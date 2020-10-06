@@ -41,6 +41,7 @@
                 android:layout_marginRight="40dp"
                 android:background="@drawable/button_frame_lg"
                 android:text="@string/play"
+                android:onClick="playButton"
                 android:textSize="30sp" />
 
         </TableRow>
