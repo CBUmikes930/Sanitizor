@@ -12,7 +12,10 @@ import android.graphics.PointF;
  */
 public class SanitizorGame {
 
+    public static boolean PLAY_GAME_AUDIO = true;
+
     private Player mPlayer;
+
 
     private Context mContext;
     private int mSurfaceWidth;
