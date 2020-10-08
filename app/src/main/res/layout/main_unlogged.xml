@@ -58,6 +58,7 @@
                 android:layout_marginTop="50dp"
                 android:layout_marginRight="40dp"
                 android:background="@drawable/button_frame_med"
+                android:onClick="settingsButtonListener"
                 android:text="@string/settings"
                 android:textSize="30sp" />
         </TableRow>

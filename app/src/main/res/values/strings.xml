@@ -6,4 +6,13 @@
     <string name="settings">Settings</string>
     <string name="view_leaderboard">View Leaderboard</string>
     <string name="sanitizor_logo">Sanitizor_logo</string>
+    <string name="settings_label">Settings</string>
+    <string name="mute">Mute</string>
+    <string name="unmute">Unmute</string>
+    <string name="dark_mode">Dark Mode</string>
+    <string name="light_mode">Light Mode</string>
+    <string name="clear_local_leaderboard">Clear Local Leaderboard</string>
+    <string name="brightness">Brightness</string>
+    <string name="enable_push_notifications">Enable Push Notifications</string>
+    <string name="disable_push_notifications">Disable Push Notifications</string>
 </resources>
