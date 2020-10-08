@@ -6,7 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SettingsDialogue.SettingsDialogListener {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,4 +39,8 @@ public class MainActivity extends AppCompatActivity {
         settingsDialogue.show(getSupportFragmentManager(), "settingsFragment");
     }
 
+    @Override
+    public void onButtonClicked() {
+
+    }
 }
