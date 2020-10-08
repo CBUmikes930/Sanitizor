@@ -12,8 +12,6 @@ import android.graphics.PointF;
  */
 public class SanitizorGame {
 
-    public static boolean PLAY_GAME_AUDIO = true;
-
     private Player mPlayer;
 
     //Context is saved in order to load resources
