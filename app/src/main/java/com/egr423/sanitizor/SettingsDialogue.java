@@ -23,6 +23,9 @@ public class SettingsDialogue extends BottomSheetDialogFragment {
     private Button darkModeLightModeButton;
     private Button clearLeaderboardButton;
 
+
+//    TODO MAKE XML TO LOAD SETTINGS ON CREATE
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
