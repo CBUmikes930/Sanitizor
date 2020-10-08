@@ -5,7 +5,7 @@ android {
     buildToolsVersion "30.0.2"
 
     defaultConfig {
-        applicationId "com.egr423.sanitizor"
+        applicationId "com.egr423.player"
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 1

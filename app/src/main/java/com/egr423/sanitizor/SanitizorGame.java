@@ -16,11 +16,12 @@ public class SanitizorGame {
 
     private Player mPlayer;
 
-
+    //Context is saved in order to load resources
     private Context mContext;
+    //Screen dimensions
     private int mSurfaceWidth;
     private int mSurfaceHeight;
-    private Paint mPaint;
+    
     private boolean mGameOver;
 
     public SanitizorGame(Context context, int surfaceWidth, int surfaceHeight) {
@@ -29,7 +30,7 @@ public class SanitizorGame {
         mSurfaceHeight = surfaceHeight;
 
         //Create a player object
-        mPlayer = new Player(mSurfaceWidth, mSurfaceHeight);
+        mPlayer = new Player(mSurfaceWidth, mSurfaceHeight, context);
 
         //Start the game
         newGame();
