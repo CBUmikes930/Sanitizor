@@ -1,8 +1,7 @@
 package com.egr423.sanitizor;
 
-import android.graphics.Canvas;
 import android.content.Context;
-import android.graphics.Paint;
+import android.graphics.Canvas;
 import android.graphics.PointF;
 
 /**
@@ -10,7 +9,7 @@ import android.graphics.PointF;
  *
  * The Game handler which controls object creation and calculations
  */
-public class SanitizorGame {
+public class SanitizorGame{
 
     private Player mPlayer;
 
