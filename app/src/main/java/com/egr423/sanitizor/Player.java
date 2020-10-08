@@ -67,6 +67,8 @@ public class Player {
     public void move(PointF velocity) {
         //Move center by velocity on x-axis, but anchor y
         mTopLeft.offset((float) (-velocity.x * SPEED), 0);
+        //Log.d("VELOCITY CHECK", "Original Velocity: " + -velocity.x);
+        //Log.d("VELOCITY CHECK", "Modified Velocity: " + -velocity.x * SPEED);
 
         //Check if still on screen
         if (mTopLeft.x + WIDTH > mSurfaceWidth) {

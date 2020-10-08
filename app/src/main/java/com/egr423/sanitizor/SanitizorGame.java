@@ -2,7 +2,11 @@ package com.egr423.sanitizor;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.PointF;
+
+import androidx.core.content.ContextCompat;
 
 /**
  * Created by Micah Steinbock on 10/6/2020
@@ -12,6 +16,7 @@ import android.graphics.PointF;
 public class SanitizorGame{
 
     private Player mPlayer;
+    private Joystick joystick = Joystick.getInstance();
 
     //Context is saved in order to load resources
     private Context mContext;
@@ -28,6 +33,10 @@ public class SanitizorGame{
 
         //Create a player object
         mPlayer = new Player(mSurfaceWidth, mSurfaceHeight, context);
+
+        joystick.setCenter((float) mSurfaceWidth / 2, (float) mSurfaceHeight - 150);
+        joystick.setOuterColor(context.getResources().getColor(R.color.joystick_bg));
+        joystick.setInnerColor(context.getResources().getColor(R.color.joystick_fg));
 
         //Start the game
         newGame();
@@ -56,5 +65,8 @@ public class SanitizorGame{
 
         //Draw Player
         mPlayer.draw(canvas);
+
+        //Draw the joystick circle
+        joystick.draw(canvas);
     }
 }

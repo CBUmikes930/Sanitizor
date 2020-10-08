@@ -11,6 +11,8 @@ import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnDragListener;
+import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.widget.TextViewCompat;
@@ -25,7 +27,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
     private GameSurfaceView mSurfaceView;
-//    private static final Joystick joystick = Joystick.getInstance();
+    private static final Joystick joystick = Joystick.getInstance();
     float mInitX;
     float mInitY;
 
@@ -40,6 +42,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
             mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
             mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         } else{
+            mSurfaceView = findViewById(R.id.gameSurface);
 
             mSurfaceView.setOnTouchListener(new View.OnTouchListener() {
                 @Override
@@ -48,23 +51,37 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
                     switch (action) {
                         case MotionEvent.ACTION_DOWN:
                             mInitX = event.getX();
-                            mInitY = event.getX();
+                            mInitY = event.getY();
                             return true;
                         case MotionEvent.ACTION_MOVE:
-                            int x = (int) event.getX();
-                            int y = (int) event.getY();
+                            float x = event.getX() - mInitX;
+                            float y = event.getY() - mInitY;
                             // See if movement is at least 20 pixels
-                            mSurfaceView.changeAcceleration(x, y);
+                            mSurfaceView.changeAcceleration(-x, y);
                             return true;
+                        case MotionEvent.ACTION_UP:
+                            mInitX = Integer.MAX_VALUE;
+                            mInitY = Integer.MAX_VALUE;
+                            mSurfaceView.changeAcceleration(0, 0);
                     }
                     return false;
+                }
+            });
+
+            Button testButton = findViewById(R.id.TEST);
+
+            testButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String test = "WACK";
+                    Toast toast = Toast.makeText(v.getContext(), test, Toast.LENGTH_SHORT);
+                    toast.show();
                 }
             });
 
         }
 
         //Set the surface view
-        mSurfaceView = findViewById(R.id.gameSurface);
     }
 
     @Override

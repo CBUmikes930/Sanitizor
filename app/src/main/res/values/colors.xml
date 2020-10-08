@@ -6,4 +6,6 @@
 
     <!-- Used in the background of the game screen -->
     <color name="bgColor">#FFFFFF</color>
+    <color name="joystick_bg">#80404040</color>
+    <color name="joystick_fg">#80202020</color>
 </resources>
