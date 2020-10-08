@@ -16,6 +16,9 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 public class SettingsDialogue extends BottomSheetDialogFragment {
 
+    public static boolean PLAY_GAME_AUDIO = true;
+    public static boolean USE_GYRO_CONTROLS = false;
+
     private SettingsDialogListener dialogListener;
 
     private Button notificationsButton;
@@ -62,10 +65,10 @@ public class SettingsDialogue extends BottomSheetDialogFragment {
                 return new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        SanitizorGame.PLAY_GAME_AUDIO = !SanitizorGame.PLAY_GAME_AUDIO;
+                        PLAY_GAME_AUDIO = !PLAY_GAME_AUDIO;
                         String toastText = "Game audio has been turned on.";
                         String buttonText = "Mute";
-                        if (!SanitizorGame.PLAY_GAME_AUDIO) {
+                        if (!PLAY_GAME_AUDIO) {
                             toastText = "Game audio has been turned off.";
                             buttonText = "Unmute";
                         }
@@ -76,7 +79,7 @@ public class SettingsDialogue extends BottomSheetDialogFragment {
                         muteUnmuteButton.setText(buttonText);
                         Log.d("",
                                 String.format("MainActivity.PLAY_GAME_AUDIO: %s",
-                                        SanitizorGame.PLAY_GAME_AUDIO));
+                                        PLAY_GAME_AUDIO));
                     }
                 };
 
