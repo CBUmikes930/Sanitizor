@@ -6,16 +6,12 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnDragListener;
 import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.widget.TextViewCompat;
 
 /**
  * Created by Micah Steinbock on 10/6/2020
@@ -37,7 +33,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
-        if (SettingsDialogue.USE_GYRO_CONTROLS) {
+        if (SettingsDialogue.useGyroControls) {
             //Initialize sensors
             mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
             mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -56,7 +52,6 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
                         case MotionEvent.ACTION_MOVE:
                             float x = event.getX() - mInitX;
                             float y = event.getY() - mInitY;
-                            // See if movement is at least 20 pixels
                             mSurfaceView.changeAcceleration(-x, y);
                             return true;
                         case MotionEvent.ACTION_UP:
@@ -87,7 +82,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
     @Override
     protected void onResume() {
         super.onResume();
-        if (SettingsDialogue.USE_GYRO_CONTROLS) {
+        if (SettingsDialogue.useGyroControls) {
             mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         }
     }

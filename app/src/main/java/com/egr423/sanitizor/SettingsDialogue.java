@@ -1,6 +1,5 @@
 package com.egr423.sanitizor;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -24,9 +23,9 @@ public class SettingsDialogue extends BottomSheetDialogFragment {
 
     private View view;
 
-    public static boolean PLAY_GAME_AUDIO = true;
-    public static boolean USE_DARK_MODE = true;
-    public static boolean USE_GYRO_CONTROLS = false;
+    public static boolean playGameAudio = true;
+    public static boolean useDarkMode = true;
+    public static boolean useGyroControls = false;
 
     private RadioGroup controlSchemeRadioGroup;
     private Button muteUnmuteButton;
@@ -49,50 +48,85 @@ public class SettingsDialogue extends BottomSheetDialogFragment {
         darkModeLightModeButton = view.findViewById(R.id.dark_mode_light_mode_button);
         clearLeaderboardButton = view.findViewById(R.id.clear_local_leaderboard_button);
 
-        darkModeLightModeButton.setOnClickListener(setOnClickListenerById(controlSchemeRadioGroup.getId()));
+        controlSchemeRadioGroup.setOnCheckedChangeListener(setOnCheckedChangeListener(controlSchemeRadioGroup.getId()));
         muteUnmuteButton.setOnClickListener(setOnClickListenerById(muteUnmuteButton.getId()));
         darkModeLightModeButton.setOnClickListener(setOnClickListenerById(darkModeLightModeButton.getId()));
         clearLeaderboardButton.setOnClickListener(setOnClickListenerById(clearLeaderboardButton.getId()));
 
+        setDisplay(controlSchemeRadioGroup);
+        setDisplay(muteUnmuteButton);
+        setDisplay(darkModeLightModeButton);
+        setDisplay(clearLeaderboardButton);
+
         return view;
     }
 
-    @Override
-    public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
-        Dialog dialog = super.onCreateDialog(savedInstanceState);
-        dialog.show();
+    private void setDisplay(View view) {
+        switch (view.getId()) {
+            case R.id.control_scheme:
+                RadioGroup radioGroup = (RadioGroup) view;
+                int check = sharedPref.getInt("controlScheme", -1);
+                if (check != -1) {
+                    radioGroup.check(check);
+                } else {
+                    radioGroup.clearCheck();
+                }
+
+            case R.id.mute_unmute_button:
+                Button button = (Button) view;
+                String buttonText = "Mute";
+                if (!playGameAudio) {
+                    buttonText = "Unmute";
+                }
+                button.setText(buttonText);
+
+            case R.id.dark_mode_light_mode_button:
+
+            case R.id.clear_local_leaderboard_button:
+
+            default:
+                throw new IllegalArgumentException("id should be an id one of the associated buttons" +
+                        "of the SettingsDialogue");
+
+        }
+    }
+
+    private RadioGroup.OnCheckedChangeListener setOnCheckedChangeListener(int id) {
+        switch (id) {
+            case R.id.control_scheme:
+                return new RadioGroup.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(RadioGroup group, int checkedId) {
+                        sharedPref.edit().putInt("controlScheme", checkedId).apply();
+                    }
+                };
+            default:
+                throw new IllegalArgumentException("id should be an id one of the associated " +
+                        "RadioButtonGroup of the SettingsDialogue");
+        }
     }
 
     private View.OnClickListener setOnClickListenerById(int id) {
 
         switch (id) {
-            case R.id.control_scheme:
-                return new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                    }
-                };
             case R.id.mute_unmute_button:
                 return new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        PLAY_GAME_AUDIO = !PLAY_GAME_AUDIO;
+                        playGameAudio = !playGameAudio;
+                        sharedPref.edit().putBoolean("PLAY_GAME_AUDIO", playGameAudio).apply();
                         String toastText = "Game audio has been turned on.";
-                        String buttonText = "Mute";
-                        if (!PLAY_GAME_AUDIO) {
+                        if (!playGameAudio) {
                             toastText = "Game audio has been turned off.";
-                            buttonText = "Unmute";
                         }
                         Context context = v.getContext();
                         int duration = Toast.LENGTH_SHORT;
                         Toast toast = Toast.makeText(context, toastText, duration);
                         toast.show();
-                        muteUnmuteButton.setText(buttonText);
                         Log.d("SettingsDialogue",
                                 String.format("SettingsDialogue.PLAY_GAME_AUDIO: %s",
-                                        PLAY_GAME_AUDIO));
-                        sharedPref.edit().putBoolean("PLAY_GAME_AUDIO", PLAY_GAME_AUDIO).apply();
+                                        playGameAudio));
+                        setDisplay(muteUnmuteButton);
                     }
                 };
 
@@ -102,8 +136,8 @@ public class SettingsDialogue extends BottomSheetDialogFragment {
                     public void onClick(View v) {
                         Log.d("SettingsDialogue",
                                 String.format("SettingsDialogue.USE_DARK_MODE: %s",
-                                        USE_DARK_MODE));
-                        sharedPref.edit().putBoolean("USE_DARK_MODE", USE_DARK_MODE).apply();
+                                        useDarkMode));
+                        sharedPref.edit().putBoolean("USE_DARK_MODE", useDarkMode).apply();
                     }
                 };
 
@@ -114,13 +148,9 @@ public class SettingsDialogue extends BottomSheetDialogFragment {
 
                     }
                 };
-
             default:
                 throw new IllegalArgumentException("id should be an id one of the associated buttons" +
                         "of the SettingsDialogue");
-
         }
-
     }
-
 }
