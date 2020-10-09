@@ -46,7 +46,8 @@
             android:text="@string/joystick_controls" />
     </RadioGroup>
 
-
+    <!--    Purposely left as static text,
+     should change when inflated by SettingsDialogue.java -->
     <Button
         android:id="@+id/mute_unmute_button"
         android:layout_width="wrap_content"
@@ -55,7 +56,8 @@
         android:padding="20dp"
         android:text="mute_unmute_button" />
 
-
+    <!--    Purposely left as static text,
+ should change when inflated by SettingsDialogue.java -->
     <Button
         android:id="@+id/dark_mode_light_mode_button"
         android:layout_width="wrap_content"
@@ -70,7 +72,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:padding="20dp"
-        android:text="clear_local_leaderboard_button" />
+        android:text="@string/clear_local_leaderboard" />
 
 
 </androidx.appcompat.widget.LinearLayoutCompat>
