@@ -1,6 +1,7 @@
 package com.egr423.sanitizor;
 
 import android.annotation.SuppressLint;
+import android.graphics.PointF;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -27,6 +28,9 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
     float mInitX;
     float mInitY;
 
+    //Temp variable to be replaced by setting at some point
+    private final boolean IS_USING_JOYSTICK = false;
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,18 +50,46 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
                     int action = event.getAction();
                     switch (action) {
                         case MotionEvent.ACTION_DOWN:
-                            mInitX = event.getX();
-                            mInitY = event.getY();
+                            if (!IS_USING_JOYSTICK) {
+                                //Swipe input
+                                mInitX = event.getX();
+                                mInitY = event.getY();
+                            } else {
+                                //Joystick input
+                                //Init is set to joystick's center
+                                mInitX = joystick.getCenter().x;
+                                mInitY = joystick.getCenter().y;
+
+                                //x and y are distance between touch and joystick's center
+                                float x = event.getX() - mInitX;
+                                float y = event.getY() - mInitY;
+
+                                //Move the player
+                                mSurfaceView.changeAcceleration(-x, y);
+                                //Move the handle in the joystick
+                                joystick.setHandleCenter(new PointF(event.getX(), event.getY()));
+                            }
                             return true;
                         case MotionEvent.ACTION_MOVE:
                             float x = event.getX() - mInitX;
                             float y = event.getY() - mInitY;
                             mSurfaceView.changeAcceleration(-x, y);
+
+                            if (IS_USING_JOYSTICK) {
+                                //Move the handle in the joystick
+                                joystick.setHandleCenter(new PointF(event.getX(), event.getY()));
+                            }
                             return true;
                         case MotionEvent.ACTION_UP:
                             mInitX = Integer.MAX_VALUE;
                             mInitY = Integer.MAX_VALUE;
+                            //Stop player motion
                             mSurfaceView.changeAcceleration(0, 0);
+
+                            if (IS_USING_JOYSTICK) {
+                                //Reset handle to center of joystick
+                                joystick.resetHandlePos();
+                            }
                     }
                     return false;
                 }
@@ -90,7 +122,9 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
     @Override
     protected void onPause() {
         super.onPause();
-        mSensorManager.unregisterListener(this, mAccelerometer);
+        if (SettingsDialogue.USE_GYRO_CONTROLS) {
+            mSensorManager.unregisterListener(this, mAccelerometer);
+        }
     }
 
     @Override
