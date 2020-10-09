@@ -39,7 +39,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
 
         mSurfaceView = findViewById(R.id.gameSurface);
 
-        if (SettingsDialogue.useGyroControls) {
+        if (SettingsDialogue.controlScheme == R.id.gyro_controls) {
             //Initialize sensors
             mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
             mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -50,7 +50,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
                     int action = event.getAction();
                     switch (action) {
                         case MotionEvent.ACTION_DOWN:
-                            if (IS_USING_JOYSTICK) {
+                            if (SettingsDialogue.controlScheme == R.id.joystick_controls) {
                                 //Move the handle in the joystick
                                 joystick.setHandleCenter(new PointF(event.getX(), event.getY()));
 
@@ -66,7 +66,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
                             }
                             return true;
                         case MotionEvent.ACTION_MOVE:
-                            if (IS_USING_JOYSTICK) {
+                            if (SettingsDialogue.controlScheme == R.id.joystick_controls) {
                                 //Move the handle in the joystick
                                 joystick.setHandleCenter(new PointF(event.getX(), event.getY()));
 
@@ -83,7 +83,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
                             //Stop player motion
                             mSurfaceView.changeAcceleration(0, 0);
 
-                            if (IS_USING_JOYSTICK) {
+                            if (SettingsDialogue.controlScheme == R.id.joystick_controls) {
                                 //Reset handle to center of joystick
                                 joystick.resetHandlePos();
                             } else {
@@ -114,7 +114,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
     @Override
     protected void onResume() {
         super.onResume();
-        if (SettingsDialogue.useGyroControls) {
+        if (SettingsDialogue.controlScheme == R.id.gyro_controls) {
             mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         }
     }
@@ -122,7 +122,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
     @Override
     protected void onPause() {
         super.onPause();
-        if (SettingsDialogue.useGyroControls) {
+        if (SettingsDialogue.controlScheme == R.id.gyro_controls) {
             mSensorManager.unregisterListener(this, mAccelerometer);
         }
     }

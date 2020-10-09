@@ -29,7 +29,6 @@ public class SettingsDialogue extends BottomSheetDialogFragment {
     public static Boolean playGameAudio;
     public static Boolean useDarkMode;
     public static Integer controlScheme;
-    public static boolean useGyroControls = false;
 
     private RadioGroup controlSchemeRadioGroup;
     private Button muteUnmuteButton;
@@ -125,9 +124,9 @@ public class SettingsDialogue extends BottomSheetDialogFragment {
 
             case R.id.dark_mode_light_mode_button:
                 Button darkModeButton = (Button) view;
-                String darkModeButtonText = "Dark Mode";
+                String darkModeButtonText = "Light Mode";
                 if (!useDarkMode) {
-                    darkModeButtonText = "Light Mode";
+                    darkModeButtonText = "Dark Mode";
                 }
                 darkModeButton.setText(darkModeButtonText);
                 return;
@@ -160,6 +159,7 @@ public class SettingsDialogue extends BottomSheetDialogFragment {
                     @Override
                     public void onCheckedChanged(RadioGroup group, int checkedId) {
                         sharedPref.edit().putInt("controlScheme", checkedId).apply();
+                        controlScheme = checkedId;
                     }
 
                 };
