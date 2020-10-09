@@ -34,9 +34,11 @@ public class SanitizorGame{
         //Create a player object
         mPlayer = new Player(mSurfaceWidth, mSurfaceHeight, context);
 
-        joystick.setCenter((float) mSurfaceWidth / 2, (float) mSurfaceHeight - 150);
+        //Set joystick position to bottom center of screen and set handle to center
+        joystick.setCenter(new PointF((float) mSurfaceWidth / 2, (float) mSurfaceHeight - 150));
+        joystick.resetHandlePos();
         joystick.setOuterColor(context.getResources().getColor(R.color.joystick_bg));
-        joystick.setInnerColor(context.getResources().getColor(R.color.joystick_fg));
+        joystick.setHandleColor(context.getResources().getColor(R.color.joystick_fg));
 
         //Start the game
         newGame();
