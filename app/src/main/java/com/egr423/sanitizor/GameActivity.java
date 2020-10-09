@@ -33,7 +33,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
     float mInitY;
 
     //Temp variable to be replaced by setting at some point
-    private final boolean IS_USING_JOYSTICK = false;
+    private final boolean IS_USING_JOYSTICK = true;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -41,59 +41,57 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
+        mSurfaceView = findViewById(R.id.gameSurface);
         if (SettingsDialogue.USE_GYRO_CONTROLS) {
             //Initialize sensors
             mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
             mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         } else{
-            mSurfaceView = findViewById(R.id.gameSurface);
-
             mSurfaceView.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
                     int action = event.getAction();
                     switch (action) {
                         case MotionEvent.ACTION_DOWN:
-                            if (!IS_USING_JOYSTICK) {
-                                //Swipe input
-                                mInitX = event.getX();
-                                mInitY = event.getY();
-                            } else {
-                                //Joystick input
-                                //Init is set to joystick's center
-                                mInitX = joystick.getCenter().x;
-                                mInitY = joystick.getCenter().y;
-
-                                //x and y are distance between touch and joystick's center
-                                float x = event.getX() - mInitX;
-                                float y = event.getY() - mInitY;
-
-                                //Move the player
-                                mSurfaceView.changeAcceleration(-x, y);
-                                //Move the handle in the joystick
-                                joystick.setHandleCenter(new PointF(event.getX(), event.getY()));
-                            }
-                            return true;
-                        case MotionEvent.ACTION_MOVE:
-                            float x = event.getX() - mInitX;
-                            float y = event.getY() - mInitY;
-
-                            mSurfaceView.changeAcceleration(-x, y);
-
                             if (IS_USING_JOYSTICK) {
                                 //Move the handle in the joystick
                                 joystick.setHandleCenter(new PointF(event.getX(), event.getY()));
+
+                                //Calculate relative to the max travel distance the handle of the joystick is
+                                float percentX = joystick.getHandleCenter().x - joystick.getCenter().x;
+                                percentX /= joystick.getOutRadius() - joystick.getHandleRadius();
+                                //Multiply that percentage by the max accelerometer speed to keep speed consistent between modes
+                                mSurfaceView.changeAcceleration((float) (percentX * -9.8), event.getY());
+                            } else {
+                                //Swipe input
+                                mInitX = event.getX();
+                                mInitY = event.getY();
+                            }
+                            return true;
+                        case MotionEvent.ACTION_MOVE:
+                            if (IS_USING_JOYSTICK) {
+                                //Move the handle in the joystick
+                                joystick.setHandleCenter(new PointF(event.getX(), event.getY()));
+
+                                //Calculate relative to the max travel distance the handle of the joystick is
+                                float percentX = joystick.getHandleCenter().x - joystick.getCenter().x;
+                                percentX /= joystick.getOutRadius() - joystick.getHandleRadius();
+                                //Multiply that percentage by the max accelerometer speed to keep speed consistent between modes
+                                mSurfaceView.changeAcceleration((float) (percentX * -9.8), event.getY());
+                            } else {
+                                mSurfaceView.changeAcceleration(-(event.getX() - mInitX), event.getY() - mInitY);
                             }
                             return true;
                         case MotionEvent.ACTION_UP:
-                            mInitX = Integer.MAX_VALUE;
-                            mInitY = Integer.MAX_VALUE;
                             //Stop player motion
                             mSurfaceView.changeAcceleration(0, 0);
 
                             if (IS_USING_JOYSTICK) {
                                 //Reset handle to center of joystick
                                 joystick.resetHandlePos();
+                            } else {
+                                mInitX = Integer.MAX_VALUE;
+                                mInitY = Integer.MAX_VALUE;
                             }
                     }
                     return false;

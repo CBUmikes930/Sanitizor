@@ -47,6 +47,8 @@ public class GameThread extends Thread {
     public void changeAcceleration(float xForce, float yForce) {
         mVelocity.x = xForce;
         mVelocity.y = yForce;
+        System.out.println("xForce: " + xForce);
+        //System.out.println("yForce: " + yForce);
     }
 
     public void stopThread() {

@@ -73,8 +73,20 @@ public class Joystick {
         }
     }
 
+    public PointF getHandleCenter() {
+        return new PointF(handleCenter.x, handleCenter.y);
+    }
+
     public void resetHandlePos() {
         setHandleCenter(new PointF(center.x, center.y));
+    }
+
+    public float getOutRadius() {
+        return OUT_RADIUS;
+    }
+
+    public float getHandleRadius() {
+        return HANDLE_RADIUS;
     }
 
     //Sets the color of the outer joystick

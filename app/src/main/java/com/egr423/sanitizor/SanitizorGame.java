@@ -68,7 +68,10 @@ public class SanitizorGame{
         //Draw Player
         mPlayer.draw(canvas);
 
-        //Draw the joystick circle
-        joystick.draw(canvas);
+        boolean usingJoystick = true;
+        if (usingJoystick) {
+            //Draw the joystick circle
+            joystick.draw(canvas);
+        }
     }
 }

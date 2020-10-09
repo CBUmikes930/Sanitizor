@@ -26,7 +26,7 @@ public class SettingsDialogue extends BottomSheetDialogFragment {
 
     public static boolean PLAY_GAME_AUDIO = true;
     public static boolean USE_DARK_MODE = true;
-    public static boolean USE_GYRO_CONTROLS = false;
+    public static boolean USE_GYRO_CONTROLS = true;
 
     private RadioGroup controlSchemeRadioGroup;
     private Button muteUnmuteButton;
