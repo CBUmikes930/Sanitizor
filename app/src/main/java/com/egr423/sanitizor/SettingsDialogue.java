@@ -1,12 +1,15 @@
 package com.egr423.sanitizor;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -14,47 +17,56 @@ import androidx.annotation.Nullable;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
+import java.util.Objects;
+
 public class SettingsDialogue extends BottomSheetDialogFragment {
 
+
+    private View view;
+
     public static boolean PLAY_GAME_AUDIO = true;
+    public static boolean USE_DARK_MODE = true;
     public static boolean USE_GYRO_CONTROLS = false;
 
-    private SettingsDialogListener dialogListener;
-
-    private Button notificationsButton;
+    private RadioGroup controlSchemeRadioGroup;
     private Button muteUnmuteButton;
     private Button darkModeLightModeButton;
     private Button clearLeaderboardButton;
 
+    private static SharedPreferences sharedPref;
 
-//    TODO MAKE XML TO LOAD SETTINGS ON CREATE
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.settings_layout, container, false);
+        view = inflater.inflate(R.layout.settings_layout, container, false);
 
-        notificationsButton = v.findViewById(R.id.enable_disable_notifications);
-        muteUnmuteButton = v.findViewById(R.id.mute_unmute_button);
-        darkModeLightModeButton = v.findViewById(R.id.dark_mode_light_mode_button);
-        clearLeaderboardButton = v.findViewById(R.id.clear_local_leaderboard_button);
+        Context context = getActivity();
+        sharedPref = Objects.requireNonNull(getActivity()).getPreferences(Context.MODE_PRIVATE);
 
-        darkModeLightModeButton.setOnClickListener(setOnClickListenerById(notificationsButton.getId()));
+        controlSchemeRadioGroup = view.findViewById(R.id.control_scheme);
+        muteUnmuteButton = view.findViewById(R.id.mute_unmute_button);
+        darkModeLightModeButton = view.findViewById(R.id.dark_mode_light_mode_button);
+        clearLeaderboardButton = view.findViewById(R.id.clear_local_leaderboard_button);
+
+        darkModeLightModeButton.setOnClickListener(setOnClickListenerById(controlSchemeRadioGroup.getId()));
         muteUnmuteButton.setOnClickListener(setOnClickListenerById(muteUnmuteButton.getId()));
         darkModeLightModeButton.setOnClickListener(setOnClickListenerById(darkModeLightModeButton.getId()));
         clearLeaderboardButton.setOnClickListener(setOnClickListenerById(clearLeaderboardButton.getId()));
 
-        return v;
+        return view;
     }
 
-    public interface SettingsDialogListener {
-        void onButtonClicked();
+    @Override
+    public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
+        Dialog dialog = super.onCreateDialog(savedInstanceState);
+        dialog.show();
     }
 
     private View.OnClickListener setOnClickListenerById(int id) {
 
         switch (id) {
-            case R.id.enable_disable_notifications:
+            case R.id.control_scheme:
                 return new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -77,9 +89,10 @@ public class SettingsDialogue extends BottomSheetDialogFragment {
                         Toast toast = Toast.makeText(context, toastText, duration);
                         toast.show();
                         muteUnmuteButton.setText(buttonText);
-                        Log.d("",
-                                String.format("MainActivity.PLAY_GAME_AUDIO: %s",
+                        Log.d("SettingsDialogue",
+                                String.format("SettingsDialogue.PLAY_GAME_AUDIO: %s",
                                         PLAY_GAME_AUDIO));
+                        sharedPref.edit().putBoolean("PLAY_GAME_AUDIO", PLAY_GAME_AUDIO).apply();
                     }
                 };
 
@@ -87,7 +100,10 @@ public class SettingsDialogue extends BottomSheetDialogFragment {
                 return new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        Log.d("SettingsDialogue",
+                                String.format("SettingsDialogue.USE_DARK_MODE: %s",
+                                        USE_DARK_MODE));
+                        sharedPref.edit().putBoolean("USE_DARK_MODE", USE_DARK_MODE).apply();
                     }
                 };
 
@@ -107,15 +123,4 @@ public class SettingsDialogue extends BottomSheetDialogFragment {
 
     }
 
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-
-        try {
-            dialogListener = (SettingsDialogListener) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() +
-                    " must implement SettingsDialogListener");
-        }
-    }
 }
