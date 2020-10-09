@@ -20,5 +20,6 @@
     <string name="joystick_controls">Joystick Controls</string>
     <string name="control_scheme">Control Scheme</string>
     <string name="preference_file_key">qwertyuiopasdfghjklzxcvbnm</string>
+    <string name="clear_local_leaderboard">Clear Local Leaderboard</string>
 
 </resources>
