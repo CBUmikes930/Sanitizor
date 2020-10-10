@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/setting_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
@@ -10,19 +11,43 @@
         android:id="@+id/settings_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="20dp"
         android:text="@string/settings_label"
-        android:textAlignment="center"
-        android:textSize="25sp" />
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="20dp"
+        android:textSize="35sp" />
 
-    <Button
-        android:id="@+id/enable_disable_notifications"
+    <RadioGroup
+        android:id="@+id/control_scheme"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:padding="20dp"
-        android:text="enable_disable_notifications" />
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/control_scheme"
+            android:textSize="20sp"
+            android:layout_gravity="center_horizontal"
+            android:labelFor="@id/control_scheme"/>
+        <RadioButton
+            android:id="@+id/gyro_controls"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/gyro_controls" />
 
+        <RadioButton
+            android:id="@+id/swipe_controls"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/swipe_controls" />
+
+        <RadioButton
+            android:id="@+id/joystick_controls"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/joystick_controls" />
+    </RadioGroup>
+
+    <!--    Purposely left as static text,
+     should change when inflated by SettingsDialogue.java -->
     <Button
         android:id="@+id/mute_unmute_button"
         android:layout_width="wrap_content"
@@ -31,7 +56,8 @@
         android:padding="20dp"
         android:text="mute_unmute_button" />
 
-
+    <!--    Purposely left as static text,
+ should change when inflated by SettingsDialogue.java -->
     <Button
         android:id="@+id/dark_mode_light_mode_button"
         android:layout_width="wrap_content"
@@ -46,7 +72,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:padding="20dp"
-        android:text="clear_local_leaderboard_button" />
+        android:text="@string/clear_local_leaderboard" />
 
 
 </androidx.appcompat.widget.LinearLayoutCompat>

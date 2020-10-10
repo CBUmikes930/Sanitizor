@@ -6,12 +6,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-public class MainActivity extends AppCompatActivity implements SettingsDialogue.SettingsDialogListener {
+public class MainActivity extends AppCompatActivity {
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SettingsDialogue.initialize(this);
+
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.main_unlogged);
     }
 
@@ -40,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements SettingsDialogue.
     }
 
     @Override
-    public void onButtonClicked() {
-
+    public void recreate() {
+        super.recreate();
     }
 }

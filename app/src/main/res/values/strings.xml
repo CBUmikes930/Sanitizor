@@ -15,4 +15,10 @@
     <string name="brightness">Brightness</string>
     <string name="enable_push_notifications">Enable Push Notifications</string>
     <string name="disable_push_notifications">Disable Push Notifications</string>
+    <string name="gyro_controls">Gyro Controls</string>
+    <string name="swipe_controls">Swipe Controls</string>
+    <string name="joystick_controls">Joystick Controls</string>
+    <string name="control_scheme">Control Scheme</string>
+    <string name="preference_file_key">qwertyuiopasdfghjklzxcvbnm</string>
+
 </resources>
