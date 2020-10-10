@@ -37,10 +37,10 @@ public class SanitizorGame{
         mPlayer = new Player(mSurfaceWidth, mSurfaceHeight, mContext);
 
         //Create enemy objects
-        for(int i = 0; i < 10; i++){
-            PointF location = new PointF(0,0); // TODO figure out spawn grid equation for enemies
-            enemies[i] = new Enemy().enemy(context, surfaceWidth,surfaceHeight, location);
-        }
+//        for(int i = 0; i < 10; i++){
+//            PointF location = new PointF(0,0); // TODO figure out spawn grid equation for enemies
+//            enemies[i] = new Enemy().enemy(context, surfaceWidth,surfaceHeight, location);
+//        }
 
         //Set joystick position to bottom center of screen and set handle to center
         joystick.setCenter(new PointF((float) mSurfaceWidth / 2, (float) mSurfaceHeight - 150));
@@ -57,6 +57,7 @@ public class SanitizorGame{
 
         //Reset Player position
         mPlayer.setStartPosition();
+
     }
 
     public void update(PointF velocity) {
@@ -79,9 +80,9 @@ public class SanitizorGame{
         mPlayer.draw(canvas);
 
         //Draw Enemies
-        for (Enemy e: enemies) {
-            e.draw(canvas);
-        }
+        //for (Enemy e: enemies) {
+        //    e.draw(canvas);
+        //}
 
         //Draw the joystick circle
         joystick.draw(canvas);

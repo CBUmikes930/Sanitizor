@@ -56,7 +56,7 @@ public class Enemy {
         public Red(Context context, int surfaceWidth, int surfaceHeight, PointF location){
             assignEnemyImage(context, "enemy_red", surfaceWidth, surfaceHeight, location);
             mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            mPaint.setColor(0xffff0000);
+            mPaint.setColor(0xffffaaaa);
         }
 
     }
@@ -65,7 +65,7 @@ public class Enemy {
         public Yellow(Context context, int surfaceWidth, int surfaceHeight, PointF location){
             assignEnemyImage(context, "enemy_yellow", surfaceWidth, surfaceHeight, location);
             mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            mPaint.setColor(0xffbff00);
+            mPaint.setColor(0xffbffaa);
         }
     }
 
@@ -73,7 +73,7 @@ public class Enemy {
         public Blue(Context context, int surfaceWidth, int surfaceHeight, PointF location){
             assignEnemyImage(context, "enemy_blue", surfaceWidth, surfaceHeight, location);
             mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            mPaint.setColor(0xff0000ff);
+            mPaint.setColor(0xffaaaaff);
         }
 
 
