@@ -23,6 +23,8 @@ public class Joystick {
     private static int outColor;
     //The color for the inner circle of the joystick
     private static int handleColor;
+    //Whether the graphic should be drawn currently (used in swipe control scheme)
+    private static boolean drawGraphic = false;
 
     private Joystick() {
         outColor = 0;
@@ -99,13 +101,20 @@ public class Joystick {
         handleColor = color;
     }
 
-    public void draw(Canvas canvas) {
-        //Draw the outer circle
-        paint.setColor(outColor);
-        canvas.drawCircle(center.x, center.y, OUT_RADIUS, paint);
+    protected void setDrawGraphic(boolean shouldDraw) {
+        drawGraphic = shouldDraw;
+    }
 
-        //Draw the handle
-        paint.setColor(handleColor);
-        canvas.drawCircle(handleCenter.x, handleCenter.y, HANDLE_RADIUS, paint);
+    public void draw(Canvas canvas) {
+        if ((drawGraphic && SettingsDialogue.controlScheme == R.id.swipe_controls) ||
+            SettingsDialogue.controlScheme == R.id.joystick_controls) {
+            //Draw the outer circle
+            paint.setColor(outColor);
+            canvas.drawCircle(center.x, center.y, OUT_RADIUS, paint);
+
+            //Draw the handle
+            paint.setColor(handleColor);
+            canvas.drawCircle(handleCenter.x, handleCenter.y, HANDLE_RADIUS, paint);
+        }
     }
 }

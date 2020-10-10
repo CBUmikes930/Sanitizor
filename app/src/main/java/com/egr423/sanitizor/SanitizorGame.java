@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
+import android.util.TypedValue;
 
 import androidx.core.content.ContextCompat;
 
@@ -63,14 +64,14 @@ public class SanitizorGame{
 
     public void draw(Canvas canvas) {
         //Clear canvas
-        canvas.drawColor(mContext.getResources().getColor(R.color.bgColor));
+        TypedValue a = new TypedValue();
+        mContext.getTheme().resolveAttribute(android.R.attr.windowBackground, a, true);
+        canvas.drawColor(a.data);
 
         //Draw Player
         mPlayer.draw(canvas);
 
-        if (SettingsDialogue.controlScheme == R.id.joystick_controls) {
-            //Draw the joystick circle
-            joystick.draw(canvas);
-        }
+        //Draw the joystick circle
+        joystick.draw(canvas);
     }
 }

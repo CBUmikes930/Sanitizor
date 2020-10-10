@@ -41,6 +41,7 @@
                 android:layout_marginRight="40dp"
                 android:background="@drawable/button_frame_lg"
                 android:text="@string/play"
+                android:textColor="@color/buttonTextColor"
                 android:onClick="playButton"
                 android:textSize="30sp" />
 
@@ -60,6 +61,7 @@
                 android:background="@drawable/button_frame_med"
                 android:onClick="settingsButtonListener"
                 android:text="@string/settings"
+                android:textColor="@color/buttonTextColor"
                 android:textSize="30sp" />
         </TableRow>
 
@@ -76,6 +78,7 @@
                 android:layout_marginRight="40dp"
                 android:background="@drawable/button_frame_med"
                 android:text="@string/view_leaderboard"
+                android:textColor="@color/buttonTextColor"
                 android:textSize="30sp" />
 
         </TableRow>
@@ -96,6 +99,7 @@
                     android:layout_marginTop="5dp"
                     android:background="@drawable/button_frame_sm"
                     android:text="@string/log_in"
+                    android:textColor="@color/buttonTextColor"
                     android:textSize="25sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/button_Register"
@@ -111,6 +115,7 @@
                     android:layout_marginEnd="27dp"
                     android:background="@drawable/button_frame_sm"
                     android:text="@string/Register"
+                    android:textColor="@color/buttonTextColor"
                     android:textSize="25sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.377"

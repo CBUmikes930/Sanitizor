@@ -199,6 +199,7 @@ public class SettingsDialogue extends BottomSheetDialogFragment {
                         onClickSettingsButton((Button) v, useDarkMode, "useDarkMode",
                                 "Dark Mode has been turned");
                         setDisplay(darkModeLightModeButton);
+                        getActivity().recreate();
                     }
                 };
 
@@ -265,6 +266,9 @@ public class SettingsDialogue extends BottomSheetDialogFragment {
         controlScheme = sharedPref.getInt("controlScheme", R.id.gyro_controls);
         playGameAudio = sharedPref.getBoolean("playGameAudio", true);
         useDarkMode = sharedPref.getBoolean("useDarkMode", true);
+
+        int themeID = (useDarkMode) ? R.style.DarkTheme : R.style.LightTheme;
+        context.setTheme(themeID);
     }
 
 }

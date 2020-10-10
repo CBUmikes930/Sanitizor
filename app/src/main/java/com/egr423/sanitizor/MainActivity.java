@@ -11,9 +11,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.main_unlogged);
         SettingsDialogue.initialize(this);
+
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.main_unlogged);
     }
 
     /**
@@ -40,4 +42,8 @@ public class MainActivity extends AppCompatActivity {
         settingsDialogue.show(getSupportFragmentManager(), "settingsFragment");
     }
 
+    @Override
+    public void recreate() {
+        super.recreate();
+    }
 }
