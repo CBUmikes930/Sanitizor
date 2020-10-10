@@ -13,7 +13,7 @@ import android.graphics.PointF;
 public class SanitizorGame {
 
     private Player mPlayer;
-
+    private Enemy[] enemies;
     //Context is saved in order to load resources
     private Context mContext;
     private int mSurfaceWidth;
@@ -27,7 +27,12 @@ public class SanitizorGame {
         mSurfaceHeight = surfaceHeight;
 
         //Create a player object
-        mPlayer = new Player(mSurfaceWidth, mSurfaceHeight);
+        mPlayer = new Player(mSurfaceWidth, mSurfaceHeight, mContext);
+
+        for(int i = 0; i < 10; i++){
+            PointF location = new PointF(0,0); // TODO figure out spawn grid equation for enemies
+            enemies[i] = new Enemy().enemy(context, surfaceWidth,surfaceHeight, location);
+        }
 
         //Start the game
         newGame();
@@ -56,5 +61,10 @@ public class SanitizorGame {
 
         //Draw Player
         mPlayer.draw(canvas);
+
+        for (Enemy e: enemies) {
+            e.draw(canvas);
+        }
     }
+
 }
