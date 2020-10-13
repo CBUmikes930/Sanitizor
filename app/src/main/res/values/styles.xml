@@ -4,6 +4,11 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="gameBackgroundColor">@color/colorBackgroundLight</item>
+        <item name="joystick_bg">@color/joystickBackgroundLight</item>
+        <item name="joystick_handle">@color/joystickHandleLight</item>
+        <item name="buttonTextColor">@color/buttonTextLight</item>
+        <item name="settingsTextColor">@color/settingsTextColorLight</item>
     </style>
 
     <style name="DarkTheme" parent="Theme.AppCompat.NoActionBar">
@@ -11,6 +16,11 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="gameBackgroundColor">@color/colorBackgroundDark</item>
+        <item name="joystick_bg">@color/joystickBackgroundDark</item>
+        <item name="joystick_handle">@color/joystickHandleDark</item>
+        <item name="buttonTextColor">@color/buttonTextDark</item>
+        <item name="settingsTextColor">@color/settingsTextColorDark</item>
     </style>
 
 </resources>

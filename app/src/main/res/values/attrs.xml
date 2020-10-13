@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="gameBackgroundColor" format="reference|color" />
+    <attr name="joystick_bg" format="reference|color" />
+    <attr name="joystick_handle" format="reference|color" />
+    <attr name="buttonTextColor" format="reference|color" />
+    <attr name="settingsTextColor" format="reference|color" />
+</resources>

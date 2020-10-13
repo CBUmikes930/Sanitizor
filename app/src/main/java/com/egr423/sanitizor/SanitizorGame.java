@@ -45,8 +45,11 @@ public class SanitizorGame{
         //Set joystick position to bottom center of screen and set handle to center
         joystick.setCenter(new PointF((float) mSurfaceWidth / 2, (float) mSurfaceHeight - 150));
         joystick.resetHandlePos();
-        joystick.setOuterColor(context.getResources().getColor(R.color.joystick_bg));
-        joystick.setHandleColor(context.getResources().getColor(R.color.joystick_fg));
+        TypedValue a = new TypedValue();
+        mContext.getTheme().resolveAttribute(R.attr.joystick_bg, a, true);
+        joystick.setOuterColor(a.data);
+        mContext.getTheme().resolveAttribute(R.attr.joystick_handle, a, true);
+        joystick.setHandleColor(a.data);
 
         //Start the game
         newGame();
@@ -73,7 +76,7 @@ public class SanitizorGame{
     public void draw(Canvas canvas) {
         //Clear Canvas
         TypedValue a = new TypedValue();
-        mContext.getTheme().resolveAttribute(android.R.attr.windowBackground, a, true);
+        mContext.getTheme().resolveAttribute(R.attr.gameBackgroundColor, a, true);
         canvas.drawColor(a.data);
 
         //Draw Player
