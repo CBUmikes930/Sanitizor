@@ -1,4 +1,15 @@
 <resources>
+
+    <!--
+        <item name="[name_in_attrs.xml]">@color/[name_in_colors.xml]</item>
+
+        If referencing in a layout file (xml) use tag "?[name]"
+        If referencing programatically (java) use:
+            TypedValue a = new TypedValue();
+            context.getTheme().resolveAttribute(R.attr.[name], a, true);
+            Color color = a.data;
+    -->
+
     <style name="LightTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
