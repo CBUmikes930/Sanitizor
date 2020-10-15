@@ -64,6 +64,10 @@ public class Player {
         mTopLeft.y = y;
     }
 
+    public PointF getPosition() {
+        return new PointF (mTopLeft.x, mTopLeft.y);
+    }
+
     public void move(PointF velocity) {
         //Move center by velocity on x-axis, but anchor y
         mTopLeft.offset((float) (-velocity.x * SPEED), 0);

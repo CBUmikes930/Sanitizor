@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/setting_view"
+    android:background="?gameBackgroundColor"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
@@ -14,7 +15,8 @@
         android:text="@string/settings_label"
         android:layout_gravity="center_horizontal"
         android:layout_margin="20dp"
-        android:textSize="35sp" />
+        android:textSize="35sp"
+        android:textColor="?settingsTextColor" />
 
     <RadioGroup
         android:id="@+id/control_scheme"
@@ -26,24 +28,31 @@
             android:text="@string/control_scheme"
             android:textSize="20sp"
             android:layout_gravity="center_horizontal"
-            android:labelFor="@id/control_scheme"/>
+            android:labelFor="@id/control_scheme"
+            android:textColor="?settingsTextColor"/>
         <RadioButton
             android:id="@+id/gyro_controls"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/gyro_controls" />
+            android:text="@string/gyro_controls"
+            android:textColor="?settingsTextColor"
+            android:buttonTint="?settingsTextColor" />
 
         <RadioButton
             android:id="@+id/swipe_controls"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/swipe_controls" />
+            android:text="@string/swipe_controls"
+            android:textColor="?settingsTextColor"
+            android:buttonTint="?settingsTextColor" />
 
         <RadioButton
             android:id="@+id/joystick_controls"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/joystick_controls" />
+            android:text="@string/joystick_controls"
+            android:textColor="?settingsTextColor"
+            android:buttonTint="?settingsTextColor" />
     </RadioGroup>
 
     <!--    Purposely left as static text,

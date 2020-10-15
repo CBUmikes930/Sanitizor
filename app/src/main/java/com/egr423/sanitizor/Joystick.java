@@ -27,8 +27,8 @@ public class Joystick {
     private static boolean drawGraphic = false;
 
     private Joystick() {
-        outColor = 0;
-        handleColor = 0;
+        outColor = R.attr.joystick_bg;
+        handleColor = R.attr.joystick_handle;
     }
 
     public static Joystick getInstance() {
@@ -110,6 +110,7 @@ public class Joystick {
             SettingsDialogue.controlScheme == R.id.joystick_controls) {
             //Draw the outer circle
             paint.setColor(outColor);
+
             canvas.drawCircle(center.x, center.y, OUT_RADIUS, paint);
 
             //Draw the handle

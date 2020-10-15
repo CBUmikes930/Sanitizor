@@ -44,4 +44,9 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             mGameThread.changeAcceleration(x, y);
         }
     }
+
+    //Called from GameActivity whenever a button is pushed
+    public void buttonClicked() {
+        mGameThread.buttonClicked();
+    }
 }

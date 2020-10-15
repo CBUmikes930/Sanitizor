@@ -5,6 +5,23 @@
     <color name="colorAccent">#03DAC5</color>
     <color name="buttonTextColor">#000000</color>
     <!-- Used in the background of the game screen -->
-    <color name="joystick_bg">#80404040</color>
-    <color name="joystick_fg">#80202020</color>
+    <color name="colorBackgroundDark">#404040</color>
+    <color name="colorBackgroundLight">#FFFFFF</color>
+    <!-- Joystick colors -->
+    <color name="joystickBackgroundLight">#80404040</color>
+    <color name="joystickHandleLight">#80202020</color>
+    <color name="joystickBackgroundDark">#60E0E0E0</color>
+    <color name="joystickHandleDark">#A0FAFAFA</color>
+    <!-- Button Text Colors -->
+    <color name="buttonTextLight">#000000</color>
+    <color name="buttonTextDark">#404040</color>
+    <!-- Settings colors -->
+    <color name="settingsTextColorLight">#000000</color>
+    <color name="settingsTextColorDark">#FFFFFF</color>
+    <!-- Game Colors -->
+    <color name="gameButtonBGColorDark">#80E0E0E0</color>
+    <color name="gameButtonTextColorDark">#000000</color>
+    <color name="gameButtonBGColorLight">#80404040</color>
+    <color name="gameButtonTextColorLight">#FFFFFF</color>
+
 </resources>

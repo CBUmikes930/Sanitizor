@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- name is reference in styles.xml -->
+    <attr name="gameBackgroundColor" format="reference|color" />
+    <attr name="joystick_bg" format="reference|color" />
+    <attr name="joystick_handle" format="reference|color" />
+    <attr name="buttonTextColor" format="reference|color" />
+    <attr name="settingsTextColor" format="reference|color" />
+    <attr name="gameButtonColor" format="reference|color" />
+    <attr name="gameButtonTextColor" format="reference|color" />
+</resources>
