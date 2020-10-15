@@ -49,6 +49,11 @@ public class GameThread extends Thread {
         mVelocity.y = yForce;
     }
 
+    //Called from GameSurfaceView when a button is clicked
+    public void buttonClicked() {
+        mSanitizorGame.buttonClicked();
+    }
+
     public void stopThread() {
         mThreadRunning = false;
     }
