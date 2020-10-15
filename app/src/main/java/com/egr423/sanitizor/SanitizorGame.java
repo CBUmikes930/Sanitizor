@@ -5,6 +5,8 @@ import android.graphics.Canvas;
 import android.graphics.PointF;
 import android.util.TypedValue;
 
+import java.util.Random;
+
 
 /**
  * Created by Micah Steinbock on 10/6/2020
@@ -15,7 +17,7 @@ public class SanitizorGame{
 
     private Player mPlayer;
     private Joystick mJoystick = Joystick.getInstance();
-    private Enemy[] enemies;
+    private Enemy[] enemies = new Enemy[1];
 
     //Projectile System
     private Projectile[] mProjectiles;
@@ -41,10 +43,14 @@ public class SanitizorGame{
         mPlayer = new Player(mSurfaceWidth, mSurfaceHeight, mContext);
 
         //Create enemy objects
-//        for(int i = 0; i < 10; i++){
-//            PointF location = new PointF(0,0); // TODO figure out spawn grid equation for enemies
-//            enemies[i] = new Enemy().enemy(context, surfaceWidth,surfaceHeight, location);
-//        }
+        for(int i = 0; i < 1; i++){
+            PointF location = new PointF(20,20); // TODO figure out spawn grid equation for enemies
+            Random ran = new Random();
+            int num = ran.nextInt(3);
+            //if(num == 0){
+                enemies[i]= new Enemy("red",mContext, mSurfaceWidth, mSurfaceHeight, location);
+            //}
+        }
 
         //Set joystick position to bottom center of screen and set handle to center
         mJoystick.setCenter(new PointF((float) mSurfaceWidth / 2, (float) mSurfaceHeight - 150));
@@ -85,6 +91,7 @@ public class SanitizorGame{
 
         //Move player
         mPlayer.move(velocity);
+        enemies[0].move(velocity);
 
         //Move Projectiles
         for (Projectile proj : mProjectiles) {
@@ -125,9 +132,9 @@ public class SanitizorGame{
         mPlayer.draw(canvas);
 
         //Draw Enemies
-        //for (Enemy e: enemies) {
-        //    e.draw(canvas);
-        //}
+        for (Enemy e: enemies) {
+            e.draw(canvas);
+        }
 
         //Draw all projectiles
         for (Projectile proj : mProjectiles) {

@@ -6,6 +6,7 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
+import android.widget.HeaderViewListAdapter;
 
 import androidx.core.content.res.ResourcesCompat;
 
@@ -31,6 +32,7 @@ public class Enemy {
     private final int BOTTOM_PADDING = 50;
     private final int TOP_PADDING = 50;
     private final int SIDE_PADDING = 10;
+    private final int SPEED = 2;
 
     private double[] enemySpeeds;
     private Paint mPaint;
@@ -39,43 +41,55 @@ public class Enemy {
     private Drawable mEnemyImage;
     private int mSurfaceWidth;
     private int mSurfaceHeight;
+    private boolean wrappingx = false;
+    private boolean wrappingy = false;
 
-    public Enemy enemy(Context context, int surfaceWidth, int surfaceHeight, PointF location){
-        Random ran = new Random();
-        int num = ran.nextInt(3);
-        if(num == 0){
-            return new Red(context, surfaceWidth, surfaceHeight, location);
-        } else if (num ==1){
-            return new Blue(context,surfaceWidth, surfaceHeight, location);
+
+    public Enemy(String color, Context context, int surfaceWidth, int  surfaceHeight, PointF location){
+        mEnemyImage = ResourcesCompat.getDrawable(context.getResources(), R.drawable.enemy_red,null);
+        if (mEnemyImage != null){
+            HEIGHT = (int) (WIDTH * ((float) mEnemyImage.getIntrinsicHeight() /(float) mEnemyImage.getIntrinsicWidth()));
         } else {
-            return new Yellow(context,surfaceWidth,surfaceHeight,location);
+            Log.d("Enemy Error", "Could not load mEnemyImage from resource: R.drawable.enemy_" +color);
+            HEIGHT=WIDTH;
         }
+        mSurfaceWidth = surfaceWidth;
+        mSurfaceHeight = surfaceHeight;
+
+        mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mPaint.setColor(0xffffaaaa);
+
+        mTopLeft = location;
     }
 
-    public class Red extends Enemy{
-        public Red(Context context, int surfaceWidth, int surfaceHeight, PointF location){
-            assignEnemyImage(context, "enemy_red", surfaceWidth, surfaceHeight, location);
-            mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            mPaint.setColor(0xffffaaaa);
+    public void move (PointF velocity){
+        mTopLeft.offset((velocity.x*SPEED) , (velocity.y*SPEED));
+
+        if(mTopLeft.x + WIDTH <= mSurfaceWidth && mTopLeft.x > 0){
+            wrappingx = false;
+        }
+        if(mTopLeft.y +HEIGHT <= mSurfaceHeight && mTopLeft.y > 0){
+            wrappingy = false;
         }
 
+        if(!wrappingy) {
+            if (mTopLeft.y > mSurfaceHeight) {
+                mTopLeft.y = -HEIGHT;
+                wrappingy = true;
+            }
+        }
+        if(!wrappingx)
+            if (mTopLeft.x > mSurfaceWidth) {
+                mTopLeft.x = -WIDTH;
+                wrappingx = true;
+            }
+            if (mTopLeft.x < -WIDTH) {
+                mTopLeft.x = WIDTH+mSurfaceWidth;
+                wrappingx = true;
+            }
     }
 
-    public class Yellow extends Enemy{
-        public Yellow(Context context, int surfaceWidth, int surfaceHeight, PointF location){
-            assignEnemyImage(context, "enemy_yellow", surfaceWidth, surfaceHeight, location);
-            mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            mPaint.setColor(0xffbffaa);
-        }
-    }
-
-    public class Blue extends Enemy{
-        public Blue(Context context, int surfaceWidth, int surfaceHeight, PointF location){
-            assignEnemyImage(context, "enemy_blue", surfaceWidth, surfaceHeight, location);
-            mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            mPaint.setColor(0xffaaaaff);
-        }
-
+    private void wrapScreen() {
 
     }
 
@@ -84,20 +98,8 @@ public class Enemy {
         mTopLeft.y = y;
     }
 
-    public void assignEnemyImage(Context context, String name, int surfaceWidth, int surfaceHeight, PointF location){
-        int imageID = context.getResources().getIdentifier(name, "drawable", "com.egr423.sanitizor");
-        mEnemyImage = ResourcesCompat.getDrawable(context.getResources(), imageID, null);
-        if (mEnemyImage != null){
-            HEIGHT = (int) (WIDTH * ((float)mEnemyImage.getIntrinsicHeight()/(float) mEnemyImage.getIntrinsicWidth()));
-        } else {
-            Log.d("Enemy Error", "Could not load mEnemyImage from resource: R.drawable." +name );
-        }
-
-        mSurfaceHeight = surfaceHeight;
-        mSurfaceWidth = surfaceWidth;
-
-        mTopLeft = location;
-
+    public PointF getPostition(){
+        return new PointF(mTopLeft.x, mTopLeft.y);
     }
 
     public int getWIDTH(){
