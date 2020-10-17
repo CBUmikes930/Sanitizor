@@ -12,8 +12,7 @@ public abstract class Character {
 
 
      void setPosition(int x, int y) {
-          bounds.left = x;
-          bounds.top = y;
+          bounds.offsetTo(x, y);
      }
 
      void setPosition(Point point){
@@ -21,7 +20,7 @@ public abstract class Character {
      }
 
      public Rect getRect(){
-          return new Rect();
+          return bounds;
      }
 
      Point getPosition() {

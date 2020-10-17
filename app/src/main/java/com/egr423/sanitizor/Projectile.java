@@ -55,7 +55,7 @@ public class Projectile {
 
         }
         //Load SoundFX
-        splashSound = MediaPlayer.create(context, R.raw.splash);
+        //splashSound = MediaPlayer.create(context, R.raw.splash);
     }
 
     public void setPosition(Point location) {
@@ -63,18 +63,19 @@ public class Projectile {
     }
 
     public void move() {
-        //Move up a speed
-        bounds.offset(0, -SPEED);
-        //If collided with the top of screen, then play animation
-        if (bounds.top <= 0) {
-            bounds.offsetTo(bounds.left, 0);
-            startAnimation();
+        if (!mAnimationIsRunning) {
+            //Move up a speed
+            bounds.offset(0, -SPEED);
+            //If collided with the top of screen, then play animation
+            if (bounds.top <= 0) {
+                bounds.offsetTo(bounds.left, 0);
+                startAnimation();
+            }
         }
     }
 
-    //TODO: Detect if collided with enemy
-    public boolean didCollide(Object obj) {
-        return false;
+    public Rect getRect() {
+        return bounds;
     }
 
     public void startAnimation() {
@@ -83,8 +84,16 @@ public class Projectile {
             mStartTime = System.currentTimeMillis();
             mAnimationIsRunning = true;
             //TODO: Make sound play in sync
-            splashSound.start();
+            //splashSound.start();
         }
+    }
+
+    public boolean isAnimationRunning() {
+        return mAnimationIsRunning;
+    }
+
+    public boolean shouldDestroy() {
+        return mStatus >= mSprites.length;
     }
 
     public void draw(Canvas canvas) {
