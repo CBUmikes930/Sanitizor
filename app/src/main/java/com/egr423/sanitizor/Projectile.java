@@ -2,40 +2,32 @@ package com.egr423.sanitizor;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.PointF;
+import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.media.AudioAttributes;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.media.SoundPool;
-import android.provider.MediaStore;
 import android.util.Log;
 
 import androidx.core.content.res.ResourcesCompat;
 
-import java.io.IOException;
-
 /**
  * Created by Micah Steinbock on 10/13/2020
- *
+ * <p>
  * Defines a projectile object that is fired in a straight line
  * When it collides with something it animates into a splashing animation
  */
 public class Projectile {
-    private final int WIDTH = 150; //Change WIDTH to change overall image size
-    private final int HEIGHT; //Calculated when image is loaded in order to preserver aspect ratio
-
-    private final float SPEED = 30;
-
-    private PointF mTopLeft;
+    private final int SPEED = 30;
 
     //private Drawable mSprite;
     private Drawable[] mSprites = new Drawable[6];
     //Which sprite to draw
     private int mStatus;
     //Animation start time
+    Rect bounds;
     private long mStartTime;
     private boolean mAnimationIsRunning = false;
+    private boolean fromPlayer;
     //Sound FX
     private MediaPlayer splashSound;
 
@@ -56,27 +48,26 @@ public class Projectile {
         }
 
         //calculate height based off of the aspect ratio of the first image
-        if (mSprites[0] != null ) {
-            HEIGHT = (int) (WIDTH * ((float) mSprites[0].getIntrinsicHeight() /
-                    (float) mSprites[0].getIntrinsicWidth()));
-        } else {
-            HEIGHT = WIDTH;
-        }
+        if (mSprites[0] != null) {
+            bounds = new Rect(0, 0,
+                    (int) (mSprites[0].getIntrinsicWidth() * SanitizorGame.pixelMultiplier),
+                    (int) (mSprites[0].getIntrinsicHeight() * SanitizorGame.pixelMultiplier));
 
+        }
         //Load SoundFX
         splashSound = MediaPlayer.create(context, R.raw.splash);
     }
 
-    public void setPosition(PointF topLeft) {
-        mTopLeft = new PointF(topLeft.x, topLeft.y);
+    public void setPosition(Point location) {
+       bounds.offsetTo(location.x, location.y);
     }
 
     public void move() {
         //Move up a speed
-        mTopLeft.offset(0, -SPEED);
+        bounds.offset(0, -SPEED);
         //If collided with the top of screen, then play animation
-        if (mTopLeft.y <= 0) {
-            mTopLeft.set(mTopLeft.x, 0);
+        if (bounds.top <= 0) {
+            bounds.offsetTo(bounds.left, 0);
             startAnimation();
         }
     }
@@ -106,8 +97,7 @@ public class Projectile {
         }
         //If the animation has not finished, then render the frame
         if (mStatus < mSprites.length) {
-            mSprites[mStatus].setBounds((int) mTopLeft.x, (int) mTopLeft.y,
-                    (int) mTopLeft.x + WIDTH, (int) mTopLeft.y + HEIGHT);
+            mSprites[mStatus].setBounds(bounds);
             mSprites[mStatus].draw(canvas);
         }
     }
