@@ -2,22 +2,24 @@ package com.egr423.sanitizor;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Point;
 import android.graphics.PointF;
 import android.util.TypedValue;
 
 import java.util.Random;
+import java.util.ArrayList;
 
 
 /**
  * Created by Micah Steinbock on 10/6/2020
- *
+ * <p>
  * The Game handler which controls object creation and calculations
  */
-public class SanitizorGame{
+public class SanitizorGame {
 
     private Player mPlayer;
     private Joystick mJoystick = Joystick.getInstance();
-    private Enemy[] enemies = new Enemy[1];
+    private ArrayList<Enemy> enemies;
 
     //Projectile System
     private Projectile[] mProjectiles;
@@ -27,12 +29,14 @@ public class SanitizorGame{
     //Context is saved in order to load resources
     private Context mContext;
     //Screen dimensions
-    private int mSurfaceWidth;
-    private int mSurfaceHeight;
+    static int mSurfaceWidth;
+    static int mSurfaceHeight;
 
     private final int BG_COLOR;
-    
+
     private boolean mGameOver;
+
+    public static final double pixelMultiplier = .5;
 
     public SanitizorGame(Context context, int surfaceWidth, int surfaceHeight) {
         mContext = context;
@@ -40,15 +44,17 @@ public class SanitizorGame{
         mSurfaceHeight = surfaceHeight;
 
         //Create a player object
-        mPlayer = new Player(mSurfaceWidth, mSurfaceHeight, mContext);
+        mPlayer = new Player(mContext);
 
+
+        enemies = new ArrayList<>();
         //Create enemy objects
-        for(int i = 0; i < 1; i++){
-            PointF location = new PointF(20,20); // TODO figure out spawn grid equation for enemies
+        for (int i = 0; i < 1; i++) {
+            Point location = new Point(20, 20); // TODO figure out spawn grid equation for enemies
             Random ran = new Random();
             int num = ran.nextInt(3);
             //if(num == 0){
-                enemies[i]= new Enemy("red",mContext, mSurfaceWidth, mSurfaceHeight, location);
+//            enemies.add(new Enemy.Red("red", mContext, location);
             //}
         }
 
@@ -79,11 +85,12 @@ public class SanitizorGame{
         //Reset Player position
         mPlayer.setStartPosition();
 
+
     }
 
     //Called from GameThread when a button is clicked
     public void buttonClicked() {
-        createProjectile();
+        createProjectile(mPlayer);
     }
 
     public void update(PointF velocity) {
@@ -91,7 +98,10 @@ public class SanitizorGame{
 
         //Move player
         mPlayer.move(velocity);
-        enemies[0].move(velocity);
+
+        for (Enemy enemy : enemies) {
+            enemy.move(velocity);
+        }
 
         //Move Projectiles
         for (Projectile proj : mProjectiles) {
@@ -106,21 +116,24 @@ public class SanitizorGame{
 
     //Used to create a new projectile (if the cooldown has been surpassed) and add it to
     //the mProjectils array
-    private void createProjectile() {
-        final int SHOT_COOL_DOWN = 200;
+    private void createProjectile(Character character) {
+        final int SHOT_COOL_DOWN = 1000;
 
         //If its been longer than the cooldown to shoot, then fire a new projectile
-        if (System.currentTimeMillis() - lastFired >= SHOT_COOL_DOWN) {
+        if (System.currentTimeMillis() - lastFired >= SHOT_COOL_DOWN || !character.equals(mPlayer)) {
             //Create a new projectile
             Projectile projectile = new Projectile(mContext);
             //Set it to the Player's position
-            projectile.setPosition(mPlayer.getPosition());
-            //Record shot time
-            lastFired = System.currentTimeMillis();
-            //Add it to the projectile array
-            mProjectiles[mProjPointer++] = projectile;
-            //If we have filled the array, then loop back to the front of the array
-            mProjPointer %= mProjectiles.length;
+            projectile.setPosition(character.getPosition());
+
+            if (character.equals(mPlayer)) {
+                //Record shot time
+                lastFired = System.currentTimeMillis();
+                //Add it to the projectile array
+                mProjectiles[mProjPointer++] = projectile;
+                //If we have filled the array, then loop back to the front of the array
+                mProjPointer %= mProjectiles.length;
+            }
         }
     }
 
@@ -132,9 +145,10 @@ public class SanitizorGame{
         mPlayer.draw(canvas);
 
         //Draw Enemies
-        for (Enemy e: enemies) {
+        for (Enemy e : enemies) {
             e.draw(canvas);
         }
+
 
         //Draw all projectiles
         for (Projectile proj : mProjectiles) {
