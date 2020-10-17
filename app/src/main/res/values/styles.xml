@@ -20,6 +20,8 @@
         <item name="joystick_handle">@color/joystickHandleLight</item>
         <item name="buttonTextColor">@color/buttonTextLight</item>
         <item name="settingsTextColor">@color/settingsTextColorLight</item>
+        <item name="gameButtonColor">@color/gameButtonBGColorLight</item>
+        <item name="gameButtonTextColor">@color/gameButtonTextColorLight</item>
     </style>
 
     <style name="DarkTheme" parent="Theme.AppCompat.NoActionBar">
@@ -32,6 +34,8 @@
         <item name="joystick_handle">@color/joystickHandleDark</item>
         <item name="buttonTextColor">@color/buttonTextDark</item>
         <item name="settingsTextColor">@color/settingsTextColorDark</item>
+        <item name="gameButtonColor">@color/gameButtonBGColorDark</item>
+        <item name="gameButtonTextColor">@color/gameButtonTextColorDark</item>
     </style>
 
 </resources>

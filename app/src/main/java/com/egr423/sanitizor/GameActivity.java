@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -41,11 +40,25 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
         mSurfaceView = findViewById(R.id.gameSurface);
 
         if (SettingsDialogue.controlScheme == R.id.gyro_controls) {
-            //Initialize sensors
+            //Initialize sensors for motion control
             mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
             mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
+            //Set tap listener to fire projectile
+            mSurfaceView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    int action = event.getAction();
+                    switch (action) {
+                        case MotionEvent.ACTION_DOWN:
+                            mSurfaceView.buttonClicked();
+                            return true;
+                    }
+                    return false;
+                }
+            });
         } else{
-            //Initialize Touch settings
+            //Initialize Touch settings for motion control
             mSurfaceView.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
@@ -84,18 +97,15 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
                 }
             });
 
-            /*
-            Button testButton = findViewById(R.id.TEST);
-
-            testButton.setOnClickListener(new View.OnClickListener() {
+            //Set up button to fire projectile
+            Button fireButton = findViewById(R.id.FireButton);
+            fireButton.setVisibility(View.VISIBLE);
+            fireButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    String test = "WACK";
-                    Toast toast = Toast.makeText(v.getContext(), test, Toast.LENGTH_SHORT);
-                    toast.show();
+                    mSurfaceView.buttonClicked();
                 }
             });
-            */
         }
     }
 

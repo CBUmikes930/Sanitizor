@@ -6,4 +6,6 @@
     <attr name="joystick_handle" format="reference|color" />
     <attr name="buttonTextColor" format="reference|color" />
     <attr name="settingsTextColor" format="reference|color" />
+    <attr name="gameButtonColor" format="reference|color" />
+    <attr name="gameButtonTextColor" format="reference|color" />
 </resources>
