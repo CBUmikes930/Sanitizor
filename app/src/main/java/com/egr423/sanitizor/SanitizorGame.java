@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
-import android.util.Log;
 import android.util.TypedValue;
 
 import java.util.Random;
@@ -51,8 +50,8 @@ public class SanitizorGame {
 
         enemies = new ArrayList<>();
         //Create enemy objects
-        for (int i = 0; i < 1; i++) {
-            Point location = new Point(20, 20); // TODO figure out spawn grid equation for enemies
+        for (int i = 0; i < 6; i++) {
+            Point location = new Point((i *250) + 20, 100); // TODO figure out spawn grid equation for enemies
             Random ran = new Random();
             int num = ran.nextInt(3);
 //            if(num == 0){
@@ -100,8 +99,43 @@ public class SanitizorGame {
         //Move player
         mPlayer.move(velocity);
 
+        Random ran = new Random();
         for (Enemy enemy : enemies) {
-            enemy.move(velocity);
+            int attack = ran.nextInt(101);
+            //Log.d("Attack Chance", "attack variable logged at: " +attack);
+            //if random variable is < 5 then I want to check if I can attack
+            if(enemy.getIsAttacking()){
+                enemy.attack();
+            } else if(enemy.getIsReturning()){
+                //Log.d("Sanitizor.update", "Enemy is still returning");
+                enemy.returnToOriginalPos();
+            }else if(!enemy.getAtOriginalPos()){
+                try {
+                    enemy.returnToOriginalPos();
+                } catch (Exception e){
+                    // Do nothing
+                }
+            }else {
+                if (attack <= 1) {
+                    try {
+                        if (enemy.checkAttack()) {
+                            //Log.d("Enemy update", "Enemy is attacking: " + enemy);
+                            enemy.attack();
+                        } else {
+                            if (!enemy.getIsAttacking()) {
+                                enemy.move(new PointF(  20, 0));
+                            }
+                            // Log.d("Enemy update", "Enemy couldn't attack");
+                        }
+                    } catch(Exception e) {
+                        // DO NOTHING}
+                    }
+                } else {
+                    if (!enemy.getIsAttacking()) {
+                        enemy.move(new PointF(20, 0));
+                    }
+                }
+            }
         }
 
         //Move Projectiles
@@ -124,7 +158,7 @@ public class SanitizorGame {
                         Rect.intersects(proj.getRect(), enemy.getRect()) &&
                         !proj.isAnimationRunning()) {
                     proj.startAnimation();
-                    Log.d("Projectile", "Projectile hit enemy");
+                    //Log.d("Projectile", "Projectile hit enemy");
                 }
             }
         }
