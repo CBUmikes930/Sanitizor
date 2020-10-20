@@ -2,9 +2,9 @@ package com.egr423.sanitizor;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Picture;
+//import android.graphics.Color;
+//import android.graphics.Paint;
+//import android.graphics.Picture;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
@@ -29,9 +29,7 @@ import androidx.core.content.res.ResourcesCompat;
 public class Enemy extends Character {
 
     private double[] enemySpeeds;
-    private final Point ORIGIN_POINT;
     private final int TIME_TO_ATTACK = 20;
-    private Point pointOfAttack;
     private long lastAttacked;
     private long attackTime;
     private Rect gridPos;
@@ -60,7 +58,6 @@ public class Enemy extends Character {
             //Log.d("Enemy Error", "Could not load mEnemyImage from resource: R.drawable.enemy_" + color);
         }
         SPEED = .5;
-        ORIGIN_POINT = location;
         gridPos = new Rect(bounds);
         atOriginalPos = true;
         // 0 0     gridspeed*20  bounds*50
@@ -83,7 +80,7 @@ public class Enemy extends Character {
         wrapGrid();
         checkAtOriginalPos();
         // How long should the attack last
-        final int ATTACK_PHASE = 2000;
+        final int ATTACK_PHASE = 4000;
         // If I am attacking reset the last attack variable to current time
         if(!isAttacking) {
             isAttacking = true;
@@ -113,8 +110,8 @@ public class Enemy extends Character {
             if(x < 0){
                 sign = -1;
             }
-            int speed = 20;
-            bounds.offset((int) ((speed * Math.cos(direction))), (int) (Math.ceil(speed * Math.sin(direction) *sign)));
+            int speed = 40;
+            bounds.offset((int) ((speed * Math.cos(direction) * sign)), (int) (Math.ceil(speed * Math.sin(direction) *sign)));
             wrapScreen();
             isReturning=true;
             //Log.d("Enemy.returnToAttackPos", "Enemy is returning");
@@ -243,6 +240,12 @@ public class Enemy extends Character {
         gridPos.offset((int) (gridSpeed.x * SPEED), (int) (gridSpeed.y * SPEED));
     }
 
+    public int getEnemyWidth(){
+        return (bounds.right-bounds.left);
+    }
+    public int getEnemyHeight(){
+        return (bounds.bottom-bounds.top);
+    }
 
 }
 
