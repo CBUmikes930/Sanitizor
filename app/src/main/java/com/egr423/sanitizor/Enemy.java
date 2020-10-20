@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.graphics.Region;
 import android.util.Log;
 
 import androidx.core.content.res.ResourcesCompat;
@@ -23,7 +24,7 @@ import androidx.core.content.res.ResourcesCompat;
 //TODO Add attack command to each subclass
 //TODO Create graphical components for each enemy type
 
-public abstract class Enemy extends Character {
+public class Enemy extends Character {
 
     private double[] enemySpeeds;
 
@@ -32,7 +33,12 @@ public abstract class Enemy extends Character {
 
 
     public Enemy(String color, Context context, Point location) {
-        mImage = ResourcesCompat.getDrawable(context.getResources(), R.drawable.enemy_red, null);
+        mImage = ResourcesCompat.getDrawable(context.getResources(), R.drawable.enemy, null);
+
+        Region region = mImage.getTransparentRegion();
+
+        region.
+
         if (mImage != null) {
             bounds = new Rect(0, 0,
                     (int) (mImage.getIntrinsicWidth() * SanitizorGame.pixelMultiplier),
@@ -43,6 +49,8 @@ public abstract class Enemy extends Character {
         }
         SPEED = .5;
     }
+
+
 
     public void move(PointF velocity) {
         bounds.offset((int) (velocity.x * SPEED), (int) (velocity.y * SPEED));
