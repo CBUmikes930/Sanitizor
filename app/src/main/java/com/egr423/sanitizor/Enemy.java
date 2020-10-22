@@ -5,12 +5,10 @@ import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
-import android.graphics.Region;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 import androidx.core.content.res.ResourcesCompat;
-
-// THIS IS A TEST COMMIT TO JESSE's CONTRIBUTION
 
 /**
  * Created by Jesse Breslin on 10/9/2020
@@ -27,29 +25,48 @@ import androidx.core.content.res.ResourcesCompat;
 public class Enemy extends Character {
 
     private double[] enemySpeeds;
+    private Drawable[] mSprites = new Drawable[6];
+
+    private int hitPoints;
+
+    private int mDeathStatus;
+    private boolean mDeathAnimationIsRunning = false;
 
     private boolean wrappingx = false;
     private boolean wrappingy = false;
+    private long mDeathStartTime;
 
 
     public Enemy(String color, Context context, Point location) {
         mImage = ResourcesCompat.getDrawable(context.getResources(), R.drawable.enemy, null);
+        for (int i = 0; i < 6; i++) {
+            //Get sprite name
+            String name = "enemy_" + (i + 1);
+            //Get sprite id
+            int id = context.getResources().getIdentifier(name, "drawable", context.getPackageName());
+            if (id == 0) {
+                Log.e("Projectile Error", "ID lookup for resource " + name + " failed.");
+            }
+            //Get sprite
+            mSprites[i] = ResourcesCompat.getDrawable(context.getResources(), id, null);
+        }
 
-        Region region = mImage.getTransparentRegion();
 
-        region.
-
+        mDeathStatus = 0;
         if (mImage != null) {
             bounds = new Rect(0, 0,
                     (int) (mImage.getIntrinsicWidth() * SanitizorGame.pixelMultiplier),
                     (int) (mImage.getIntrinsicHeight() * SanitizorGame.pixelMultiplier));
             bounds.offsetTo(location.x, location.y);
+            mSprites[0] = mImage;
         } else {
             Log.d("Enemy Error", "Could not load mEnemyImage from resource: R.drawable.enemy_" + color);
         }
         SPEED = .5;
+        hitPoints = 2;
+        shotCoolDown = 500;
+        lastFired = 0;
     }
-
 
 
     public void move(PointF velocity) {
@@ -79,22 +96,49 @@ public class Enemy extends Character {
         }
     }
 
-    private void wrapScreen() {
+
+    public void hit() {
+        hitPoints--;
+        Log.d("Enemy", "Enemy hit, current HP: " + hitPoints);
+    }
+
+    public boolean shouldDestroy() {
+        Log.d("Enemy", "Should Destroy " + (mDeathStatus >= mSprites.length));
+        return mDeathStatus >= mSprites.length;
+    }
+
+    public void startDeathAnimation() {
+        if (!mDeathAnimationIsRunning) {
+            mDeathStartTime = System.currentTimeMillis();
+            mDeathAnimationIsRunning = true;
+            Log.d("Enemy", "Started Death Animation");
+        }
 
     }
 
-    public void setPosition(int x, int y) {
-        bounds.left = x;
-        bounds.top = y;
+    public boolean isDeathAnimationRunning() {
+        return mDeathAnimationIsRunning;
     }
 
+    public boolean isDead() {
+        return hitPoints <= 0;
+    }
 
     public void draw(Canvas canvas) {
         if (mImage != null) {
+            final float ANIMATION_SPEED = 50;
             //If we have a player image, then draw it
-            mImage.setBounds((int) bounds.left, (int) bounds.top, (int) bounds.right, (int) bounds.bottom);
-            mImage.draw(canvas);
 
+            if (mDeathAnimationIsRunning) {
+                long elapsedTime = System.currentTimeMillis() - mDeathStartTime;
+                mDeathStatus = (int) Math.floor(elapsedTime / ANIMATION_SPEED);
+            }
+            if (mDeathStatus < mSprites.length) {
+                mSprites[mDeathStatus].setBounds(bounds);
+                mSprites[mDeathStatus].draw(canvas);
+            }
+//            mImage.setBounds(bounds);
+//            mImage.draw(canvas);
         }
     }
 }

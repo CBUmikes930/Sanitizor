@@ -2,18 +2,13 @@ package com.egr423.sanitizor;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
 import android.util.Log;
 import android.util.TypedValue;
-import android.widget.ImageView;
 
 import java.util.Random;
-import java.util.ArrayList;
 
 
 /**
@@ -25,10 +20,13 @@ public class SanitizorGame {
 
     static Player mPlayer;
     private Joystick mJoystick = Joystick.getInstance();
-    private ArrayList<Enemy> enemies;
+
+    private int enemySize;
+    private Enemy[] enemies;
 
     //Projectile System
     private Projectile[] mProjectiles;
+
     private int mProjPointer;
     private long lastFired;
 
@@ -49,20 +47,17 @@ public class SanitizorGame {
         mSurfaceWidth = surfaceWidth;
         mSurfaceHeight = surfaceHeight;
 
+
         //Create a player object
         mPlayer = new Player(mContext);
 
 
-        enemies = new ArrayList<>();
+        enemies = new Enemy[1000];
+        enemySize = 0;
         //Create enemy objects
         for (int i = 0; i < 1; i++) {
-            Point location = new Point(20, 20); // TODO figure out spawn grid equation for enemies
-            Random ran = new Random();
-            int num = ran.nextInt(3);
-//            if(num == 0){
-//                enemies.add(new Enemy("red", mContext, location));
-//            }
-            enemies.add(new Enemy("red", mContext, location));
+            Point location = new Point(60 * i, 20); // TODO figure out spawn grid equation for enemies
+            enemies[enemySize++] = (new Enemy("red", mContext, location));
         }
 
         //Set joystick position to bottom center of screen and set handle to center
@@ -105,8 +100,10 @@ public class SanitizorGame {
         mPlayer.move(velocity);
 
         for (Enemy enemy : enemies) {
-            enemy.move(velocity);
-//            createProjectile(enemy);
+            if (enemy != null) {
+                enemy.move(velocity);
+                createProjectile(enemy);
+            }
         }
 
         //Move Projectiles
@@ -115,17 +112,20 @@ public class SanitizorGame {
             if (proj != null && !proj.shouldDestroy()) {
                 proj.move();
                 if (proj.isFromPlayer()) {
-                    for (Enemy enemy : enemies) {
+                    int currentEnemyIndex = 0;
+                    for (Enemy enemy : enemies) {// check if enemy got hit
                         //If the projectile and enemy exist and they have collided (according to Rects)
                         //  and the projectile hasn't already hit a different enemy
                         if (enemy != null &&
                                 Rect.intersects(proj.getRect(), enemy.getRect()) &&
                                 !proj.isAnimationRunning()) {
-
-                            Log.d("Projectile", enemy.mImage.getTransparentRegion())
-
+                            // enemy hit
+                            enemy.hit();
                             proj.startAnimation();
-                            Log.d("Projectile", "Projectile hit enemy");
+                            if (enemy.isDead() && !enemy.shouldDestroy() &&
+                                    !enemy.isDeathAnimationRunning()) {
+                                enemy.startDeathAnimation();
+                            }
                         }
                     }
                 } else {
@@ -140,6 +140,15 @@ public class SanitizorGame {
             i++;
         }
 
+        int currentEnemyIndex = 0;
+        for (Enemy enemy : enemies) {
+            if (enemy != null && enemy.shouldDestroy()) {
+                enemies[currentEnemyIndex] = null;
+            }
+            currentEnemyIndex++;
+        }
+
+
         //Check for win (for now, nothing)
         mGameOver = false;
     }
@@ -147,23 +156,22 @@ public class SanitizorGame {
     //Used to create a new projectile (if the cooldown has been surpassed) and add it to
     //the mProjectils array
     private void createProjectile(Character character) {
-        final int SHOT_COOL_DOWN = 500;
-
         Projectile projectile;
 
-        //If its been longer than the cooldown to shoot, then fire a new projectile
-        if (character.equals(mPlayer) && System.currentTimeMillis() - lastFired >= SHOT_COOL_DOWN) {
-            //Create a new projectile
-            projectile = new Projectile(mContext, character);
-
-            //Record shot time
-            lastFired = System.currentTimeMillis();
-        } else if (!character.equals(mPlayer)) {
-            //Create a new projectile at enemy position
-            projectile = new EnemyProjectile(mContext);
-        } else {
+        if (System.currentTimeMillis() - character.lastFired < character.shotCoolDown) {
             return;
         }
+
+        //If its been longer than the cooldown to shoot, then fire a new projectile
+        if (character.equals(mPlayer)) {
+            //Create a new projectile
+            projectile = new Projectile(mContext, character);
+        } else {
+            //Create a new projectile at enemy position
+            projectile = new EnemyProjectile(mContext);
+        }
+        //Record shot time
+        character.lastFired = System.currentTimeMillis();
         //Set it to the Player's position
         projectile.setPosition(character.getPosition());
 
@@ -182,7 +190,9 @@ public class SanitizorGame {
 
         //Draw Enemies
         for (Enemy e : enemies) {
-            e.draw(canvas);
+            if (e != null) {
+                e.draw(canvas);
+            }
         }
 
 

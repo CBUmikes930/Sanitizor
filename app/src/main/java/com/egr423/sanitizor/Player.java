@@ -46,7 +46,8 @@ public class Player extends Character {
         //Set initial position
         setStartPosition();
 
-        //Set color
+        shotCoolDown = 500;
+        lastFired = 0;
     }
 
     public void move(PointF velocity) {
