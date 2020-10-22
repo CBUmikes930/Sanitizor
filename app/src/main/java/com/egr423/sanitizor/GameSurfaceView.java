@@ -15,6 +15,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
     private GameThread mGameThread;
 
+
     public GameSurfaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
@@ -48,5 +49,17 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     //Called from GameActivity whenever a button is pushed
     public void buttonClicked() {
         mGameThread.buttonClicked();
+    }
+
+    public boolean getGameOver(){
+        return mGameThread.getmSanitizorGame().getGameOver();
+    }
+
+    public int getPlayerScore(){
+        return mGameThread.getPlayerScore();
+    }
+
+    public GameThread getmGameThread(){
+        return mGameThread;
     }
 }

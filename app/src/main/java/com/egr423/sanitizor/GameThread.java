@@ -1,6 +1,7 @@
 package com.egr423.sanitizor;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.PointF;
 import android.view.SurfaceHolder;
@@ -32,7 +33,7 @@ public class GameThread extends Thread {
     @Override
     public void run() {
         try {
-            while (mThreadRunning) {
+            while (!getmSanitizorGame().getGameOver() && mThreadRunning ) {
                 Canvas canvas = mSurfaceHolder.lockCanvas();
                 mSanitizorGame.update(mVelocity);
                 mSanitizorGame.draw(canvas);
@@ -57,4 +58,13 @@ public class GameThread extends Thread {
     public void stopThread() {
         mThreadRunning = false;
     }
+
+    public int getPlayerScore(){
+        return mSanitizorGame.getPlayerScore();
+    }
+
+    public SanitizorGame getmSanitizorGame(){
+        return mSanitizorGame;
+    }
+
 }

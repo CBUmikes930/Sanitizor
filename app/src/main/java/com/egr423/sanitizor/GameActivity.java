@@ -1,6 +1,7 @@
 package com.egr423.sanitizor;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.PointF;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -39,6 +40,14 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
         setContentView(R.layout.activity_game);
         mSurfaceView = findViewById(R.id.gameSurface);
 
+        Button killPlayer = findViewById(R.id.killPlayerButton);
+        killPlayer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                killPlayer();
+            }
+        });
+
         if (SettingsDialogue.controlScheme == R.id.gyro_controls) {
             //Initialize sensors for motion control
             mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -58,6 +67,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
                 }
             });
         } else{
+
             //Initialize Touch settings for motion control
             mSurfaceView.setOnTouchListener(new View.OnTouchListener() {
                 @Override
@@ -156,4 +166,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
     public void onAccuracyChanged(Sensor sensor, int i) {
     }
 
+    public void killPlayer() {
+        mSurfaceView.getmGameThread().getmSanitizorGame().killPlayer();
+    }
 }

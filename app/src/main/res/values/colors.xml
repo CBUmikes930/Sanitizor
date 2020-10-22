@@ -23,5 +23,6 @@
     <color name="gameButtonTextColorDark">#000000</color>
     <color name="gameButtonBGColorLight">#80404040</color>
     <color name="gameButtonTextColorLight">#FFFFFF</color>
+    <color name ="gameOverTitle">#000000</color>
 
 </resources>
