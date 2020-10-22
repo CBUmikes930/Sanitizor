@@ -62,8 +62,6 @@ public class Projectile {
 
             Drawable sprite = mSprites[0];
 
-            sprite.getHotspotBounds();
-
         }
         //Load SoundFX
         //splashSound = MediaPlayer.create(context, R.raw.splash);
