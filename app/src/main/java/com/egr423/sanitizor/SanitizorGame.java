@@ -67,11 +67,13 @@ public class SanitizorGame {
                     col = 0;
                     row++;
                 }
-                location = new Point((col++ * enemies[i - 1].getEnemyWidth()) + 20, 100 + row * enemies[i - 1].getEnemyHeight()); // TODO figure out spawn grid equation for enemies
+                location = new Point((col++ * enemies[i - 1].getEnemyWidth()) + 20,
+                        100 + row * enemies[i - 1].getEnemyHeight()); // TODO figure out spawn grid equation for enemies
             } catch (Exception e) {
                 location = new Point(20, 100);
             }
-            enemies[enemySize] = (new Enemy("red", mContext, location));
+            enemies[enemySize++] = (new Enemy("red", mContext, location));
+
         }
 
         //Set joystick position to bottom center of screen and set handle to center
