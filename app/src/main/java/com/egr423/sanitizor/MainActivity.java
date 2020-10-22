@@ -42,6 +42,11 @@ public class MainActivity extends AppCompatActivity {
         settingsDialogue.show(getSupportFragmentManager(), "settingsFragment");
     }
 
+    public void viewLeaderboard(View view) {
+        Intent leaderboardIntent = new Intent(MainActivity.this, LeaderboardActivity.class);
+        startActivity(leaderboardIntent);
+    }
+
     @Override
     public void recreate() {
         super.recreate();
