@@ -38,4 +38,18 @@
         <item name="gameButtonTextColor">@color/gameButtonTextColorDark</item>
     </style>
 
+    <style name="leaderboard_name">
+        <item name="android:textSize">20sp</item>
+        <item name="android:paddingLeft">25dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+    </style>
+
+    <style name="leaderboard_score">
+        <item name="android:textSize">20sp</item>
+        <item name="android:paddingRight">25dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+    </style>
+
 </resources>
