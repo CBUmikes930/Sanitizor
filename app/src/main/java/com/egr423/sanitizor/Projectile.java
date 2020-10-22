@@ -17,7 +17,7 @@ import androidx.core.content.res.ResourcesCompat;
  * When it collides with something it animates into a splashing animation
  */
 public class Projectile {
-    private final int SPEED = 30;
+    int SPEED = 30;
 
     //private Drawable mSprite;
     private Drawable[] mSprites = new Drawable[6];
@@ -26,10 +26,17 @@ public class Projectile {
     //Animation start time
     Rect bounds;
     private long mStartTime;
+
     private boolean mAnimationIsRunning = false;
     private boolean fromPlayer;
     //Sound FX
     private MediaPlayer splashSound;
+
+
+    public Projectile(Context context, Character character){
+        this(context);
+        fromPlayer = character.equals(SanitizorGame.mPlayer);
+    }
 
     public Projectile(Context context) {
         //Start with the first sprite
@@ -52,6 +59,10 @@ public class Projectile {
             bounds = new Rect(0, 0,
                     (int) (mSprites[0].getIntrinsicWidth() * SanitizorGame.pixelMultiplier),
                     (int) (mSprites[0].getIntrinsicHeight() * SanitizorGame.pixelMultiplier));
+
+            Drawable sprite = mSprites[0];
+
+            sprite.getHotspotBounds();
 
         }
         //Load SoundFX
@@ -88,8 +99,13 @@ public class Projectile {
         }
     }
 
+
     public boolean isAnimationRunning() {
         return mAnimationIsRunning;
+    }
+
+    public boolean isFromPlayer() {
+        return fromPlayer;
     }
 
     public boolean shouldDestroy() {
