@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "831741184989",
+    "firebase_url": "https://sanitizor-b99a8.firebaseio.com",
+    "project_id": "sanitizor-b99a8",
+    "storage_bucket": "sanitizor-b99a8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:831741184989:android:01586e35cfd16153458434",
+        "android_client_info": {
+          "package_name": "com.egr423.sanitizor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "831741184989-jmalele806k63drjto7ti5tfd9auraob.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAuIksNllfWmJq9qBb3Tn45066ux5NLy5I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "831741184989-jmalele806k63drjto7ti5tfd9auraob.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
