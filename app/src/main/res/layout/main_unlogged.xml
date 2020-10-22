@@ -77,6 +77,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="40dp"
                 android:background="@drawable/button_frame_med"
+                android:onClick="viewLeaderboard"
                 android:text="@string/view_leaderboard"
                 android:textColor="?buttonTextColor"
                 android:textSize="30sp" />

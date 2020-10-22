@@ -18,6 +18,9 @@ import java.util.Random;
  */
 public class SanitizorGame {
 
+    private final int ENEMY_ROWS = 5;
+    private final int ENEMIES_IN_ROW = 11;
+
     static Player mPlayer;
     private Joystick mJoystick = Joystick.getInstance();
 
@@ -55,9 +58,20 @@ public class SanitizorGame {
         enemies = new Enemy[1000];
         enemySize = 0;
         //Create enemy objects
-        for (int i = 0; i < 1; i++) {
-            Point location = new Point(60 * i, 20); // TODO figure out spawn grid equation for enemies
-            enemies[enemySize++] = (new Enemy("red", mContext, location));
+        int row = 0;
+        int col = 0;
+        for (int i = 0; i < ENEMY_ROWS * ENEMIES_IN_ROW + 1; i++) {
+            Point location;
+            try {
+                if (((col * enemies[i - 1].getEnemyWidth()) + 20) > (mSurfaceWidth)) {
+                    col = 0;
+                    row++;
+                }
+                location = new Point((col++ * enemies[i - 1].getEnemyWidth()) + 20, 100 + row * enemies[i - 1].getEnemyHeight()); // TODO figure out spawn grid equation for enemies
+            } catch (Exception e) {
+                location = new Point(20, 100);
+            }
+            enemies[enemySize] = (new Enemy("red", mContext, location));
         }
 
         //Set joystick position to bottom center of screen and set handle to center
@@ -99,9 +113,47 @@ public class SanitizorGame {
         //Move player
         mPlayer.move(velocity);
 
+        Random ran = new Random();
         for (Enemy enemy : enemies) {
             if (enemy != null) {
-                enemy.move(velocity);
+                int attack = ran.nextInt(1001);
+                //Log.d("Attack Chance", "attack variable logged at: " +attack);
+                //if random variable is < 5 then I want to check if I can attack
+                if (enemy.getIsAttacking()) {
+                    enemy.attack();
+                    Log.d("Enemy update", "Enemy is attacking: " + enemy);
+                } else if (enemy.getIsReturning()) {
+                    //Log.d("Sanitizor.update", "Enemy is still returning");
+                    enemy.returnToOriginalPos();
+                    Log.d("Enemy update", "Enemy returning to Original position");
+                } else if (!enemy.getAtOriginalPos()) {
+                    try {
+                        enemy.returnToOriginalPos();
+                        Log.d("Enemy update", "Enemy returning to Original position");
+                    } catch (Exception e) {
+                        // Do nothing
+                    }
+                } else {
+                    if (attack <= 1) {
+                        try {
+                            if (enemy.checkAttack()) {
+                                Log.d("Enemy update", "Enemy is attacking: " + enemy);
+                                enemy.attack();
+                            } else {
+                                if (!enemy.getIsAttacking()) {
+                                    enemy.move(new PointF(30, 0));
+                                }
+                                Log.d("Enemy update", "Enemy couldn't attack");
+                            }
+                        } catch (Exception e) {
+                            // DO NOTHING}
+                        }
+                    } else {
+                        if (!enemy.getIsAttacking()) {
+                            enemy.move(new PointF(30, 0));
+                        }
+                    }
+                }
                 createProjectile(enemy);
             }
         }

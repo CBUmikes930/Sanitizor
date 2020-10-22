@@ -26,6 +26,7 @@ public class Player extends Character {
 
     //The image resource for the player
     private Drawable mImage;
+    private boolean isAlive;
     //Screen Dimensions
 
     public Player(Context context) {
