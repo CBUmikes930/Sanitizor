@@ -295,5 +295,4 @@ public class Enemy extends Character {
         return (bounds.bottom-bounds.top);
     }
 
-
 }

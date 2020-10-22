@@ -27,10 +27,6 @@ public class Player extends Character {
     //The image resource for the player
     private Drawable mImage;
     private boolean isAlive;
-    private boolean justTookDamage;
-    private long lastDamaged;
-    private boolean isInvincible;
-    private int playerLives;
     //Screen Dimensions
 
     public Player(Context context) {
@@ -47,30 +43,12 @@ public class Player extends Character {
         }
 
         SPEED = 1.5;
-        justTookDamage = false;
-        isInvincible = false;
-        playerLives = 3;
 
         //Set initial position
         setStartPosition();
 
         shotCoolDown = 500;
         lastFired = 0;
-    }
-
-    public void damagePlayer(){
-        final int invincibility_frame = 1000;
-        if(!justTookDamage){
-            Log.d("Player", "Player took damage!");
-            playerLives--;
-            Log.d("Player","Player has "+ playerLives +" lives left");
-            justTookDamage = true;
-            lastDamaged = System.currentTimeMillis();
-        }
-        if(System.currentTimeMillis()-lastDamaged > invincibility_frame){
-            justTookDamage = false;
-        }
-
     }
 
     public void move(PointF velocity) {
@@ -101,13 +79,5 @@ public class Player extends Character {
         //Set player image to the center of the screen and the bottom off the screen's bottom by the padding
         bounds.offsetTo((SanitizorGame.mSurfaceWidth - bounds.width()) / 2,
                 SanitizorGame.mSurfaceHeight - (BOTTOM_PADDING + bounds.height()));
-    }
-
-    public int getPlayerLives(){
-        return playerLives;
-    }
-
-    public void setPlayerLives(int lives){
-        playerLives = lives;
     }
 }

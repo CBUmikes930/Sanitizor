@@ -34,10 +34,4 @@
     <string name="highscore_header">YOUR HIGHSCORE</string>
     <string name="highscore">0</string>
     <string name="home_button">HOME</string>
-
-    <!-- GameOver Activity -->
-    <string name="game_over"><u>Game Over</u></string>
-    <string name="home">Home</string>
-    <string name="play_again">Play again!</string>
-    <string name="score">Score:</string>
 </resources>

@@ -1,7 +1,6 @@
 package com.egr423.sanitizor;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.PointF;
@@ -23,11 +22,6 @@ public class SanitizorGame {
     private final int ENEMIES_IN_ROW = 11;
 
     static Player mPlayer;
-    private int mPlayerLives;
-    private int mPlayerScore = 0;
-    private boolean mGameOver = false;
-    private boolean mPlayerisInvincible = false;
-
     private Joystick mJoystick = Joystick.getInstance();
 
     private int enemySize;
@@ -47,7 +41,7 @@ public class SanitizorGame {
 
     private final int BG_COLOR;
 
-
+    private boolean mGameOver;
 
     public static final double pixelMultiplier = .5;
 
@@ -73,11 +67,13 @@ public class SanitizorGame {
                     col = 0;
                     row++;
                 }
-                location = new Point((col++ * enemies[i - 1].getEnemyWidth()) + 20, 100 + row * enemies[i - 1].getEnemyHeight()); // TODO figure out spawn grid equation for enemies
+                location = new Point((col++ * enemies[i - 1].getEnemyWidth()) + 20,
+                        100 + row * enemies[i - 1].getEnemyHeight()); // TODO figure out spawn grid equation for enemies
             } catch (Exception e) {
                 location = new Point(20, 100);
             }
-            enemies[enemySize] = (new Enemy("red", mContext, location));
+            enemies[enemySize++] = (new Enemy("red", mContext, location));
+
         }
 
         //Set joystick position to bottom center of screen and set handle to center
@@ -103,6 +99,7 @@ public class SanitizorGame {
 
     public void newGame() {
         mGameOver = false;
+
         //Reset Player position
         mPlayer.setStartPosition();
     }
@@ -113,58 +110,11 @@ public class SanitizorGame {
     }
 
     public void update(PointF velocity) {
-        updateGameOver();
-        if (!mGameOver) {
+        if (mGameOver) return;
 
-            //Move player
-            mPlayer.move(velocity);
+        //Move player
+        mPlayer.move(velocity);
 
-            Random ran = new Random();
-            for (Enemy enemy : enemies) {
-                if (Rect.intersects(enemy.getRect(), mPlayer.getRect())) {
-                    if (mPlayer.getPlayerLives() > 0 && !mPlayerisInvincible) {
-                        mPlayer.damagePlayer();
-                    }
-                }
-                int attack = ran.nextInt(1001);
-                //Log.d("Attack Chance", "attack variable logged at: " +attack);
-                //if random variable is < 5 then I want to check if I can attack
-                if (enemy.getIsAttacking()) {
-                    enemy.attack();
-//                    Log.d("Enemy update", "Enemy is attacking: " + enemy);
-                } else if (enemy.getIsReturning()) {
-                    //Log.d("Sanitizor.update", "Enemy is still returning");
-                    enemy.returnToOriginalPos();
-//                    Log.d("Enemy update", "Enemy returning to Original position");
-                } else if (!enemy.getAtOriginalPos()) {
-                    try {
-                        enemy.returnToOriginalPos();
-//                        Log.d("Enemy update", "Enemy returning to Original position");
-                    } catch (Exception e) {
-                        // Do nothing
-                    }
-                } else {
-                    if (attack <= 1) {
-                        try {
-                            if (enemy.checkAttack()) {
-//                                Log.d("Enemy update", "Enemy is attacking: " + enemy);
-                                enemy.attack();
-                            } else {
-                                if (!enemy.getIsAttacking()) {
-                                    enemy.move(new PointF(30, 0));
-                                }
-//                                Log.d("Enemy update", "Enemy couldn't attack");
-                            }
-                        } catch (Exception e) {
-                            // DO NOTHING}
-                        }
-                    } else {
-                        if (!enemy.getIsAttacking()) {
-                            enemy.move(new PointF(30, 0));
-                        }
-                    }
-                }
-            }
         Random ran = new Random();
         for (Enemy enemy : enemies) {
             if (enemy != null) {
@@ -210,41 +160,6 @@ public class SanitizorGame {
             }
         }
 
-            //Move Projectiles
-            int i = 0;
-            for (Projectile proj : mProjectiles) {
-                if (proj != null && !proj.shouldDestroy()) {
-                    proj.move();
-                    if (proj.isFromPlayer()) {
-                        for (Enemy enemy : enemies) {
-                            //If the projectile and enemy exist and they have collided (according to Rects)
-                            //  and the projectile hasn't already hit a different enemy
-                            if (enemy != null &&
-                                    Rect.intersects(proj.getRect(), enemy.getRect()) &&
-                                    !proj.isAnimationRunning()) {
-//                                Log.d("Projectile", String.valueOf(enemy.mImage.getTransparentRegion()));
-                                proj.startAnimation();
-                                mPlayerScore += 100;
-//                                Log.d("Projectile", "Projectile hit enemy");
-                            }
-                        }
-                    } else {
-                        if (Rect.intersects(proj.getRect(), mPlayer.getRect()) && !proj.isAnimationRunning()) {
-                            proj.startAnimation();
-//                            Log.d("Projectile", "Projectile hit Player");
-                            if (mPlayerLives > 0) {
-                                mPlayer.damagePlayer();
-                            }
-                        }
-                    }
-                } else {
-                    mProjectiles[i] = null;
-                }
-                i++;
-            }
-        } else {
-            Intent gameIntent = new Intent(mContext, GameOver.class);
-            mContext.startActivity(gameIntent);
         //Move Projectiles
         int i = 0;
         for (Projectile proj : mProjectiles) {
@@ -341,25 +256,9 @@ public class SanitizorGame {
                 proj.draw(canvas);
             }
         }
+
+
         //Draw the joystick circle
         mJoystick.draw(canvas);
     }
-
-    private void updateGameOver(){
-        if(mPlayer.getPlayerLives() <=0){
-            mGameOver = true;
-        }
-    }
-    public boolean getGameOver(){
-        return mGameOver;
-    }
-
-    public int getPlayerScore(){
-        return mPlayerScore;
-    }
-
-    public void killPlayer(){
-        mPlayer.setPlayerLives(0);
-    }
-
 }
