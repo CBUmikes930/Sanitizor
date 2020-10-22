@@ -9,15 +9,8 @@ public abstract class Character {
     Rect bounds;
     Drawable mImage;
     double SPEED;
-
-
-    void setPosition(int x, int y) {
-        bounds.offsetTo(x, y);
-    }
-
-    void setPosition(Point point) {
-        setPosition(point.x, point.y);
-    }
+    long lastFired;
+    int shotCoolDown;
 
     public Rect getRect() {
         return bounds;

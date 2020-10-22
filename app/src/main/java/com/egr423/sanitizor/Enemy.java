@@ -2,12 +2,10 @@ package com.egr423.sanitizor;
 
 import android.content.Context;
 import android.graphics.Canvas;
-//import android.graphics.Color;
-//import android.graphics.Paint;
-//import android.graphics.Picture;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 import androidx.core.content.res.ResourcesCompat;
@@ -27,40 +25,83 @@ import androidx.core.content.res.ResourcesCompat;
 //TODO Create graphical components for each enemy type
 
 public class Enemy extends Character {
-
     private double[] enemySpeeds;
+    private Drawable[] mSprites = new Drawable[6];
+    private int hitPoints;
+    private int mDeathStatus;
+    private boolean mDeathAnimationIsRunning = false;
+    private boolean wrappingx = false;
+    private boolean wrappingy = false;
+    private long mDeathStartTime;
+
     private final int TIME_TO_ATTACK = 20;
     private long lastAttacked;
     private long attackTime;
     private Rect gridPos;
-
     private PointF gridSpeed;
-
     private boolean isAttacking;
     private boolean isReturning;
     private boolean atOriginalPos =false;
-
-
-
-    private boolean wrappingx = false;
-    private boolean wrappingy = false;
     private boolean wrappingGx = false;
     private boolean wrappingGy = false;
 
     public Enemy(String color, Context context, Point location) {
         mImage = ResourcesCompat.getDrawable(context.getResources(), R.drawable.enemy, null);
+        for (int i = 0; i < 6; i++) {
+            //Get sprite name
+            String name = "enemy_" + (i + 1);
+            //Get sprite id
+            int id = context.getResources().getIdentifier(name, "drawable", context.getPackageName());
+            if (id == 0) {
+                Log.e("Projectile Error", "ID lookup for resource " + name + " failed.");
+            }
+            //Get sprite
+            mSprites[i] = ResourcesCompat.getDrawable(context.getResources(), id, null);
+        }
+        mDeathStatus = 0;
         if (mImage != null) {
             bounds = new Rect(0, 0,
                     (int) (mImage.getIntrinsicWidth() * SanitizorGame.pixelMultiplier),
                     (int) (mImage.getIntrinsicHeight() * SanitizorGame.pixelMultiplier));
             bounds.offsetTo(location.x, location.y);
+            mSprites[0] = mImage;
         } else {
-            //Log.d("Enemy Error", "Could not load mEnemyImage from resource: R.drawable.enemy_" + color);
+            Log.d("Enemy Error", "Could not load mEnemyImage from resource: R.drawable.enemy_" + color);
         }
         SPEED = .5;
+        hitPoints = 2;
+        shotCoolDown = 500;
+        lastFired = 0;
+
         gridPos = new Rect(bounds);
         atOriginalPos = true;
         // 0 0     gridspeed*20  bounds*50
+    }
+
+
+    public void returnToOriginalPos(){
+        moveGridPos();
+        wrapGrid();
+        checkAtOriginalPos(true);
+        if(!atOriginalPos) {
+//            Log.d("Enemy Movement","" +gridPos.left +"," + gridPos.top);
+            int x = gridPos.left-bounds.left;
+            int y = gridPos.top-bounds.top;
+            double direction = Math.atan((0.0+y)/x);
+            int sign = 1;
+            if(x < 0){
+                sign = -1;
+            }
+            int speed = 40;
+            bounds.offset((int) ((speed * Math.cos(direction) * sign)), (int) (Math.ceil(speed * Math.sin(direction) *sign)));
+            wrapScreen();
+            isReturning=true;
+            //Log.d("Enemy.returnToAttackPos", "Enemy is returning");
+        } else {
+            //Log.d("Enemy.returnToAttackPos", "Enemy is no longer returning");
+            lastAttacked = System.currentTimeMillis();
+            isReturning = false;
+        }
     }
 
     //To check if I can attack, I have to check if it has been enough time since I last attacked.
@@ -96,32 +137,6 @@ public class Enemy extends Character {
             isAttacking = false;
         }
     }
-
-    public void returnToOriginalPos(){
-        moveGridPos();
-        wrapGrid();
-        checkAtOriginalPos(true);
-        if(!atOriginalPos) {
-//            Log.d("Enemy Movement","" +gridPos.left +"," + gridPos.top);
-            int x = gridPos.left-bounds.left;
-            int y = gridPos.top-bounds.top;
-            double direction = Math.atan((0.0+y)/x);
-            int sign = 1;
-            if(x < 0){
-                sign = -1;
-            }
-            int speed = 40;
-            bounds.offset((int) ((speed * Math.cos(direction) * sign)), (int) (Math.ceil(speed * Math.sin(direction) *sign)));
-            wrapScreen();
-            isReturning=true;
-            //Log.d("Enemy.returnToAttackPos", "Enemy is returning");
-        } else {
-            //Log.d("Enemy.returnToAttackPos", "Enemy is no longer returning");
-            lastAttacked = System.currentTimeMillis();
-            isReturning = false;
-        }
-    }
-
     public void moveDown(PointF velocity){
         wrapGrid();
 //        checkAtOriginalPos();
@@ -189,22 +204,51 @@ public class Enemy extends Character {
         }
     }
 
+    public void hit() {
+        hitPoints--;
+        Log.d("Enemy", "Enemy hit, current HP: " + hitPoints);
+    }
+
+    public boolean shouldDestroy() {
+        Log.d("Enemy", "Should Destroy " + (mDeathStatus >= mSprites.length));
+        return mDeathStatus >= mSprites.length;
+    }
+
+    public void startDeathAnimation() {
+        if (!mDeathAnimationIsRunning) {
+            mDeathStartTime = System.currentTimeMillis();
+            mDeathAnimationIsRunning = true;
+            Log.d("Enemy", "Started Death Animation");
+        }
+
+    }
+
+
     public void setPosition(int x, int y) {
         bounds.offsetTo(x,y);
     }
 
+    public boolean isDeathAnimationRunning() {
+        return mDeathAnimationIsRunning;
+    }
+
+    public boolean isDead() {
+        return hitPoints <= 0;
+    }
 
     public void draw(Canvas canvas) {
         if (mImage != null) {
+            final float ANIMATION_SPEED = 50;
             //If we have a player image, then draw it
-            mImage.setBounds((int) bounds.left, (int) bounds.top, (int) bounds.right, (int) bounds.bottom);
-            mImage.draw(canvas);
-            // Grid boxes
-//            Paint myPaint = new Paint();
-//            myPaint.setColor(0x80000000);
-//            myPaint.setStrokeWidth(10);
-//            canvas.drawRect(gridPos.left, gridPos.top, gridPos.right, gridPos.bottom, myPaint);
 
+            if (mDeathAnimationIsRunning) {
+                long elapsedTime = System.currentTimeMillis() - mDeathStartTime;
+                mDeathStatus = (int) Math.floor(elapsedTime / ANIMATION_SPEED);
+            }
+            if (mDeathStatus < mSprites.length) {
+                mSprites[mDeathStatus].setBounds(bounds);
+                mSprites[mDeathStatus].draw(canvas);
+            }
         }
     }
 
