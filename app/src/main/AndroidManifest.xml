@@ -25,6 +25,10 @@
             android:name=".GameActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".GameOver"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".GameActivity"/>
+        <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
