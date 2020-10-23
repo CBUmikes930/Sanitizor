@@ -10,8 +10,6 @@ import android.util.Log;
 
 import androidx.core.content.res.ResourcesCompat;
 
-// THIS IS A TEST COMMIT TO JESSE's CONTRIBUTION
-
 /**
  * Created by Jesse Breslin on 10/9/2020
  * <p>
@@ -68,9 +66,9 @@ public class Enemy extends Character {
         } else {
             Log.d("Enemy Error", "Could not load mEnemyImage from resource: R.drawable.enemy_" + color);
         }
-        SPEED = .5;
+        SPEED = .2;
         hitPoints = 2;
-        shotCoolDown = 500;
+        shotCoolDown = 5000;
         lastFired = 0;
 
         gridPos = new Rect(bounds);

@@ -1,9 +1,12 @@
 package com.egr423.sanitizor;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -22,6 +25,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
 
 /**
  * Created by Micah Steinbock on October 21, 2020
@@ -35,8 +40,9 @@ public class LeaderboardManager {
      * The overall method that gets the data from the firestore database and populates the RecyclerView
      * @param context - The context of the app that is calling this method
      * @param rView - The recyclerview to set the content to
+     * @param progressBar - The progress bar spinner to hide when the data is generated
      */
-    public void populateLeaderboard(Context context, RecyclerView rView) {
+    public void populateLeaderboard(Context context, RecyclerView rView, ProgressBar progressBar) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         //Find the scores in descending order
@@ -52,6 +58,8 @@ public class LeaderboardManager {
                         ScoreAdapter adapter = new ScoreAdapter(results, context);
                         //Set the recycler view
                         rView.setAdapter(adapter);
+                        //Hide progress bar
+                        progressBar.setVisibility(View.INVISIBLE);
                     } else {
                         Log.d(TAG,
                                 "Could not load documents from populateLeaderboard(): "
@@ -62,15 +70,27 @@ public class LeaderboardManager {
 
     /**
      * Method to get the current user's high score (displayed in the leaderboard activity
+     * @param context - The activity context that this is getting called from
      * @param textView - The textview to set to the high score
-     * @param user - The name of the current user to search for
      */
-    public void getUserHighScore(TextView textView, String user) {
+    public void getUserHighScore(Context context, TextView textView) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        //Find the scores for user
+        //Get instance id (UUID)
+        SharedPreferences sharedPreferences = context.getSharedPreferences(
+                "PREF_UNIQUE_ID", Context.MODE_PRIVATE);
+        String uniqueID = sharedPreferences.getString("PREF_UNIQUE_ID", null);
+        //If it doesn't exist, create it
+        if (uniqueID == null) {
+            uniqueID = UUID.randomUUID().toString();
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("PREF_UNIQUE_ID", uniqueID);
+            editor.apply();
+        }
+
+        //Find the scores for instance id
         db.collection("scores")
-                .whereEqualTo("name", user)
+                .whereEqualTo("instance", uniqueID)
                 .orderBy("score", Query.Direction.DESCENDING)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -81,8 +101,12 @@ public class LeaderboardManager {
                             //Process the results into List<Map> format
                             try {
                                 List<Map<String, Object>> results = processData(task.getResult());
-                                //Sset the TextView
-                                textView.setText(results.get(0).get("score").toString());
+                                //Set the TextView
+                                if (results.size() > 0) {
+                                    textView.setText(results.get(0).get("score").toString());
+                                } else {
+                                    textView.setText(Integer.toString(0));
+                                }
                             } catch (Exception e) {
                                 Log.d(TAG, "Error accessing returned data");
                             }
@@ -95,13 +119,35 @@ public class LeaderboardManager {
                 });
     }
 
-    public void addNewScore(String name, Integer number) {
+    /**
+     * Method to add a new score into the database
+     * @param context - the activity that this is getting called from
+     * @param name - the username to display with the score
+     * @param number - the score
+     */
+    public void addNewScore(Context context, String name, Integer number) {
+        //Create data record map
         Map<String, Object> data = new HashMap<>();
-        data.put("name", name);
+        data.put("name", generateRandomString(3));
         data.put("score", number);
+
+        //Get instance id (UUID)
+        SharedPreferences sharedPreferences = context.getSharedPreferences(
+                "PREF_UNIQUE_ID", Context.MODE_PRIVATE);
+        String uniqueID = sharedPreferences.getString("PREF_UNIQUE_ID", null);
+        //If it doesn't exist, create it
+        if (uniqueID == null) {
+            uniqueID = UUID.randomUUID().toString();
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("PREF_UNIQUE_ID", uniqueID);
+            editor.apply();
+        }
+        //Add instance unique id
+        data.put("instance", uniqueID);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+        //Add data map into collection
         db.collection("scores")
                 .add(data)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -133,6 +179,17 @@ public class LeaderboardManager {
             results.add(doc.getData());
         }
         return results;
+    }
+
+    private String generateRandomString(int numChars) {
+        String validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < numChars; i++) {
+            char character = validChars.charAt(random.nextInt(validChars.length()));
+            sb.append(character);
+        }
+        return sb.toString();
     }
 
 

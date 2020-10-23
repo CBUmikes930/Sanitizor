@@ -112,7 +112,14 @@ public class Projectile {
         //Calculate what frame of animation we should be on
         if (mAnimationIsRunning) {
             long elapsedTime = System.currentTimeMillis() - mStartTime;
+            int oldStatus = mStatus;
             mStatus = (int) Math.floor(elapsedTime / ANIMATION_SPEED);
+            //Recalculate bounds based on new sprite dimensions
+            if (oldStatus != mStatus && mStatus < mSprites.length) {
+                bounds.set(bounds.left, bounds.top,
+                        bounds.left + (int) (mSprites[mStatus].getIntrinsicWidth() * SanitizorGame.pixelMultiplier),
+                        bounds.top + (int) (mSprites[mStatus].getIntrinsicHeight() * SanitizorGame.pixelMultiplier));
+            }
         }
         //If the animation has not finished, then render the frame
         if (mStatus < mSprites.length) {

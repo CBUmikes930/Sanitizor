@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class GameOver extends AppCompatActivity {
@@ -25,17 +26,25 @@ public class GameOver extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.gOrecycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        //Add seperator between records
         DividerItemDecoration divider = new DividerItemDecoration(recyclerView.getContext(),
                 DividerItemDecoration.VERTICAL);
         recyclerView.addItemDecoration(divider);
 
+        //Get the score from the intent
+        Intent gameOverIntent = getIntent();
+        int score = gameOverIntent.getIntExtra("com.egr423.sanitizor.score", 0);
         TextView userScore = findViewById(R.id.score);
+        userScore.setText(Integer.toString(score));
 
+        ProgressBar progressBar = findViewById(R.id.progressBar1);
+        //Add the score into the database
         LeaderboardManager leaderboardManager = new LeaderboardManager();
-        leaderboardManager.populateLeaderboard(this, recyclerView);
+        leaderboardManager.addNewScore(this, "DDJ", score);
+        //Load the recycler view
+        leaderboardManager.populateLeaderboard(this, recyclerView, progressBar);
 
-
-
+        //Load header info
         TextView textView = findViewById(R.id.GameOverTitle) ;
         SpannableString content = new SpannableString( "Game Over" ) ;
         content.setSpan( new UnderlineSpan() , 0 , content.length() , 0 ) ;

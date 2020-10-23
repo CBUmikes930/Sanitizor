@@ -19,14 +19,14 @@ import java.util.Random;
  */
 public class SanitizorGame {
 
-    private final int ENEMY_ROWS = 5;
-    private final int ENEMIES_IN_ROW = 11;
+    private final int ENEMY_ROWS = 2;
+    private final int ENEMIES_IN_ROW = 5;
 
     static Player mPlayer;
     private int mPlayerLives;
     private int mPlayerScore = 0;
     private boolean mGameOver = false;
-    private boolean mPlayerisInvincible = true;
+    private boolean mPlayerisInvincible = false;
 
 
 
@@ -48,7 +48,6 @@ public class SanitizorGame {
     static int mSurfaceHeight;
 
     private final int BG_COLOR;
-
 
     public static final double pixelMultiplier = .5;
 
@@ -125,7 +124,7 @@ public class SanitizorGame {
 
             Random ran = new Random();
             for (Enemy enemy : enemies) {
-                if (enemy != null) {
+                if (enemy != null && !enemy.isDeathAnimationRunning()) {
                     if (Rect.intersects(enemy.getRect(), mPlayer.getRect())) {
 //                       Log.d("Enemy", "Enemy collided with Player");
                         if(!mPlayerisInvincible) {
@@ -170,7 +169,11 @@ public class SanitizorGame {
                             }
                         }
                     }
-                    createProjectile(enemy);
+                    //Randomize whether to attack
+                    attack = ran.nextInt(500);
+                    if (attack <= 1) {
+                        createProjectile(enemy);
+                    }
                 }
             }
             //Move Projectiles
@@ -219,6 +222,11 @@ public class SanitizorGame {
             }
         } else {
             Intent gameIntent = new Intent(mContext, GameOver.class);
+            //TODO Take out random score when we implement score
+            //Generate random score for now
+            Random random = new Random();
+            mPlayerScore = random.nextInt(10000);
+            gameIntent.putExtra("com.egr423.sanitizor.score", mPlayerScore);
             mContext.startActivity(gameIntent);
         }
     }
