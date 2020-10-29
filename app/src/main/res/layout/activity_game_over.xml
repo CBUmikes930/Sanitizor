@@ -19,6 +19,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginTop="20dp"/>
+
     <TextView
         android:id="@+id/gOLeaderBoard"
         android:layout_width="wrap_content"
@@ -54,11 +55,10 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="50dp"
-        android:layout_marginBottom="25dp"
+        android:layout_marginBottom="5dp"
         android:scrollbars="vertical"
         app:layout_constraintTop_toBottomOf="@id/gOLeaderBoard"
-        app:layout_constraintBottom_toTopOf="@id/score_header"
-         />
+        app:layout_constraintBottom_toTopOf="@id/score_layout" />
 
     <ProgressBar
         android:id="@+id/progressBar1"
@@ -71,50 +71,164 @@
         app:layout_constraintBottom_toBottomOf="@id/gOrecycler_view"
         android:visibility="visible" />
 
-    <TextView
-        android:id="@+id/score_header"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/score_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:textStyle="bold"
-        android:textSize="40sp"
-        android:text="@string/score"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/score"/>
-    <Button
-        android:id="@+id/gOHome"
-        android:onClick="HomeButton"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:textSize="30sp"
-        android:text="@string/home"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="25dp"/>
-    <Button
-        android:id="@+id/playAgain"
-        android:onClick="playAgainButton"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:textSize="30sp"
-        android:text="@string/play_again"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/gOHome"
-        android:layout_marginBottom="20dp"/>
-    <TextView
-        android:id="@+id/score"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
-        android:textSize="30sp"
-        android:text="FILLER"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/playAgain"/>
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/name_layout" >
 
+        <TextView
+            android:id="@+id/score_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="15dp"
+            android:textStyle="bold"
+            android:textSize="40sp"
+            android:textAlignment="textEnd"
+            android:text="@string/score" />
+
+        <TextView
+            android:id="@+id/score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="15dp"
+            android:textSize="30sp"
+            android:textAlignment="textStart"
+            android:text="FILLER" />
+
+    </LinearLayout>
+
+    <GridLayout
+        android:id="@+id/name_layout"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/button_layout"
+        android:columnCount="3"
+        android:rowCount="3"
+        android:layout_marginBottom="15dp">
+
+        <Button
+            android:id="@+id/letter_1_up"
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:layout_columnWeight="1"
+            android:drawableBottom="@drawable/up"
+            android:onClick="arrowClick" />
+
+        <Button
+            android:id="@+id/letter_2_up"
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:layout_columnWeight="1"
+            android:drawableBottom="@drawable/up"
+            android:onClick="arrowClick" />
+
+        <Button
+            android:id="@+id/letter_3_up"
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:layout_columnWeight="1"
+            android:drawableBottom="@drawable/up"
+            android:onClick="arrowClick" />
+
+        <TextView
+            android:id="@+id/letter_1_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:layout_columnWeight="1"
+            android:text="A" />
+
+        <TextView
+            android:id="@+id/letter_2_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:layout_columnWeight="1"
+            android:text="A" />
+
+        <TextView
+            android:id="@+id/letter_3_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:layout_columnWeight="1"
+            android:text="a" />
+
+        <Button
+            android:id="@+id/letter_1_down"
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:layout_columnWeight="1"
+            android:drawableTop="@drawable/down"
+            android:onClick="arrowClick" />
+
+        <Button
+            android:id="@+id/letter_2_down"
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:layout_columnWeight="1"
+            android:drawableTop="@drawable/down"
+            android:onClick="arrowClick" />
+
+        <Button
+            android:id="@+id/letter_3_down"
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:layout_columnWeight="1"
+            android:drawableTop="@drawable/down"
+            android:onClick="arrowClick" />
+
+    </GridLayout>
+
+    <LinearLayout
+        android:id="@+id/button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginVertical="30dp"
+        android:visibility="invisible">
+
+        <Button
+            android:id="@+id/playAgain"
+            android:onClick="playAgainButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="24sp"
+            android:text="@string/play_again" />
+
+        <Button
+            android:id="@+id/gOHome"
+            android:onClick="HomeButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="24sp"
+            android:text="@string/home" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/submit_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="25dp"
+        android:text="@string/submit"
+        app:layout_constraintTop_toTopOf="@id/button_layout"
+        app:layout_constraintBottom_toBottomOf="@id/button_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:onClick="submitScore"
+        android:visibility="visible" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

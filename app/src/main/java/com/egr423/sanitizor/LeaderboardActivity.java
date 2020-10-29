@@ -32,7 +32,7 @@ public class LeaderboardActivity extends AppCompatActivity {
         ProgressBar progressBar = findViewById(R.id.progressBar1);
 
         //Use LeaderboardManager to populate the recycler view
-        LeaderboardManager leaderboardManager = new LeaderboardManager();
+        LeaderboardManager leaderboardManager = LeaderboardManager.getInstance();
         leaderboardManager.populateLeaderboard(this, recyclerView, progressBar);
         TextView userHighScore = findViewById(R.id.highscore);
         //Temporary literal

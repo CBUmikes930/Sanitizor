@@ -30,11 +30,24 @@ import java.util.UUID;
 
 /**
  * Created by Micah Steinbock on October 21, 2020
- * A manager object that is used to interact with the firestore database
+ * A manager singleton that is used to interact with the firestore database
  */
 public class LeaderboardManager {
 
+    //Singleton instance
+    private static LeaderboardManager instance;
+
     private final String TAG = "FireStore";
+
+    private RecyclerView mRecyclerView;
+    private ProgressBar mProgressBar;
+
+    public static LeaderboardManager getInstance() {
+        if (instance == null) {
+            instance = new LeaderboardManager();
+        }
+        return instance;
+    }
 
     /**
      * The overall method that gets the data from the firestore database and populates the RecyclerView
@@ -43,6 +56,9 @@ public class LeaderboardManager {
      * @param progressBar - The progress bar spinner to hide when the data is generated
      */
     public void populateLeaderboard(Context context, RecyclerView rView, ProgressBar progressBar) {
+        mRecyclerView = rView;
+        mProgressBar = progressBar;
+
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         //Find the scores in descending order
@@ -128,7 +144,7 @@ public class LeaderboardManager {
     public void addNewScore(Context context, String name, Integer number) {
         //Create data record map
         Map<String, Object> data = new HashMap<>();
-        data.put("name", generateRandomString(3));
+        data.put("name", name);
         data.put("score", number);
 
         //Get instance id (UUID)
@@ -155,6 +171,8 @@ public class LeaderboardManager {
                     public void onSuccess(DocumentReference documentReference) {
                         Log.d(TAG, "Data added properly with ID: "
                                 + documentReference.getId());
+                        //After we add the new data, then refresh the recycler view
+                        populateLeaderboard(context, mRecyclerView, mProgressBar);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -180,18 +198,6 @@ public class LeaderboardManager {
         }
         return results;
     }
-
-    private String generateRandomString(int numChars) {
-        String validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        Random random = new Random();
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < numChars; i++) {
-            char character = validChars.charAt(random.nextInt(validChars.length()));
-            sb.append(character);
-        }
-        return sb.toString();
-    }
-
 
 
     private class ScoreHolder extends RecyclerView.ViewHolder {
