@@ -76,6 +76,7 @@ public class GameOver extends AppCompatActivity {
         //Toggle buttons at the bottom
         view.setVisibility(View.INVISIBLE);
         findViewById(R.id.button_layout).setVisibility(View.VISIBLE);
+        findViewById(R.id.name_layout).setVisibility(View.GONE);
     }
 
     //Generates the name string based off of the three textviews
