@@ -26,7 +26,7 @@
 
     <!-- Game Activity -->
     <string name="fire_button">Fire!</string>
-
+    <string name="level_cleared_message">LEVEL CLEARED!!%sNext Level Starting in %d seconds…</string>
     <!-- Leaderboard Activity -->
     <string name="header">LEADERBOARD</string>
     <string name="name_label">Name:</string>
@@ -39,4 +39,5 @@
     <string name="home">Home</string>
     <string name="play_again">Play Again!</string>
     <string name="submit">Submit Score</string>
+    <string name="level_start_message">Level Starting…</string>
 </resources>

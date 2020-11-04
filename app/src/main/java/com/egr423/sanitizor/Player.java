@@ -34,7 +34,7 @@ public class Player extends Character {
     private boolean isAlive;
     private boolean justTookDamage;
     private long lastDamaged;
-    private boolean isInvincible;
+    private final boolean isInvincible;
     private int playerLives;
     private boolean mAnimationIsRunning;
     private long mStartTime;
