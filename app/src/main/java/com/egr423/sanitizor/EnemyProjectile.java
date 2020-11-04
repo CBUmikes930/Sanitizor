@@ -2,11 +2,8 @@ package com.egr423.sanitizor;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.media.MediaPlayer;
-import android.util.Log;
 
 import androidx.core.content.res.ResourcesCompat;
 
@@ -18,15 +15,15 @@ import androidx.core.content.res.ResourcesCompat;
  */
 public class EnemyProjectile extends Projectile {
 
-    private Drawable mImage;
+    private final Drawable mImage;
     public EnemyProjectile(Context context) {
         super(context);
         SPEED = -SPEED;
         mImage = ResourcesCompat.getDrawable(context.getResources(), R.drawable.enemy_projectile, null);
         if (mImage != null) {
             bounds = new Rect(0, 0,
-                    (int) (mImage.getIntrinsicWidth() * SanitizorGame.pixelMultiplier),
-                    (int) (mImage.getIntrinsicHeight() * SanitizorGame.pixelMultiplier));
+                    (int) (mImage.getIntrinsicWidth() * SanitizorGame.PIXEL_MULTIPLIER),
+                    (int) (mImage.getIntrinsicHeight() * SanitizorGame.PIXEL_MULTIPLIER));
         }
     }
 

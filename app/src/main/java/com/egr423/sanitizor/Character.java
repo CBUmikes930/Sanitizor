@@ -1,16 +1,16 @@
 package com.egr423.sanitizor;
 
+import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 
 public abstract class Character {
 
     Rect bounds;
-    Drawable mImage;
-    double SPEED;
+    Bitmap[] mImage;
+    double SPEED = .2;
     long lastFired;
-    int shotCoolDown;
+    int shotCoolDown = 5000;
 
     public Rect getRect() {
         return bounds;

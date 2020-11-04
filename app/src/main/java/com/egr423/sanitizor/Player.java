@@ -25,11 +25,11 @@ public class Player extends Character {
     //The location of the top left corner of the player
 
     //The image resource for the player
-    private Drawable mImage;
+    private final Drawable mImage;
     private boolean isAlive;
     private boolean justTookDamage;
     private long lastDamaged;
-    private boolean isInvincible;
+    private final boolean isInvincible;
     private int playerLives;
     //Screen Dimensions
 
@@ -39,8 +39,8 @@ public class Player extends Character {
         if (mImage != null) {
             //If image was loaded, then calculate it's relative height compared to the WIDTH (aspect ratio)
             bounds = new Rect(0, 0,
-                    (int) (mImage.getIntrinsicWidth() * SanitizorGame.pixelMultiplier),
-                    (int) (mImage.getIntrinsicHeight() * SanitizorGame.pixelMultiplier));
+                    (int) (mImage.getIntrinsicWidth() * SanitizorGame.PIXEL_MULTIPLIER),
+                    (int) (mImage.getIntrinsicHeight() * SanitizorGame.PIXEL_MULTIPLIER));
         } else {
             //Couldn't load, so post a message and set HEIGHT = WIDTH
             Log.d("Player Error", "Could not load mPlayerImage from resource: R.drawable.player");

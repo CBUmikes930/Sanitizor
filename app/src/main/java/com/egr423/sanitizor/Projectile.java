@@ -20,7 +20,7 @@ public class Projectile {
     int SPEED = 30;
 
     //private Drawable mSprite;
-    private Drawable[] mSprites = new Drawable[6];
+    private final Drawable[] mSprites = new Drawable[6];
     //Which sprite to draw
     int mStatus;
     //Animation start time
@@ -56,8 +56,8 @@ public class Projectile {
         //calculate height based off of the aspect ratio of the first image
         if (mSprites[0] != null) {
             bounds = new Rect(0, 0,
-                    (int) (mSprites[0].getIntrinsicWidth() * SanitizorGame.pixelMultiplier),
-                    (int) (mSprites[0].getIntrinsicHeight() * SanitizorGame.pixelMultiplier));
+                    (int) (mSprites[0].getIntrinsicWidth() * SanitizorGame.PIXEL_MULTIPLIER),
+                    (int) (mSprites[0].getIntrinsicHeight() * SanitizorGame.PIXEL_MULTIPLIER));
         }
         //Load SoundFX
         //splashSound = MediaPlayer.create(context, R.raw.splash);
@@ -117,8 +117,8 @@ public class Projectile {
             //Recalculate bounds based on new sprite dimensions
             if (oldStatus != mStatus && mStatus < mSprites.length) {
                 bounds.set(bounds.left, bounds.top,
-                        bounds.left + (int) (mSprites[mStatus].getIntrinsicWidth() * SanitizorGame.pixelMultiplier),
-                        bounds.top + (int) (mSprites[mStatus].getIntrinsicHeight() * SanitizorGame.pixelMultiplier));
+                        bounds.left + (int) (mSprites[mStatus].getIntrinsicWidth() * SanitizorGame.PIXEL_MULTIPLIER),
+                        bounds.top + (int) (mSprites[mStatus].getIntrinsicHeight() * SanitizorGame.PIXEL_MULTIPLIER));
             }
         }
         //If the animation has not finished, then render the frame
