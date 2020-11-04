@@ -4,7 +4,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -24,7 +26,7 @@ public class Projectile {
     int SPEED = 30;
 
     //private Drawable mSprite;
-    private Bitmap[] mImage = new Bitmap[6];
+    protected Bitmap[] mImage;
     //Which sprite to draw
     int mStatus;
     //Animation start time
@@ -42,6 +44,7 @@ public class Projectile {
     }
 
     public Projectile(Context context) {
+        mImage = new Bitmap[6];
         //Start with the first sprite
         mStatus = 0;
         //Load in all the sprites into an array
@@ -60,8 +63,8 @@ public class Projectile {
         //calculate height based off of the aspect ratio of the first image
         if (mImage[0] != null) {
             bounds = new Rect(0, 0,
-                    (int) (mImage[0].getWidth() * SanitizorGame.pixelMultiplier),
-                    (int) (mImage[0].getHeight() * SanitizorGame.pixelMultiplier));
+                    (int) (mImage[0].getWidth() * SanitizorGame.PIXEL_MULTIPLIER),
+                    (int) (mImage[0].getHeight() * SanitizorGame.PIXEL_MULTIPLIER));
         }
         //Load SoundFX
         //splashSound = MediaPlayer.create(context, R.raw.splash);
@@ -121,27 +124,20 @@ public class Projectile {
             //Recalculate bounds based on new sprite dimensions
             if (oldStatus != mStatus && mStatus < mImage.length) {
                 int centerX = bounds.centerX();
-                int newLeft = (int) (centerX - (mImage[mStatus].getWidth() * SanitizorGame.pixelMultiplier * 0.5));
+                int newLeft = (int) (centerX - (mImage[mStatus].getWidth() * SanitizorGame.PIXEL_MULTIPLIER * 0.5));
 
                 bounds.set(newLeft, bounds.top,
-                        newLeft + (int) (mImage[mStatus].getWidth() * SanitizorGame.pixelMultiplier),
-                        bounds.top + (int) (mImage[mStatus].getHeight() * SanitizorGame.pixelMultiplier));
+                        newLeft + (int) (mImage[mStatus].getWidth() * SanitizorGame.PIXEL_MULTIPLIER),
+                        bounds.top + (int) (mImage[mStatus].getHeight() * SanitizorGame.PIXEL_MULTIPLIER));
             }
         }
         //If the animation has not finished, then render the frame
         if (mStatus < mImage.length) {
             Matrix matrix = new Matrix();
-            //Set the destination rectangle
-            RectF dst = new RectF(bounds.left,
-                    bounds.top,
-                    (float) (bounds.left + (bounds.width() * SanitizorGame.pixelMultiplier)),
-                    (float) (bounds.top + (bounds.height() * SanitizorGame.pixelMultiplier)));
             //Map to the bounds coordinates
-            matrix.setRectToRect(new RectF(0, 0, bounds.width(), bounds.height()),
-                    dst,
+            matrix.setRectToRect(new RectF(0, 0, mImage[mStatus].getWidth(), mImage[mStatus].getHeight()),
+                    new RectF(bounds.left, bounds.top, bounds.right, bounds.bottom),
                     Matrix.ScaleToFit.FILL);
-            //Rotate
-            //matrix.postRotate(rotation, bounds.centerX(), bounds.centerY());
             canvas.drawBitmap(mImage[mStatus], matrix, null);
         }
     }

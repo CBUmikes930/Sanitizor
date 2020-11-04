@@ -4,7 +4,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
@@ -243,16 +245,12 @@ public abstract class Enemy extends Character {
                 long elapsedTime = System.currentTimeMillis() - mDeathStartTime;
                 mDeathStatus = (int) Math.floor(elapsedTime / ANIMATION_SPEED);
             }
+
             if (mDeathStatus < mImage.length) {
                 Matrix matrix = new Matrix();
-                //Set the destination rectangle
-                RectF dst = new RectF(bounds.left,
-                        bounds.top,
-                        (float) (bounds.left + (bounds.width() * SanitizorGame.PIXEL_MULTIPLIER)),
-                        (float) (bounds.top + (bounds.height() * SanitizorGame.PIXEL_MULTIPLIER)));
                 //Map to the bounds coordinates
-                matrix.setRectToRect(new RectF(0, 0, bounds.width(), bounds.height()),
-                        dst,
+                matrix.setRectToRect(new RectF(0, 0, mImage[mDeathStatus].getWidth(), mImage[mDeathStatus].getHeight()),
+                        new RectF(bounds.left, bounds.top, bounds.right, bounds.bottom),
                         Matrix.ScaleToFit.FILL);
                 //Rotate
                 rotation += ROTATION_RATE;

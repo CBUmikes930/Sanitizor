@@ -57,23 +57,19 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
             mSurfaceView.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-                    int action = event.getAction();
-                    switch (action) {
-                        case MotionEvent.ACTION_DOWN:
-                            mSurfaceView.buttonClicked();
-                            return true;
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        mSurfaceView.buttonClicked();
+                        return true;
                     }
                     return false;
                 }
             });
-        } else{
-
+        } else {
             //Initialize Touch settings for motion control
             mSurfaceView.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-                    int action = event.getAction();
-                    switch (action) {
+                    switch (event.getAction()) {
                         case MotionEvent.ACTION_DOWN:
                             //Player touched screen
                             if (SettingsDialogue.controlScheme == R.id.joystick_controls) {
@@ -156,7 +152,6 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
         //Get Accelerometer values;
         float x = sensorEvent.values[0];
         float y = sensorEvent.values[1];
-        float z = sensorEvent.values[2];
 
         //Move Player
         mSurfaceView.changeAcceleration(x, y);

@@ -3,12 +3,13 @@ package com.egr423.sanitizor;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 
 public abstract class Character {
 
     Rect bounds;
     Bitmap[] mImage;
-    double SPEED = .2;
+    double SPEED = 0.2;
     long lastFired;
     int shotCoolDown = 5000;
 

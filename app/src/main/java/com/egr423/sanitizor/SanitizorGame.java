@@ -101,7 +101,6 @@ public class SanitizorGame {
         }
     }
 
-
     //Create enemy objects
     private void generateEnemies() {
         int row = 0;
@@ -119,9 +118,7 @@ public class SanitizorGame {
                 location = new Point(20, 100);
             }
             enemies[enemySize++] = new RedEnemy(mContext, location);
-
         }
-
     }
 
     public void newGame() {
@@ -151,6 +148,7 @@ public class SanitizorGame {
             }
             //Move player
             mPlayer.move(velocity);
+            mPlayer.checkInvincibility();
             moveProjectiles();
 
         } else {
@@ -209,7 +207,6 @@ public class SanitizorGame {
         } else {
             if (Rect.intersects(projectile.getRect(), mPlayer.getRect()) && !projectile.isAnimationRunning()) {
                 projectile.startAnimation();
-//                Log.d("Projectile", "Projectile hit Player");
                 if (!mPlayerIsInvincible) {
                     mPlayer.damagePlayer();
                 }
@@ -411,11 +408,8 @@ public class SanitizorGame {
                     layout.removeView(textView);
                 });
                 progressLevel();
-
             }
         };
         thread.start();
-
     }
-
 }

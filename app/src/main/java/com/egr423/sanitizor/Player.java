@@ -4,7 +4,10 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -20,11 +23,6 @@ public class Player extends Character {
     //Player position values
     private final int BOTTOM_PADDING = 50; //Padding to keep image off of bottom
 
-    //Speed multiplier for the movement speed based on accelerometer
-
-
-    //The location of the top left corner of the player
-
     //The image resource for the player
     private Bitmap[] mImage;
     private int rotation;
@@ -39,7 +37,6 @@ public class Player extends Character {
     private boolean mAnimationIsRunning;
     private long mStartTime;
     private boolean mGameOverStatus;
-    //Screen Dimensions
 
     public Player(Context context) {
         //Load the image from the resources
@@ -62,8 +59,8 @@ public class Player extends Character {
             rotation = 0;
             mAnimationIsRunning = false;
             bounds = new Rect(0, 0,
-                    (int) (mImage[0].getWidth() * SanitizorGame.pixelMultiplier),
-                    (int) (mImage[0].getHeight() * SanitizorGame.pixelMultiplier));
+                    (int) (mImage[0].getWidth() * SanitizorGame.PIXEL_MULTIPLIER),
+                    (int) (mImage[0].getHeight() * SanitizorGame.PIXEL_MULTIPLIER));
         } else {
             //Couldn't load, so post a message and set HEIGHT = WIDTH
             Log.d("Player Error", "Could not load mPlayerImage from resource: R.drawable.player");
@@ -75,14 +72,12 @@ public class Player extends Character {
         isInvincible = false;
         playerLives = 3;
         mGameOverStatus = false;
-
+        shotCoolDown = 1000;
         //Set initial position
         setStartPosition();
-
-        //Set color
     }
 
-    public void damagePlayer(){
+    public void damagePlayer() {
         if(!justTookDamage){
             Log.d("Player", "Player took damage!");
             playerLives--;
@@ -90,20 +85,21 @@ public class Player extends Character {
             justTookDamage = true;
             lastDamaged = System.currentTimeMillis();
         }
-        if(System.currentTimeMillis()-lastDamaged > INVICIBILITY_DURATION){
-            justTookDamage = false;
-            cur_sprite = 0;
-        }
         if (playerLives <= 0) {
             startDeathAnimation();
+        }
+    }
+
+    public void checkInvincibility() {
+        if (System.currentTimeMillis() - lastDamaged > INVICIBILITY_DURATION) {
+            justTookDamage = false;
+            cur_sprite = 0;
         }
     }
 
     public void move(PointF velocity) {
         //Move center by velocity on x-axis, but anchor y
         bounds.offset((int) (-velocity.x * SPEED), 0);
-        //Log.d("VELOCITY CHECK", "Original Velocity: " + -velocity.x);
-        //Log.d("VELOCITY CHECK", "Modified Velocity: " + -velocity.x * SPEED);
 
         //Check if still on screen
         if (bounds.right > SanitizorGame.mSurfaceWidth) {
@@ -117,6 +113,7 @@ public class Player extends Character {
 
     public void draw(Canvas canvas) {
         float ROTATION_RATE = 0.1f;
+
         if (mImage[cur_sprite] != null) {
             if (mAnimationIsRunning) {
                 rotation = (int) ((System.currentTimeMillis() - mStartTime) * ROTATION_RATE);
@@ -125,31 +122,23 @@ public class Player extends Character {
                     mGameOverStatus = true;
                 }
             }
+
             Matrix matrix = new Matrix();
-            //Set the destination rectangle
-            RectF dst = new RectF(bounds.left,
-                    bounds.top,
-                    (float) (bounds.left + (bounds.width() * SanitizorGame.pixelMultiplier)),
-                    (float) (bounds.top + (bounds.height() * SanitizorGame.pixelMultiplier)));
             //Map to the bounds coordinates
-            matrix.setRectToRect(new RectF(0, 0, bounds.width(), bounds.height()),
-                    dst,
+            matrix.setRectToRect(new RectF(0, 0, mImage[cur_sprite].getWidth(), mImage[cur_sprite].getHeight()),
+                    new RectF(bounds.left, bounds.top, bounds.right, bounds.bottom),
                     Matrix.ScaleToFit.FILL);
             //Rotate
             matrix.postRotate(rotation, bounds.centerX(), bounds.centerY());
+
             if (System.currentTimeMillis() - lastDamaged < 100) {
                 //Show damaged player animation
                 canvas.drawBitmap(mImage[1], matrix, null);
             } else if (System.currentTimeMillis() - lastDamaged < INVICIBILITY_DURATION) {
-                //Show invicibility flash
-                if (((System.currentTimeMillis() - lastDamaged) / 100) % 2 == 0) {
-                    cur_sprite = 2;
-                } else {
-                    cur_sprite = 0;
-                }
+                //Show invincibility flash
+                cur_sprite = (((System.currentTimeMillis() - lastDamaged) / 200) % 2 == 0) ? 2 : 0;
                 canvas.drawBitmap(mImage[cur_sprite], matrix, null);
             } else {
-                cur_sprite = 0;
                 canvas.drawBitmap(mImage[cur_sprite], matrix, null);
             }
         }
@@ -177,6 +166,11 @@ public class Player extends Character {
             mStartTime = System.currentTimeMillis();
             mAnimationIsRunning = true;
         }
+    }
+
+    @Override
+    Point getPosition() {
+        return new Point(bounds.centerX(), bounds.top);
     }
 
     public boolean isGameOver() {
