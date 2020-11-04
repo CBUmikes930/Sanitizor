@@ -31,12 +31,14 @@ public class EnemyProjectile extends Projectile {
                     (int) (mImage[0].getWidth() * SanitizorGame.PIXEL_MULTIPLIER),
                     (int) (mImage[0].getHeight() * SanitizorGame.PIXEL_MULTIPLIER));
         }
+        mLastMoved = System.currentTimeMillis();
     }
 
     public void move() {
         if (!mAnimationIsRunning) {
             //Move down a speed
-            bounds.offset(0, -SPEED);
+            bounds.offset(0, (int) (-SPEED * (System.currentTimeMillis() - mLastMoved)));
+            mLastMoved = System.currentTimeMillis();
         } else {
             mStatus++;
         }

@@ -23,7 +23,7 @@ import androidx.core.content.res.ResourcesCompat;
  * When it collides with something it animates into a splashing animation
  */
 public class Projectile {
-    int SPEED = 30;
+    float SPEED = 1f;
 
     //private Drawable mSprite;
     protected Bitmap[] mImage;
@@ -34,6 +34,7 @@ public class Projectile {
     long mStartTime;
     boolean mAnimationIsRunning = false;
     private boolean fromPlayer;
+    long mLastMoved;
     //Sound FX
     private MediaPlayer splashSound;
 
@@ -68,6 +69,7 @@ public class Projectile {
         }
         //Load SoundFX
         //splashSound = MediaPlayer.create(context, R.raw.splash);
+        mLastMoved = System.currentTimeMillis();
     }
 
     public void setPosition(Point location) {
@@ -77,7 +79,8 @@ public class Projectile {
     public void move() {
         if (!mAnimationIsRunning) {
             //Move up a speed
-            bounds.offset(0, -SPEED);
+            bounds.offset(0, (int) (-SPEED * (System.currentTimeMillis() - mLastMoved)));
+            mLastMoved = System.currentTimeMillis();
             //If collided with the top of screen, then play animation
             if (bounds.top <= 0) {
                 bounds.offsetTo(bounds.left, 0);

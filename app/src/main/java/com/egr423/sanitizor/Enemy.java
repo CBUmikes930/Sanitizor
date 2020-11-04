@@ -42,6 +42,7 @@ public abstract class Enemy extends Character {
     private boolean wrappingy = false;
     private long mDeathStartTime;
 
+    private long mLastMovedTime;
     private final int TIME_TO_ATTACK = 20;
     private long lastAttacked;
     private long attackTime;
@@ -95,7 +96,8 @@ public abstract class Enemy extends Character {
                 sign = -1;
             }
             int speed = 40;
-            bounds.offset((int) ((speed * Math.cos(direction) * sign)), (int) (Math.ceil(speed * Math.sin(direction) * sign)));
+            bounds.offset((int) ((speed * Math.cos(direction) * sign)),
+                    (int) (Math.ceil(speed * Math.sin(direction) * sign)));
             wrapScreen();
             isReturning = true;
             //Log.d("Enemy.returnToAttackPos", "Enemy is returning");
@@ -151,7 +153,8 @@ public abstract class Enemy extends Character {
         gridSpeed = velocity;
         moveGridPos();
 //        checkAtOriginalPos();
-        bounds.offset((int) (velocity.x * SPEED), (int) (velocity.y * SPEED));
+        bounds.offset((int) (velocity.x * SPEED),
+                (int) (velocity.y * SPEED));
         wrapScreen();
         wrapGrid();
     }
@@ -293,7 +296,8 @@ public abstract class Enemy extends Character {
     }
 
     private void moveGridPos() {
-        gridPos.offset((int) (gridSpeed.x * SPEED), (int) (gridSpeed.y * SPEED));
+        gridPos.offset((int) (gridSpeed.x * SPEED),
+                (int) (gridSpeed.y * SPEED));
     }
 
     public int getEnemyWidth() {

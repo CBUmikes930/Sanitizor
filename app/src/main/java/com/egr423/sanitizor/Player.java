@@ -37,6 +37,7 @@ public class Player extends Character {
     private boolean mAnimationIsRunning;
     private long mStartTime;
     private boolean mGameOverStatus;
+    private long mLastMoved;
 
     public Player(Context context) {
         //Load the image from the resources
@@ -67,7 +68,7 @@ public class Player extends Character {
         }
 
 
-        SPEED = 1.5;
+        SPEED = 0.1;
         justTookDamage = false;
         isInvincible = false;
         playerLives = 3;
@@ -75,6 +76,7 @@ public class Player extends Character {
         shotCoolDown = 1000;
         //Set initial position
         setStartPosition();
+        mLastMoved = System.currentTimeMillis();
     }
 
     public void damagePlayer() {
@@ -99,7 +101,8 @@ public class Player extends Character {
 
     public void move(PointF velocity) {
         //Move center by velocity on x-axis, but anchor y
-        bounds.offset((int) (-velocity.x * SPEED), 0);
+        bounds.offset((int) (-velocity.x * SPEED * (System.currentTimeMillis() - mLastMoved)), 0);
+        mLastMoved = System.currentTimeMillis();
 
         //Check if still on screen
         if (bounds.right > SanitizorGame.mSurfaceWidth) {
