@@ -287,7 +287,7 @@ public class SanitizorGame {
     }
 
     private void updateGameOver(){
-        if(mPlayer.getPlayerLives() <=0){
+        if(mPlayer.isGameOver()){
             mGameOver = true;
         }
     }

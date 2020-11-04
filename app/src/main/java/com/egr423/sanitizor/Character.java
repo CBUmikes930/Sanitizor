@@ -1,5 +1,6 @@
 package com.egr423.sanitizor;
 
+import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -7,7 +8,7 @@ import android.graphics.drawable.Drawable;
 public abstract class Character {
 
     Rect bounds;
-    Drawable mImage;
+    Bitmap[] mImage;
     double SPEED;
     long lastFired;
     int shotCoolDown;

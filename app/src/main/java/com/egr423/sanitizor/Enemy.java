@@ -1,10 +1,14 @@
 package com.egr423.sanitizor;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
@@ -24,13 +28,15 @@ import androidx.core.content.res.ResourcesCompat;
 
 public class Enemy extends Character {
     private double[] enemySpeeds;
-    private Drawable[] mSprites = new Drawable[6];
+    private Bitmap[] mImage = new Bitmap[6];
     private int hitPoints;
     private int mDeathStatus;
     private boolean mDeathAnimationIsRunning = false;
     private boolean wrappingx = false;
     private boolean wrappingy = false;
     private long mDeathStartTime;
+    private float rotation = 0;
+    private float ROTATION_RATE = 0.5f;
 
     private final int TIME_TO_ATTACK = 20;
     private long lastAttacked;
@@ -44,7 +50,7 @@ public class Enemy extends Character {
     private boolean wrappingGy = false;
 
     public Enemy(String color, Context context, Point location) {
-        mImage = ResourcesCompat.getDrawable(context.getResources(), R.drawable.enemy, null);
+        //Load Sprites into mImage by id
         for (int i = 0; i < 6; i++) {
             //Get sprite name
             String name = "enemy_" + (i + 1);
@@ -54,18 +60,19 @@ public class Enemy extends Character {
                 Log.e("Projectile Error", "ID lookup for resource " + name + " failed.");
             }
             //Get sprite
-            mSprites[i] = ResourcesCompat.getDrawable(context.getResources(), id, null);
+            mImage[i] = BitmapFactory.decodeResource(context.getResources(), id);
         }
         mDeathStatus = 0;
-        if (mImage != null) {
+        //Set image size
+        if (mImage[0] != null) {
             bounds = new Rect(0, 0,
-                    (int) (mImage.getIntrinsicWidth() * SanitizorGame.pixelMultiplier),
-                    (int) (mImage.getIntrinsicHeight() * SanitizorGame.pixelMultiplier));
+                    (int) (mImage[0].getWidth() * SanitizorGame.pixelMultiplier),
+                    (int) (mImage[0].getHeight() * SanitizorGame.pixelMultiplier));
             bounds.offsetTo(location.x, location.y);
-            mSprites[0] = mImage;
         } else {
             Log.d("Enemy Error", "Could not load mEnemyImage from resource: R.drawable.enemy_" + color);
         }
+
         SPEED = .2;
         hitPoints = 2;
         shotCoolDown = 5000;
@@ -208,8 +215,8 @@ public class Enemy extends Character {
     }
 
     public boolean shouldDestroy() {
-        Log.d("Enemy", "Should Destroy " + (mDeathStatus >= mSprites.length));
-        return mDeathStatus >= mSprites.length;
+        Log.d("Enemy", "Should Destroy " + (mDeathStatus >= mImage.length));
+        return mDeathStatus >= mImage.length;
     }
 
     public void startDeathAnimation() {
@@ -235,7 +242,7 @@ public class Enemy extends Character {
     }
 
     public void draw(Canvas canvas) {
-        if (mImage != null) {
+        if (mImage[mDeathStatus] != null) {
             final float ANIMATION_SPEED = 50;
             //If we have a player image, then draw it
 
@@ -243,9 +250,21 @@ public class Enemy extends Character {
                 long elapsedTime = System.currentTimeMillis() - mDeathStartTime;
                 mDeathStatus = (int) Math.floor(elapsedTime / ANIMATION_SPEED);
             }
-            if (mDeathStatus < mSprites.length) {
-                mSprites[mDeathStatus].setBounds(bounds);
-                mSprites[mDeathStatus].draw(canvas);
+            if (mDeathStatus < mImage.length) {
+                Matrix matrix = new Matrix();
+                //Set the destination rectangle
+                RectF dst = new RectF(bounds.left,
+                        bounds.top,
+                        (float) (bounds.left + (bounds.width() * SanitizorGame.pixelMultiplier)),
+                        (float) (bounds.top + (bounds.height() * SanitizorGame.pixelMultiplier)));
+                //Map to the bounds coordinates
+                matrix.setRectToRect(new RectF(0, 0, bounds.width(), bounds.height()),
+                        dst,
+                        Matrix.ScaleToFit.FILL);
+                //Rotate
+                rotation += ROTATION_RATE;
+                matrix.postRotate(rotation, bounds.centerX(), bounds.centerY());
+                canvas.drawBitmap(mImage[mDeathStatus], matrix, null);
             }
         }
     }

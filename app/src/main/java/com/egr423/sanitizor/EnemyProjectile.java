@@ -1,9 +1,13 @@
 package com.egr423.sanitizor;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.util.Log;
@@ -18,15 +22,15 @@ import androidx.core.content.res.ResourcesCompat;
  */
 public class EnemyProjectile extends Projectile {
 
-    private Drawable mImage;
+    private Bitmap[] mImage = new Bitmap[1];
     public EnemyProjectile(Context context) {
         super(context);
         SPEED = -SPEED;
-        mImage = ResourcesCompat.getDrawable(context.getResources(), R.drawable.enemy_projectile, null);
+        mImage[0] = BitmapFactory.decodeResource(context.getResources(), R.drawable.enemy_projectile);
         if (mImage != null) {
             bounds = new Rect(0, 0,
-                    (int) (mImage.getIntrinsicWidth() * SanitizorGame.pixelMultiplier),
-                    (int) (mImage.getIntrinsicHeight() * SanitizorGame.pixelMultiplier));
+                    (int) (mImage[0].getWidth() * SanitizorGame.pixelMultiplier),
+                    (int) (mImage[0].getHeight() * SanitizorGame.pixelMultiplier));
         }
     }
 
@@ -50,8 +54,19 @@ public class EnemyProjectile extends Projectile {
             mStatus = (int) Math.floor(elapsedTime / ANIMATION_SPEED);
         }
 
-        mImage.setBounds(bounds);
-        mImage.draw(canvas);
+        Matrix matrix = new Matrix();
+        //Set the destination rectangle
+        RectF dst = new RectF(bounds.left,
+                bounds.top,
+                (float) (bounds.left + (bounds.width() * SanitizorGame.pixelMultiplier)),
+                (float) (bounds.top + (bounds.height() * SanitizorGame.pixelMultiplier)));
+        //Map to the bounds coordinates
+        matrix.setRectToRect(new RectF(0, 0, bounds.width(), bounds.height()),
+                dst,
+                Matrix.ScaleToFit.FILL);
+        //Rotate
+        //matrix.postRotate(rotation, bounds.centerX(), bounds.centerY());
+        canvas.drawBitmap(mImage[0], matrix, null);
     }
 
 
