@@ -8,4 +8,10 @@
     <attr name="settingsTextColor" format="reference|color" />
     <attr name="gameButtonColor" format="reference|color" />
     <attr name="gameButtonTextColor" format="reference|color" />
+
+    <attr name="buttonHeight" format="dimension" />
+    <attr name="buttonHorMargin" format="dimension" />
+    <attr name="buttonVerMargin" format="dimension" />
+    <attr name="buttonTextSize" format="dimension" />
+    <attr name="buttonBackground" format="reference" />
 </resources>

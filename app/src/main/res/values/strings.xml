@@ -1,8 +1,11 @@
 <resources>
+    <string name="web_client_id">831741184989-jmalele806k63drjto7ti5tfd9auraob.apps.googleusercontent.com</string>
+
     <!-- Main Activity -->
     <string name="app_name">Sanitizor</string>
     <string name="Register">Register</string>
-    <string name="log_in">Log in</string>
+    <string name="log_in">Log In</string>
+    <string name="log_out">Log Out</string>
     <string name="play">Play</string>
     <string name="settings">Settings</string>
     <string name="view_leaderboard">View Leaderboard</string>
