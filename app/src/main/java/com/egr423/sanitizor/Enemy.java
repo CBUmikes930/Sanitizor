@@ -25,7 +25,7 @@ import androidx.core.content.res.ResourcesCompat;
 //TODO Create graphical components for each enemy type
 
 public class Enemy extends Character {
-    private double[] enemySpeeds;
+
     private Drawable[] mSprites = new Drawable[6];
     private int hitPoints;
     private int mDeathStatus;
@@ -122,11 +122,12 @@ public class Enemy extends Character {
         checkAtOriginalPos(false);
         // How long should the attack last
         final int ATTACK_PHASE = 4000;
-        // If I am attacking reset the last attack variable to current time
+        // If I am not attacking reset the last attack variable to current time
         if(!isAttacking) {
             isAttacking = true;
             attackTime = System.currentTimeMillis();
         }
+
         if (System.currentTimeMillis()-attackTime <= ATTACK_PHASE){
             //Log.d("Enemy.attack","Enemy should be attacking");
             moveDown(new PointF(0,40));
@@ -137,6 +138,7 @@ public class Enemy extends Character {
             isAttacking = false;
         }
     }
+
     public void moveDown(PointF velocity){
         wrapGrid();
 //        checkAtOriginalPos();

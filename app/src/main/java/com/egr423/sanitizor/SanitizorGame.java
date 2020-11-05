@@ -28,8 +28,6 @@ public class SanitizorGame {
     private boolean mGameOver = false;
     private boolean mPlayerisInvincible = true;
 
-
-
     private Joystick mJoystick = Joystick.getInstance();
 
     private int enemySize;
@@ -265,14 +263,12 @@ public class SanitizorGame {
             }
         }
 
-
         //Draw all projectiles
         for (Projectile proj : mProjectiles) {
             if (proj != null) {
                 proj.draw(canvas);
             }
         }
-
 
         //Draw the joystick circle
         mJoystick.draw(canvas);
