@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class LeaderboardActivity extends AppCompatActivity {
@@ -28,13 +29,14 @@ public class LeaderboardActivity extends AppCompatActivity {
                 DividerItemDecoration.VERTICAL);
         recyclerView.addItemDecoration(divider);
 
-        //Use LeaderboardManager to populate the recycler view
-        LeaderboardManager leaderboardManager = new LeaderboardManager();
-        leaderboardManager.populateLeaderboard(this, recyclerView);
+        ProgressBar progressBar = findViewById(R.id.progressBar1);
 
+        //Use LeaderboardManager to populate the recycler view
+        LeaderboardManager leaderboardManager = LeaderboardManager.getInstance();
+        leaderboardManager.populateLeaderboard(this, recyclerView, progressBar);
         TextView userHighScore = findViewById(R.id.highscore);
         //Temporary literal
-        leaderboardManager.getUserHighScore(userHighScore, "MWS");
+        leaderboardManager.getUserHighScore(this, userHighScore);
     }
 
     //Return to the parent activity

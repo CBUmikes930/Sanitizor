@@ -1,12 +1,16 @@
 package com.egr423.sanitizor;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
-import android.media.MediaPlayer;
-import android.util.Log;
 
 import androidx.core.content.res.ResourcesCompat;
 
@@ -17,42 +21,37 @@ import androidx.core.content.res.ResourcesCompat;
  * When it collides with something it animates into a splashing animation
  */
 public class EnemyProjectile extends Projectile {
-
-    private Drawable mImage;
     public EnemyProjectile(Context context) {
         super(context);
+        mImage = new Bitmap[1];
         SPEED = -SPEED;
-        mImage = ResourcesCompat.getDrawable(context.getResources(), R.drawable.enemy_projectile, null);
+        mImage[0] = BitmapFactory.decodeResource(context.getResources(), R.drawable.enemy_projectile);
         if (mImage != null) {
             bounds = new Rect(0, 0,
-                    (int) (mImage.getIntrinsicWidth() * SanitizorGame.pixelMultiplier),
-                    (int) (mImage.getIntrinsicHeight() * SanitizorGame.pixelMultiplier));
+                    (int) (mImage[0].getWidth() * SanitizorGame.PIXEL_MULTIPLIER),
+                    (int) (mImage[0].getHeight() * SanitizorGame.PIXEL_MULTIPLIER));
         }
+        mLastMoved = System.currentTimeMillis();
     }
-
 
     public void move() {
         if (!mAnimationIsRunning) {
-            //Move up a speed
-            bounds.offset(0, -SPEED);
-            //If collided with the top of screen, then play animation
-            if (bounds.bottom <= 0) {
-                bounds.offsetTo(bounds.left, 0);
-                startAnimation();
-            }
+            //Move down a speed
+            bounds.offset(0, (int) (-SPEED * (System.currentTimeMillis() - mLastMoved)));
+            mLastMoved = System.currentTimeMillis();
+        } else {
+            mStatus++;
         }
     }
 
     public void draw(Canvas canvas){
-        float ANIMATION_SPEED = 1;
-        if (mAnimationIsRunning) {
-            long elapsedTime = System.currentTimeMillis() - mStartTime;
-            mStatus = (int) Math.floor(elapsedTime / ANIMATION_SPEED);
+        if (mStatus < mImage.length) {
+            Matrix matrix = new Matrix();
+            //Map to the bounds coordinates
+            matrix.setRectToRect(new RectF(0, 0, mImage[mStatus].getWidth(), mImage[mStatus].getHeight()),
+                    new RectF(bounds.left, bounds.top, bounds.right, bounds.bottom),
+                    Matrix.ScaleToFit.FILL);
+            canvas.drawBitmap(mImage[0], matrix, null);
         }
-
-        mImage.setBounds(bounds);
-        mImage.draw(canvas);
     }
-
-
 }

@@ -1,13 +1,17 @@
 package com.egr423.sanitizor;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
+import android.graphics.RectF;
 import android.util.Log;
-
-import androidx.core.content.res.ResourcesCompat;
 
 /**
  * Created by Micah Steinbock on 10/6/2020
@@ -19,46 +23,63 @@ public class Player extends Character {
     //Player position values
     private final int BOTTOM_PADDING = 50; //Padding to keep image off of bottom
 
-    //Speed multiplier for the movement speed based on accelerometer
-
-
-    //The location of the top left corner of the player
-
     //The image resource for the player
-    private Drawable mImage;
+    private Bitmap[] mImage;
+    private int rotation;
+    private int cur_sprite;
+
+    private final int INVICIBILITY_DURATION = 1000;
     private boolean isAlive;
     private boolean justTookDamage;
     private long lastDamaged;
-    private boolean isInvincible;
+    private final boolean isInvincible;
     private int playerLives;
-    //Screen Dimensions
+    private boolean mAnimationIsRunning;
+    private long mStartTime;
+    private boolean mGameOverStatus;
+    private long mLastMoved;
 
     public Player(Context context) {
         //Load the image from the resources
-        mImage = ResourcesCompat.getDrawable(context.getResources(), R.drawable.player, null);
-        if (mImage != null) {
+        cur_sprite = 0;
+        mImage = new Bitmap[11];
+        for (int i = 0; i < 11; i++) {
+            //Get sprite name
+            String name = "player_0" + i;
+            //Get sprite id
+            int id = context.getResources().getIdentifier(name, "drawable", context.getPackageName());
+            if (id == 0) {
+                Log.e("Projectile Error", "ID lookup for resource " + name + " failed.");
+            }
+            //Get sprite
+            mImage[i] = BitmapFactory.decodeResource(context.getResources(), id);
+        }
+
+        if (mImage[0] != null) {
             //If image was loaded, then calculate it's relative height compared to the WIDTH (aspect ratio)
+            rotation = 0;
+            mAnimationIsRunning = false;
             bounds = new Rect(0, 0,
-                    (int) (mImage.getIntrinsicWidth() * SanitizorGame.pixelMultiplier),
-                    (int) (mImage.getIntrinsicHeight() * SanitizorGame.pixelMultiplier));
+                    (int) (mImage[0].getWidth() * SanitizorGame.PIXEL_MULTIPLIER),
+                    (int) (mImage[0].getHeight() * SanitizorGame.PIXEL_MULTIPLIER));
         } else {
             //Couldn't load, so post a message and set HEIGHT = WIDTH
             Log.d("Player Error", "Could not load mPlayerImage from resource: R.drawable.player");
         }
 
-        SPEED = 1.5;
+
+        SPEED = 0.1;
         justTookDamage = false;
         isInvincible = false;
         playerLives = 3;
-
+        mGameOverStatus = false;
+        shotCoolDown = 1000;
         //Set initial position
         setStartPosition();
-
-        //Set color
+        mLastMoved = System.currentTimeMillis();
     }
 
-    public void damagePlayer(){
-        final int invincibility_frame = 1000;
+    public void damagePlayer() {
         if(!justTookDamage){
             Log.d("Player", "Player took damage!");
             playerLives--;
@@ -66,17 +87,22 @@ public class Player extends Character {
             justTookDamage = true;
             lastDamaged = System.currentTimeMillis();
         }
-        if(System.currentTimeMillis()-lastDamaged > invincibility_frame){
-            justTookDamage = false;
+        if (playerLives <= 0) {
+            startDeathAnimation();
         }
+    }
 
+    public void checkInvincibility() {
+        if (System.currentTimeMillis() - lastDamaged > INVICIBILITY_DURATION) {
+            justTookDamage = false;
+            cur_sprite = 0;
+        }
     }
 
     public void move(PointF velocity) {
         //Move center by velocity on x-axis, but anchor y
-        bounds.offset((int) (-velocity.x * SPEED), 0);
-        //Log.d("VELOCITY CHECK", "Original Velocity: " + -velocity.x);
-        //Log.d("VELOCITY CHECK", "Modified Velocity: " + -velocity.x * SPEED);
+        bounds.offset((int) (-velocity.x * SPEED * (System.currentTimeMillis() - mLastMoved)), 0);
+        mLastMoved = System.currentTimeMillis();
 
         //Check if still on screen
         if (bounds.right > SanitizorGame.mSurfaceWidth) {
@@ -89,10 +115,35 @@ public class Player extends Character {
     }
 
     public void draw(Canvas canvas) {
-        if (mImage != null) {
-            //If we have a player image, then draw it
-            mImage.setBounds(bounds);
-            mImage.draw(canvas);
+        float ROTATION_RATE = 0.1f;
+
+        if (mImage[cur_sprite] != null) {
+            if (mAnimationIsRunning) {
+                rotation = (int) ((System.currentTimeMillis() - mStartTime) * ROTATION_RATE);
+                if (rotation > 90) {
+                    rotation = 90;
+                    mGameOverStatus = true;
+                }
+            }
+
+            Matrix matrix = new Matrix();
+            //Map to the bounds coordinates
+            matrix.setRectToRect(new RectF(0, 0, mImage[cur_sprite].getWidth(), mImage[cur_sprite].getHeight()),
+                    new RectF(bounds.left, bounds.top, bounds.right, bounds.bottom),
+                    Matrix.ScaleToFit.FILL);
+            //Rotate
+            matrix.postRotate(rotation, bounds.centerX(), bounds.centerY());
+
+            if (System.currentTimeMillis() - lastDamaged < 100) {
+                //Show damaged player animation
+                canvas.drawBitmap(mImage[1], matrix, null);
+            } else if (System.currentTimeMillis() - lastDamaged < INVICIBILITY_DURATION) {
+                //Show invincibility flash
+                cur_sprite = (((System.currentTimeMillis() - lastDamaged) / 200) % 2 == 0) ? 2 : 0;
+                canvas.drawBitmap(mImage[cur_sprite], matrix, null);
+            } else {
+                canvas.drawBitmap(mImage[cur_sprite], matrix, null);
+            }
         }
     }
 
@@ -108,5 +159,24 @@ public class Player extends Character {
 
     public void setPlayerLives(int lives){
         playerLives = lives;
+        if (playerLives == 0) {
+            startDeathAnimation();
+        }
+    }
+
+    public void startDeathAnimation() {
+        if (!mAnimationIsRunning) {
+            mStartTime = System.currentTimeMillis();
+            mAnimationIsRunning = true;
+        }
+    }
+
+    @Override
+    Point getPosition() {
+        return new Point(bounds.centerX(), bounds.top);
+    }
+
+    public boolean isGameOver() {
+        return mGameOverStatus;
     }
 }

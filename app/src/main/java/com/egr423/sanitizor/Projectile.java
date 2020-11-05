@@ -1,9 +1,15 @@
 package com.egr423.sanitizor;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.util.Log;
@@ -17,10 +23,10 @@ import androidx.core.content.res.ResourcesCompat;
  * When it collides with something it animates into a splashing animation
  */
 public class Projectile {
-    int SPEED = 30;
+    float SPEED = 1f;
 
     //private Drawable mSprite;
-    private Drawable[] mSprites = new Drawable[6];
+    protected Bitmap[] mImage;
     //Which sprite to draw
     int mStatus;
     //Animation start time
@@ -28,6 +34,7 @@ public class Projectile {
     long mStartTime;
     boolean mAnimationIsRunning = false;
     private boolean fromPlayer;
+    long mLastMoved;
     //Sound FX
     private MediaPlayer splashSound;
 
@@ -38,6 +45,7 @@ public class Projectile {
     }
 
     public Projectile(Context context) {
+        mImage = new Bitmap[6];
         //Start with the first sprite
         mStatus = 0;
         //Load in all the sprites into an array
@@ -50,17 +58,18 @@ public class Projectile {
                 Log.e("Projectile Error", "ID lookup for resource " + name + " failed.");
             }
             //Get sprite
-            mSprites[i] = ResourcesCompat.getDrawable(context.getResources(), id, null);
+            mImage[i] = BitmapFactory.decodeResource(context.getResources(), id);
         }
 
         //calculate height based off of the aspect ratio of the first image
-        if (mSprites[0] != null) {
+        if (mImage[0] != null) {
             bounds = new Rect(0, 0,
-                    (int) (mSprites[0].getIntrinsicWidth() * SanitizorGame.pixelMultiplier),
-                    (int) (mSprites[0].getIntrinsicHeight() * SanitizorGame.pixelMultiplier));
+                    (int) (mImage[0].getWidth() * SanitizorGame.PIXEL_MULTIPLIER),
+                    (int) (mImage[0].getHeight() * SanitizorGame.PIXEL_MULTIPLIER));
         }
         //Load SoundFX
         //splashSound = MediaPlayer.create(context, R.raw.splash);
+        mLastMoved = System.currentTimeMillis();
     }
 
     public void setPosition(Point location) {
@@ -70,7 +79,8 @@ public class Projectile {
     public void move() {
         if (!mAnimationIsRunning) {
             //Move up a speed
-            bounds.offset(0, -SPEED);
+            bounds.offset(0, (int) (-SPEED * (System.currentTimeMillis() - mLastMoved)));
+            mLastMoved = System.currentTimeMillis();
             //If collided with the top of screen, then play animation
             if (bounds.top <= 0) {
                 bounds.offsetTo(bounds.left, 0);
@@ -103,7 +113,7 @@ public class Projectile {
     }
 
     public boolean shouldDestroy() {
-        return mStatus >= mSprites.length;
+        return mStatus >= mImage.length;
     }
 
     public void draw(Canvas canvas) {
@@ -112,12 +122,26 @@ public class Projectile {
         //Calculate what frame of animation we should be on
         if (mAnimationIsRunning) {
             long elapsedTime = System.currentTimeMillis() - mStartTime;
+            int oldStatus = mStatus;
             mStatus = (int) Math.floor(elapsedTime / ANIMATION_SPEED);
+            //Recalculate bounds based on new sprite dimensions
+            if (oldStatus != mStatus && mStatus < mImage.length) {
+                int centerX = bounds.centerX();
+                int newLeft = (int) (centerX - (mImage[mStatus].getWidth() * SanitizorGame.PIXEL_MULTIPLIER * 0.5));
+
+                bounds.set(newLeft, bounds.top,
+                        newLeft + (int) (mImage[mStatus].getWidth() * SanitizorGame.PIXEL_MULTIPLIER),
+                        bounds.top + (int) (mImage[mStatus].getHeight() * SanitizorGame.PIXEL_MULTIPLIER));
+            }
         }
         //If the animation has not finished, then render the frame
-        if (mStatus < mSprites.length) {
-            mSprites[mStatus].setBounds(bounds);
-            mSprites[mStatus].draw(canvas);
+        if (mStatus < mImage.length) {
+            Matrix matrix = new Matrix();
+            //Map to the bounds coordinates
+            matrix.setRectToRect(new RectF(0, 0, mImage[mStatus].getWidth(), mImage[mStatus].getHeight()),
+                    new RectF(bounds.left, bounds.top, bounds.right, bounds.bottom),
+                    Matrix.ScaleToFit.FILL);
+            canvas.drawBitmap(mImage[mStatus], matrix, null);
         }
     }
 }

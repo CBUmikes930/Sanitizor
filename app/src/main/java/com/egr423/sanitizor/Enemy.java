@@ -1,16 +1,20 @@
 package com.egr423.sanitizor;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
-import androidx.core.content.res.ResourcesCompat;
-
-// THIS IS A TEST COMMIT TO JESSE's CONTRIBUTION
+import androidx.annotation.NonNull;
 
 /**
  * Created by Jesse Breslin on 10/9/2020
@@ -24,16 +28,21 @@ import androidx.core.content.res.ResourcesCompat;
 //TODO Add attack command to each subclass
 //TODO Create graphical components for each enemy type
 
-public class Enemy extends Character {
+public abstract class Enemy extends Character {
 
-    private Drawable[] mSprites = new Drawable[6];
-    private int hitPoints;
+    private final float ROTATION_RATE = 0.5f;
+    //VARIABLE Fields
+    int ATTACK_PHASE = 4000;
+    int hitPoints = 2;
+    int ATTACK_COOL_DOWN = 5000;
+    private float rotation = 0;
     private int mDeathStatus;
     private boolean mDeathAnimationIsRunning = false;
     private boolean wrappingx = false;
     private boolean wrappingy = false;
     private long mDeathStartTime;
 
+    private long mLastMovedTime;
     private final int TIME_TO_ATTACK = 20;
     private long lastAttacked;
     private long attackTime;
@@ -41,61 +50,56 @@ public class Enemy extends Character {
     private PointF gridSpeed;
     private boolean isAttacking;
     private boolean isReturning;
-    private boolean atOriginalPos =false;
+    private boolean atOriginalPos;
     private boolean wrappingGx = false;
     private boolean wrappingGy = false;
 
-    public Enemy(String color, Context context, Point location) {
-        mImage = ResourcesCompat.getDrawable(context.getResources(), R.drawable.enemy, null);
-        for (int i = 0; i < 6; i++) {
+    public Enemy(ENEMY_COLORS color, @NonNull Context context, Point location, int numberOfSprites) {
+        mImage = new Bitmap[numberOfSprites];
+        for (int i = 0; i < numberOfSprites; i++) {
             //Get sprite name
-            String name = "enemy_" + (i + 1);
+            String name = (color.name() + "_" + (i + 1)).toLowerCase();
             //Get sprite id
             int id = context.getResources().getIdentifier(name, "drawable", context.getPackageName());
             if (id == 0) {
                 Log.e("Projectile Error", "ID lookup for resource " + name + " failed.");
             }
             //Get sprite
-            mSprites[i] = ResourcesCompat.getDrawable(context.getResources(), id, null);
+            mImage[i] = BitmapFactory.decodeResource(context.getResources(), id);
         }
         mDeathStatus = 0;
-        if (mImage != null) {
+        if (mImage[mDeathStatus] != null) {
             bounds = new Rect(0, 0,
-                    (int) (mImage.getIntrinsicWidth() * SanitizorGame.pixelMultiplier),
-                    (int) (mImage.getIntrinsicHeight() * SanitizorGame.pixelMultiplier));
+                    (int) (mImage[mDeathStatus].getWidth() * SanitizorGame.PIXEL_MULTIPLIER),
+                    (int) (mImage[mDeathStatus].getHeight() * SanitizorGame.PIXEL_MULTIPLIER));
             bounds.offsetTo(location.x, location.y);
-            mSprites[0] = mImage;
         } else {
             Log.d("Enemy Error", "Could not load mEnemyImage from resource: R.drawable.enemy_" + color);
         }
-        SPEED = .5;
-        hitPoints = 2;
-        shotCoolDown = 500;
         lastFired = 0;
-
         gridPos = new Rect(bounds);
         atOriginalPos = true;
         // 0 0     gridspeed*20  bounds*50
     }
 
-
-    public void returnToOriginalPos(){
+    public void returnToOriginalPos() {
         moveGridPos();
         wrapGrid();
         checkAtOriginalPos(true);
-        if(!atOriginalPos) {
+        if (!atOriginalPos) {
 //            Log.d("Enemy Movement","" +gridPos.left +"," + gridPos.top);
-            int x = gridPos.left-bounds.left;
-            int y = gridPos.top-bounds.top;
-            double direction = Math.atan((0.0+y)/x);
+            int x = gridPos.left - bounds.left;
+            int y = gridPos.top - bounds.top;
+            double direction = Math.atan((0.0 + y) / x);
             int sign = 1;
-            if(x < 0){
+            if (x < 0) {
                 sign = -1;
             }
             int speed = 40;
-            bounds.offset((int) ((speed * Math.cos(direction) * sign)), (int) (Math.ceil(speed * Math.sin(direction) *sign)));
+            bounds.offset((int) ((speed * Math.cos(direction) * sign)),
+                    (int) (Math.ceil(speed * Math.sin(direction) * sign)));
             wrapScreen();
-            isReturning=true;
+            isReturning = true;
             //Log.d("Enemy.returnToAttackPos", "Enemy is returning");
         } else {
             //Log.d("Enemy.returnToAttackPos", "Enemy is no longer returning");
@@ -105,53 +109,52 @@ public class Enemy extends Character {
     }
 
     //To check if I can attack, I have to check if it has been enough time since I last attacked.
-    public boolean checkAttack(){
+    public boolean checkAttackCooldown() {
         checkAtOriginalPos(false);
-        final int ATTACK_COOL_DOWN = 5000;
-        if(isAttacking || System.currentTimeMillis()-lastAttacked >= ATTACK_COOL_DOWN){
+        if (isAttacking || System.currentTimeMillis() - lastAttacked >= ATTACK_COOL_DOWN) {
             gridPos = new Rect(bounds);
             return true;
-        } else{
+        } else {
             return false;
         }
     }
+
     // Attacking
-    public void attack(){
+    public void checkAttack() {
         moveGridPos();
         wrapGrid();
         checkAtOriginalPos(false);
         // How long should the attack last
-        final int ATTACK_PHASE = 4000;
-        // If I am not attacking reset the last attack variable to current time
-        if(!isAttacking) {
+        // If I am attacking reset the last attack variable to current time
+        if (!isAttacking) {
             isAttacking = true;
             attackTime = System.currentTimeMillis();
         }
-
-        if (System.currentTimeMillis()-attackTime <= ATTACK_PHASE){
+        if (System.currentTimeMillis() - attackTime <= ATTACK_PHASE) {
             //Log.d("Enemy.attack","Enemy should be attacking");
-            moveDown(new PointF(0,40));
+            attack(new PointF(0, 40));
         } else {
 //            Log.d("Enemy Movement","" +gridPos.left +"," + gridPos.top);
-            isReturning= true;
+            isReturning = true;
             //Log.d("Enemy.attack", "Enemy stopped attacking after " +(System.currentTimeMillis()-attackTime));
             isAttacking = false;
         }
     }
 
-    public void moveDown(PointF velocity){
+    public void attack(@NonNull PointF velocity) {
         wrapGrid();
 //        checkAtOriginalPos();
         bounds.offset(0, (int) (velocity.y * SPEED));
         wrapScreen();
     }
 
-    public void move(PointF velocity) {
+    public void move(@NonNull PointF velocity) {
         checkAtOriginalPos(false);
         gridSpeed = velocity;
         moveGridPos();
 //        checkAtOriginalPos();
-        bounds.offset((int) (velocity.x * SPEED), (int) (velocity.y * SPEED));
+        bounds.offset((int) (velocity.x * SPEED),
+                (int) (velocity.y * SPEED));
         wrapScreen();
         wrapGrid();
     }
@@ -181,7 +184,7 @@ public class Enemy extends Character {
         }
     }
 
-    private void wrapGrid(){
+    private void wrapGrid() {
         if (gridPos.right <= SanitizorGame.mSurfaceWidth && gridPos.left > 0) {
             wrappingGx = false;
         }
@@ -212,8 +215,8 @@ public class Enemy extends Character {
     }
 
     public boolean shouldDestroy() {
-        Log.d("Enemy", "Should Destroy " + (mDeathStatus >= mSprites.length));
-        return mDeathStatus >= mSprites.length;
+        Log.d("Enemy", "Should Destroy " + (mDeathStatus >= mImage.length));
+        return mDeathStatus >= mImage.length;
     }
 
     public void startDeathAnimation() {
@@ -225,9 +228,8 @@ public class Enemy extends Character {
 
     }
 
-
     public void setPosition(int x, int y) {
-        bounds.offsetTo(x,y);
+        bounds.offsetTo(x, y);
     }
 
     public boolean isDeathAnimationRunning() {
@@ -239,30 +241,37 @@ public class Enemy extends Character {
     }
 
     public void draw(Canvas canvas) {
-        if (mImage != null) {
+        if (mImage[mDeathStatus] != null) {
             final float ANIMATION_SPEED = 50;
-            //If we have a player image, then draw it
 
             if (mDeathAnimationIsRunning) {
                 long elapsedTime = System.currentTimeMillis() - mDeathStartTime;
                 mDeathStatus = (int) Math.floor(elapsedTime / ANIMATION_SPEED);
             }
-            if (mDeathStatus < mSprites.length) {
-                mSprites[mDeathStatus].setBounds(bounds);
-                mSprites[mDeathStatus].draw(canvas);
+
+            if (mDeathStatus < mImage.length) {
+                Matrix matrix = new Matrix();
+                //Map to the bounds coordinates
+                matrix.setRectToRect(new RectF(0, 0, mImage[mDeathStatus].getWidth(), mImage[mDeathStatus].getHeight()),
+                        new RectF(bounds.left, bounds.top, bounds.right, bounds.bottom),
+                        Matrix.ScaleToFit.FILL);
+                //Rotate
+                rotation += ROTATION_RATE;
+                matrix.postRotate(rotation, bounds.centerX(), bounds.centerY());
+                canvas.drawBitmap(mImage[mDeathStatus], matrix, null);
             }
         }
     }
 
-    public boolean getIsAttacking(){
+    public boolean getIsAttacking() {
         return isAttacking;
     }
 
-    public boolean getIsReturning(){
+    public boolean getIsReturning() {
         return isReturning;
     }
 
-    public boolean getAtOriginalPos(){
+    public boolean getAtOriginalPos() {
         return atOriginalPos;
     }
 
@@ -282,19 +291,23 @@ public class Enemy extends Character {
         }
     }
 
-    private void setGridSpeed(PointF speedOfGrid){
-        gridSpeed=speedOfGrid;
+    private void setGridSpeed(PointF speedOfGrid) {
+        gridSpeed = speedOfGrid;
     }
 
-    private void moveGridPos(){
-        gridPos.offset((int) (gridSpeed.x * SPEED), (int) (gridSpeed.y * SPEED));
+    private void moveGridPos() {
+        gridPos.offset((int) (gridSpeed.x * SPEED),
+                (int) (gridSpeed.y * SPEED));
     }
 
-    public int getEnemyWidth(){
-        return (bounds.right-bounds.left);
+    public int getEnemyWidth() {
+        return (bounds.right - bounds.left);
     }
-    public int getEnemyHeight(){
-        return (bounds.bottom-bounds.top);
+
+    public int getEnemyHeight() {
+        return (bounds.bottom - bounds.top);
     }
+
+    protected enum ENEMY_COLORS {RED}
 
 }
