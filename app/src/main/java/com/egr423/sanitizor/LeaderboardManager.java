@@ -16,6 +16,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -92,16 +94,14 @@ public class LeaderboardManager {
     public void getUserHighScore(Context context, TextView textView) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        //Get instance id (UUID)
-        SharedPreferences sharedPreferences = context.getSharedPreferences(
-                "PREF_UNIQUE_ID", Context.MODE_PRIVATE);
-        String uniqueID = sharedPreferences.getString("PREF_UNIQUE_ID", null);
-        //If it doesn't exist, create it
-        if (uniqueID == null) {
-            uniqueID = UUID.randomUUID().toString();
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString("PREF_UNIQUE_ID", uniqueID);
-            editor.apply();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String uniqueID;
+        if (user != null) {
+            Log.d("SignIn", "User found: " + user.getEmail());
+            uniqueID = user.getUid();
+        } else {
+            textView.setText(context.getString(R.string.high_score_sign_in));
+            return;
         }
 
         //Find the scores for instance id
@@ -138,28 +138,17 @@ public class LeaderboardManager {
     /**
      * Method to add a new score into the database
      * @param context - the activity that this is getting called from
-     * @param name - the username to display with the score
+     * @param  - the username to display with the score
      * @param number - the score
      */
-    public void addNewScore(Context context, String name, Integer number) {
+    public void addNewScore(Context context, Integer number) {
         //Create data record map
-        Map<String, Object> data = new HashMap<>();
-        data.put("name", name);
-        data.put("score", number);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        //Get instance id (UUID)
-        SharedPreferences sharedPreferences = context.getSharedPreferences(
-                "PREF_UNIQUE_ID", Context.MODE_PRIVATE);
-        String uniqueID = sharedPreferences.getString("PREF_UNIQUE_ID", null);
-        //If it doesn't exist, create it
-        if (uniqueID == null) {
-            uniqueID = UUID.randomUUID().toString();
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString("PREF_UNIQUE_ID", uniqueID);
-            editor.apply();
-        }
-        //Add instance unique id
-        data.put("instance", uniqueID);
+        Map<String, Object> data = new HashMap<>();
+        data.put("name", user.getDisplayName());
+        data.put("score", number);
+        data.put("instance", user.getUid());
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 

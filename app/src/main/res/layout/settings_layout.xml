@@ -81,7 +81,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:padding="20dp"
-        android:text="@string/clear_local_leaderboard" />
+        android:text="@string/clear_local_leaderboard"
+        android:visibility="gone" />
 
 
 </androidx.appcompat.widget.LinearLayoutCompat>
