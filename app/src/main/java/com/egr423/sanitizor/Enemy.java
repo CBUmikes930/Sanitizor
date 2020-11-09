@@ -132,7 +132,7 @@ public abstract class Enemy extends Character {
         }
         if (System.currentTimeMillis() - attackTime <= ATTACK_PHASE) {
             //Log.d("Enemy.attack","Enemy should be attacking");
-            attack(new PointF(0, 40));
+            attack(new PointF(0, 80));
         } else {
 //            Log.d("Enemy Movement","" +gridPos.left +"," + gridPos.top);
             isReturning = true;
@@ -159,7 +159,7 @@ public abstract class Enemy extends Character {
         wrapGrid();
     }
 
-    private void wrapScreen() {
+    void wrapScreen() {
         if (bounds.right <= SanitizorGame.mSurfaceWidth && bounds.left > 0) {
             wrappingx = false;
         }
@@ -184,7 +184,7 @@ public abstract class Enemy extends Character {
         }
     }
 
-    private void wrapGrid() {
+    void wrapGrid() {
         if (gridPos.right <= SanitizorGame.mSurfaceWidth && gridPos.left > 0) {
             wrappingGx = false;
         }
@@ -209,13 +209,13 @@ public abstract class Enemy extends Character {
         }
     }
 
-    public void hit() {
+    public void damageEnemy() {
         hitPoints--;
-        Log.d("Enemy", "Enemy hit, current HP: " + hitPoints);
+//        Log.d("Enemy", "Enemy hit, current HP: " + hitPoints);
     }
 
     public boolean shouldDestroy() {
-        Log.d("Enemy", "Should Destroy " + (mDeathStatus >= mImage.length));
+//        Log.d("Enemy", "Should Destroy " + (mDeathStatus >= mImage.length));
         return mDeathStatus >= mImage.length;
     }
 
@@ -223,7 +223,7 @@ public abstract class Enemy extends Character {
         if (!mDeathAnimationIsRunning) {
             mDeathStartTime = System.currentTimeMillis();
             mDeathAnimationIsRunning = true;
-            Log.d("Enemy", "Started Death Animation");
+//            Log.d("Enemy", "Started Death Animation");
         }
 
     }
@@ -281,7 +281,7 @@ public abstract class Enemy extends Character {
             atOriginalPos = false;
         } else {
             if (shouldReturn) {
-                Log.d("Enemy", "Returning to original position");
+//                Log.d("Enemy", "Returning to original position");
                 bounds.offsetTo(gridPos.left, gridPos.top);
 //            moveGridPos();
                 wrapGrid();
@@ -308,6 +308,6 @@ public abstract class Enemy extends Character {
         return (bounds.bottom - bounds.top);
     }
 
-    protected enum ENEMY_COLORS {RED}
+    protected enum ENEMY_COLORS {RED, BLUE}
 
 }

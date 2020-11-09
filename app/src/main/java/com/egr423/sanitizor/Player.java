@@ -4,9 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
@@ -24,7 +22,6 @@ public class Player extends Character {
     private final int BOTTOM_PADDING = 50; //Padding to keep image off of bottom
 
     //The image resource for the player
-    private Bitmap[] mImage;
     private int rotation;
     private int cur_sprite;
 
@@ -34,8 +31,8 @@ public class Player extends Character {
     private long lastDamaged;
     private final boolean isInvincible;
     private int playerLives;
-    private boolean mAnimationIsRunning;
-    private long mStartTime;
+    private boolean mDeathAnimationIsRunning;
+    private long mDeathStartTime;
     private boolean mGameOverStatus;
     private long mLastMoved;
 
@@ -45,7 +42,7 @@ public class Player extends Character {
         mImage = new Bitmap[11];
         for (int i = 0; i < 11; i++) {
             //Get sprite name
-            String name = "player_0" + i;
+            String name = ("player_" + i).toLowerCase();
             //Get sprite id
             int id = context.getResources().getIdentifier(name, "drawable", context.getPackageName());
             if (id == 0) {
@@ -54,14 +51,13 @@ public class Player extends Character {
             //Get sprite
             mImage[i] = BitmapFactory.decodeResource(context.getResources(), id);
         }
-
-        if (mImage[0] != null) {
+        if (mImage[cur_sprite] != null) {
             //If image was loaded, then calculate it's relative height compared to the WIDTH (aspect ratio)
             rotation = 0;
-            mAnimationIsRunning = false;
+            mDeathAnimationIsRunning = false;
             bounds = new Rect(0, 0,
-                    (int) (mImage[0].getWidth() * SanitizorGame.PIXEL_MULTIPLIER),
-                    (int) (mImage[0].getHeight() * SanitizorGame.PIXEL_MULTIPLIER));
+                    (int) (mImage[cur_sprite].getWidth() * SanitizorGame.PIXEL_MULTIPLIER),
+                    (int) (mImage[cur_sprite].getHeight() * SanitizorGame.PIXEL_MULTIPLIER));
         } else {
             //Couldn't load, so post a message and set HEIGHT = WIDTH
             Log.d("Player Error", "Could not load mPlayerImage from resource: R.drawable.player");
@@ -70,7 +66,7 @@ public class Player extends Character {
 
         SPEED = 0.1;
         justTookDamage = false;
-        isInvincible = false;
+        isInvincible = true;
         playerLives = 3;
         mGameOverStatus = false;
         shotCoolDown = 1000;
@@ -93,7 +89,7 @@ public class Player extends Character {
     }
 
     public void checkInvincibility() {
-        if (System.currentTimeMillis() - lastDamaged > INVICIBILITY_DURATION) {
+        if (System.currentTimeMillis() - lastDamaged > INVICIBILITY_DURATION && !isInvincible) {
             justTookDamage = false;
             cur_sprite = 0;
         }
@@ -118,8 +114,11 @@ public class Player extends Character {
         float ROTATION_RATE = 0.1f;
 
         if (mImage[cur_sprite] != null) {
-            if (mAnimationIsRunning) {
-                rotation = (int) ((System.currentTimeMillis() - mStartTime) * ROTATION_RATE);
+            final float ANIMATION_SPEED = 90;
+            if (mDeathAnimationIsRunning) {
+                long elapsedTime = System.currentTimeMillis()   -mDeathStartTime;
+                cur_sprite = (int) Math.floor(elapsedTime/ANIMATION_SPEED);
+                rotation = (int) ((System.currentTimeMillis() - mDeathStartTime) * ROTATION_RATE);
                 if (rotation > 90) {
                     rotation = 90;
                     mGameOverStatus = true;
@@ -134,10 +133,10 @@ public class Player extends Character {
             //Rotate
             matrix.postRotate(rotation, bounds.centerX(), bounds.centerY());
 
-            if (System.currentTimeMillis() - lastDamaged < 100) {
+            if (System.currentTimeMillis() - lastDamaged < 100 && !mDeathAnimationIsRunning) {
                 //Show damaged player animation
                 canvas.drawBitmap(mImage[1], matrix, null);
-            } else if (System.currentTimeMillis() - lastDamaged < INVICIBILITY_DURATION) {
+            } else if (System.currentTimeMillis() - lastDamaged < INVICIBILITY_DURATION && !mDeathAnimationIsRunning) {
                 //Show invincibility flash
                 cur_sprite = (((System.currentTimeMillis() - lastDamaged) / 200) % 2 == 0) ? 2 : 0;
                 canvas.drawBitmap(mImage[cur_sprite], matrix, null);
@@ -165,9 +164,9 @@ public class Player extends Character {
     }
 
     public void startDeathAnimation() {
-        if (!mAnimationIsRunning) {
-            mStartTime = System.currentTimeMillis();
-            mAnimationIsRunning = true;
+        if (!mDeathAnimationIsRunning) {
+            mDeathStartTime = System.currentTimeMillis();
+            mDeathAnimationIsRunning = true;
         }
     }
 

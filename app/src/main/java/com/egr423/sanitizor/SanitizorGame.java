@@ -41,11 +41,13 @@ public class SanitizorGame {
     private final Joystick mJoystick = Joystick.getInstance();
     private final Enemy[] enemies;
     private final Projectile[] mProjectiles;
+    private final PowerUp[] mPowerUps;
     private final Context mContext;
     private int mPlayerScore = 0;
     private boolean mGameOver = false;
     private int enemySize;
     private int mProjPointer;
+    private int mPowerPointer;
     private int level;
     private boolean levelEnding;
 
@@ -80,6 +82,10 @@ public class SanitizorGame {
         //Initialize projectiles array
         mProjectiles = new Projectile[1000];
         mProjPointer = 0;
+
+        //Initialize power ups array
+        mPowerUps = new PowerUp[1000];
+
 
         //Start the game
         newGame();
@@ -117,7 +123,7 @@ public class SanitizorGame {
             } catch (Exception e) {
                 location = new Point(20, 100);
             }
-            enemies[enemySize++] = new RedEnemy(mContext, location);
+            enemies[enemySize++] = new BlueEnemy(mContext, location);
         }
     }
 
@@ -156,7 +162,6 @@ public class SanitizorGame {
             //TODO Take out random score when we implement score
             //Generate random score for now
             Random random = new Random();
-            mPlayerScore = random.nextInt(10000);
             gameIntent.putExtra("com.egr423.sanitizor.score", mPlayerScore);
             mContext.startActivity(gameIntent);
         }
@@ -166,6 +171,12 @@ public class SanitizorGame {
         int currentEnemyIndex = 0;
         for (Enemy enemy : enemies) {
             if (enemy != null && enemy.shouldDestroy()) {
+                Random rand = new Random();
+                int spawn = rand.nextInt(10);
+                if(spawn == 0){
+                    Log.d("PowerUp", "PowerUp should have spawned");
+                    createPowerup(enemy);
+                }
                 enemies[currentEnemyIndex] = null;
                 enemySize--;
             }
@@ -196,11 +207,14 @@ public class SanitizorGame {
                         Rect.intersects(projectile.getRect(), enemy.getRect()) &&
                         !projectile.isAnimationRunning()) {
                     // enemy hit
-                    enemy.hit();
+                    enemy.damageEnemy();
                     projectile.startAnimation();
                     if (enemy.isDead() && !enemy.shouldDestroy() &&
                             !enemy.isDeathAnimationRunning()) {
                         enemy.startDeathAnimation();
+                        mPlayerScore += 100;
+                    } else {
+                        mPlayerScore += 10;
                     }
                 }
             }
@@ -301,6 +315,17 @@ public class SanitizorGame {
         mProjectiles[mProjPointer++] = projectile;
         //If we have filled the array, then loop back to the front of the array
         mProjPointer %= mProjectiles.length;
+    }
+
+    private void createPowerup(Enemy enemy){
+        PowerUp powerUp;
+        if (levelEnding){
+            return;
+        }
+        powerUp = new PowerUp(mContext);
+        powerUp.setPosition(enemy.getPosition());
+        mPowerUps[mPowerPointer++] = powerUp;
+        mPowerPointer %= mPowerUps.length;
     }
 
     public void draw(Canvas canvas) {
