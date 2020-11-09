@@ -43,4 +43,6 @@
     <string name="play_again">Play Again!</string>
     <string name="submit">Submit Score</string>
     <string name="level_start_message">Level Starting…</string>
+    <string  name="sign_in_notice">Your score will not be submitted to the leaderboard because you are not signed in</string>
+    <string  name="high_score_sign_in">You must sign in to view your high score</string>
 </resources>
