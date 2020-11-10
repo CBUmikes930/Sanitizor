@@ -5,13 +5,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.media.MediaPlayer;
 import android.util.Log;
 
 public class PowerUp extends Projectile {
-    float SPEED = 1f;
+    float SPEED = -1f;
     protected Bitmap[] mImage;
     int mStatus;
     //Animation start time
@@ -53,9 +54,15 @@ public class PowerUp extends Projectile {
     }
 
     @Override
+    public void setPosition(Point location) {
+        bounds.offsetTo(location.x, location.y);
+        Log.d("PowerUp", "Set position to: " + location.x + ", " + location.y);
+    }
+
+    @Override
     public void move(){
         Log.d("powerUp", "Current location:" + bounds.left +','+bounds.top);
-        bounds.offset(0, (int)(SPEED * (System.currentTimeMillis())));
+        bounds.offset(0, (int)(SPEED * (mLastMoved - System.currentTimeMillis())));
         mLastMoved = System.currentTimeMillis();
     }
 
@@ -70,8 +77,8 @@ public class PowerUp extends Projectile {
 
     @Override
     public boolean shouldDestroy(){
-        Log.d("PowerUp: shouldDestroy", ""+ (bounds.top < SanitizorGame.mSurfaceHeight));
-        return (bounds.top <= SanitizorGame.mSurfaceHeight);
+        Log.d("PowerUp: shouldDestroy", ""+ (bounds.top > SanitizorGame.mSurfaceHeight));
+        return (bounds.top >= SanitizorGame.mSurfaceHeight);
     }
 
     public void draw(Canvas canvas) {

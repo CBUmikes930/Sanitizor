@@ -175,7 +175,7 @@ public class SanitizorGame {
             if (enemy != null && enemy.shouldDestroy()) {
                 Random rand = new Random();
                 int spawn = rand.nextInt(10);
-                if(spawn == 0){
+                if(spawn < 7){
                     Log.d("PowerUp", "PowerUp should have spawned");
                     createPowerup(enemy);
                 }
@@ -344,6 +344,7 @@ public class SanitizorGame {
         if (levelEnding){
             return;
         }
+        Log.d("PowerUp", "createPowerup");
         powerUp = new PowerUp(mContext);
         powerUp.setPosition(enemy.getPosition());
         mPowerUps[mPowerPointer++] = powerUp;
@@ -368,6 +369,12 @@ public class SanitizorGame {
         for (Projectile proj : mProjectiles) {
             if (proj != null) {
                 proj.draw(canvas);
+            }
+        }
+
+        for (PowerUp powerUp : mPowerUps) {
+            if (powerUp != null) {
+                powerUp.draw(canvas);
             }
         }
 
