@@ -86,7 +86,7 @@ public class PowerUp extends Projectile {
     public boolean shouldDestroy(){
         Log.d("PowerUp: shouldDestroy", ""+ (bounds.top > SanitizorGame.mSurfaceHeight));
         if(!mShouldDestroy) {
-            mShouldDestroy = bounds.top >= SanitizorGame.mSurfaceHeight;
+            mShouldDestroy = bounds.top >= SanitizorGame.mSurfaceHeight || mStatus >= mImage.length;
         }
         return (mShouldDestroy);
     }
