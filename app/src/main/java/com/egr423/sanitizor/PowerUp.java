@@ -65,6 +65,7 @@ public class PowerUp extends Projectile {
         Log.d("powerUp", "Current location:" + bounds.left +','+bounds.top);
         bounds.offset(0, (int)(SPEED * (mLastMoved - System.currentTimeMillis())));
         mLastMoved = System.currentTimeMillis();
+        mShouldDestroy = bounds.top >= SanitizorGame.mSurfaceHeight;
     }
 
     @Override
@@ -79,7 +80,6 @@ public class PowerUp extends Projectile {
     @Override
     public boolean shouldDestroy(){
         Log.d("PowerUp: shouldDestroy", ""+ (bounds.top > SanitizorGame.mSurfaceHeight));
-        mShouldDestroy = bounds.top >= SanitizorGame.mSurfaceHeight;
         return (mShouldDestroy);
     }
 
