@@ -296,7 +296,7 @@ public abstract class Enemy extends Character {
     }
 
     public int getEnemyWidth() {
-        return (bounds.right - bounds.left);
+        return bounds.width();
     }
 
     public int getEnemyHeight() {
