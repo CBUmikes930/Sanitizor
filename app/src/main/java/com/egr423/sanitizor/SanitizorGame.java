@@ -124,7 +124,12 @@ public class SanitizorGame {
             } catch (Exception e) {
                 location = new Point(20, 100);
             }
-            enemies[enemySize++] = new BlueEnemy(mContext, location);
+            Random rand = new Random();
+            if (rand.nextBoolean()) {
+                enemies[enemySize++] = new BlueEnemy(mContext, location);
+            } else {
+                enemies[enemySize++] = new RedEnemy(mContext, location);
+            }
         }
     }
 
@@ -204,13 +209,12 @@ public class SanitizorGame {
         //Move Projectiles
         int i = 0;
         for (PowerUp powerUp: mPowerUps) {
-            if (powerUp != null && (!powerUp.shouldDestroy())) {
+            if (powerUp != null && !powerUp.shouldDestroy()) {
                 powerUp.move();
                 movePowerUp(powerUp);
             } else {
-                if(powerUp!= null) {
-                    Log.d("PowerUp", "" + powerUp);
-
+                if(powerUp != null) {
+                    Log.d("PowerUp", "Destroy");
                 }
                 mPowerUps[i] = null;
             }

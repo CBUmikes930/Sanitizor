@@ -12,7 +12,7 @@ import android.media.MediaPlayer;
 import android.util.Log;
 
 public class PowerUp extends Projectile {
-    float SPEED = -0.5f;
+    float SPEED = -1f;
     protected Bitmap[] mImage;
     int mStatus;
     //Animation start time
@@ -65,6 +65,7 @@ public class PowerUp extends Projectile {
         Log.d("powerUp", "Current location:" + bounds.left +','+bounds.top);
         bounds.offset(0, (int)(SPEED * (mLastMoved - System.currentTimeMillis())));
         mLastMoved = System.currentTimeMillis();
+        mShouldDestroy = bounds.top >= SanitizorGame.mSurfaceHeight;
     }
 
     @Override
@@ -76,18 +77,9 @@ public class PowerUp extends Projectile {
         }
     }
 
-    public void stopAnimation(){
-        if(mAnimationIsRunning){
-            mAnimationIsRunning = false;
-        }
-    }
-
     @Override
     public boolean shouldDestroy(){
         Log.d("PowerUp: shouldDestroy", ""+ (bounds.top > SanitizorGame.mSurfaceHeight));
-        if(!mShouldDestroy) {
-            mShouldDestroy = bounds.top >= SanitizorGame.mSurfaceHeight || mStatus >= mImage.length;
-        }
         return (mShouldDestroy);
     }
 
@@ -97,45 +89,41 @@ public class PowerUp extends Projectile {
     }
 
     public void draw(Canvas canvas) {
-        final float ANIMATION_SPEED = 300;
+        final float ANIMATION_SPEED = 50;
 
         //Calculate what frame of animation we should be on
-        if(!mShouldDestroy) {
-            if (mAnimationIsRunning) {
-                long elapsedTime = System.currentTimeMillis() - mStartTime;
-                int oldStatus = mStatus;
-                mStatus = (int) Math.floor(elapsedTime / ANIMATION_SPEED);
-                //Recalculate bounds based on new sprite dimensions
-                if (oldStatus != mStatus && mStatus < mImage.length) {
-                    int centerX = bounds.centerX();
-                    int newLeft = (int) (centerX - (mImage[mStatus].getWidth() * SanitizorGame.PIXEL_MULTIPLIER * 0.5));
+        if (mAnimationIsRunning) {
+            long elapsedTime = System.currentTimeMillis() - mStartTime;
+            int oldStatus = mStatus;
+            mStatus = (int) Math.floor(elapsedTime / ANIMATION_SPEED);
+            //Recalculate bounds based on new sprite dimensions
+            if (oldStatus != mStatus && mStatus < mImage.length) {
+                int centerX = bounds.centerX();
+                int newLeft = (int) (centerX - (mImage[mStatus].getWidth() * SanitizorGame.PIXEL_MULTIPLIER * 0.5));
 
-                    bounds.set(newLeft, bounds.top,
-                            newLeft + (int) (mImage[mStatus].getWidth() * SanitizorGame.PIXEL_MULTIPLIER),
-                            bounds.top + (int) (mImage[mStatus].getHeight() * SanitizorGame.PIXEL_MULTIPLIER));
-                }
+                bounds.set(newLeft, bounds.top,
+                        newLeft + (int) (mImage[mStatus].getWidth() * SanitizorGame.PIXEL_MULTIPLIER),
+                        bounds.top + (int) (mImage[mStatus].getHeight() * SanitizorGame.PIXEL_MULTIPLIER));
             }
-            // Reset the animation if it has finished.
-            if (mStatus >= mImage.length) {
-                mStatus = 0;
-                mStartTime = System.currentTimeMillis();
-            }
-            //If the animation has not finished, then render the frame
-            if (mStatus < mImage.length) {
-                Matrix matrix = new Matrix();
-                //Map to the bounds coordinates
-                matrix.setRectToRect(new RectF(0, 0, mImage[mStatus].getWidth(), mImage[mStatus].getHeight()),
-                        new RectF(bounds.left, bounds.top, bounds.right, bounds.bottom),
-                        Matrix.ScaleToFit.FILL);
-                canvas.drawBitmap(mImage[mStatus], matrix, null);
-            }
+        }
+        // Reset the animation if it has finished.
+        if(mStatus >= mImage.length){
+             mStatus = 0;
+             mStartTime = System.currentTimeMillis();
+        }
+        //If the animation has not finished, then render the frame
+        if (mStatus < mImage.length) {
+            Matrix matrix = new Matrix();
+            //Map to the bounds coordinates
+            matrix.setRectToRect(new RectF(0, 0, mImage[mStatus].getWidth(), mImage[mStatus].getHeight()),
+                    new RectF(bounds.left, bounds.top, bounds.right, bounds.bottom),
+                    Matrix.ScaleToFit.FILL);
+            canvas.drawBitmap(mImage[mStatus], matrix, null);
         }
     }
 
     public void destroyPowerUp(){
-        bounds= null;
         mShouldDestroy = true;
-
     }
 
     public void upgradePlayer(Player player){
