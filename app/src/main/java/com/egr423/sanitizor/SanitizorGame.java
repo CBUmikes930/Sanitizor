@@ -204,10 +204,15 @@ public class SanitizorGame {
         //Move Projectiles
         int i = 0;
         for (PowerUp powerUp: mPowerUps) {
-            if (powerUp != null && !powerUp.shouldDestroy()) {
+            if (powerUp != null && (!powerUp.shouldDestroy() || !Rect.intersects(powerUp.getRect(),
+                    mPlayer.getRect()))) {
                 powerUp.move();
                 movePowerUp(powerUp);
             } else {
+                if(powerUp!= null) {
+                    powerUp.upgradePlayer(mPlayer);
+                    powerUp.destroyPowerUp();
+                }
                 mPowerUps[i] = null;
             }
             i++;
@@ -246,7 +251,9 @@ public class SanitizorGame {
 
     private void movePowerUp(PowerUp powerUp) {
         if (Rect.intersects(powerUp.getRect(), mPlayer.getRect())) {
+            Log.d("PowerUp", "upgrade player");
             powerUp.upgradePlayer(mPlayer);
+
         }
     }
 
@@ -344,11 +351,12 @@ public class SanitizorGame {
         if (levelEnding){
             return;
         }
-        Log.d("PowerUp", "createPowerup");
+        Log.d("PowerUp", "create Powerup");
         powerUp = new PowerUp(mContext);
         powerUp.setPosition(enemy.getPosition());
         mPowerUps[mPowerPointer++] = powerUp;
         mPowerPointer %= mPowerUps.length;
+        powerUp.startAnimation();
     }
 
     public void draw(Canvas canvas) {

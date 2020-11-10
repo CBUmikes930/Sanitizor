@@ -20,6 +20,7 @@ public class PowerUp extends Projectile {
     long mStartTime;
     boolean mAnimationIsRunning = false;
     long mLastMoved;
+    boolean mShouldDestroy = false;
     //Sound FX
     private MediaPlayer collectSound;
 
@@ -78,7 +79,13 @@ public class PowerUp extends Projectile {
     @Override
     public boolean shouldDestroy(){
         Log.d("PowerUp: shouldDestroy", ""+ (bounds.top > SanitizorGame.mSurfaceHeight));
-        return (bounds.top >= SanitizorGame.mSurfaceHeight);
+        mShouldDestroy = bounds.top >= SanitizorGame.mSurfaceHeight;
+        return (mShouldDestroy);
+    }
+
+    @Override
+    public Rect getRect() {
+        return bounds;
     }
 
     public void draw(Canvas canvas) {
@@ -113,6 +120,10 @@ public class PowerUp extends Projectile {
                     Matrix.ScaleToFit.FILL);
             canvas.drawBitmap(mImage[mStatus], matrix, null);
         }
+    }
+
+    public void destroyPowerUp(){
+        mShouldDestroy = true;
     }
 
     public void upgradePlayer(Player player){
