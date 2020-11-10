@@ -26,6 +26,10 @@ public class Player extends Character {
     private int cur_sprite;
 
     private final int INVICIBILITY_DURATION = 1000;
+    private final long RAPID_FIRE_DURATION = 8000;
+    private final int NORMAL_SHOT_COOLDOWN = 1000;
+
+
     private boolean isAlive;
     private boolean justTookDamage;
     private long lastDamaged;
@@ -35,6 +39,9 @@ public class Player extends Character {
     private long mDeathStartTime;
     private boolean mGameOverStatus;
     private long mLastMoved;
+
+    private boolean mHasRapidFire;
+    private long mRapidFireStart;
 
     public Player(Context context) {
         //Load the image from the resources
@@ -69,7 +76,9 @@ public class Player extends Character {
         isInvincible = true;
         playerLives = 3;
         mGameOverStatus = false;
-        shotCoolDown = 1000;
+        shotCoolDown = NORMAL_SHOT_COOLDOWN;
+        mHasRapidFire = false;
+
         //Set initial position
         setStartPosition();
         mLastMoved = System.currentTimeMillis();
@@ -143,6 +152,11 @@ public class Player extends Character {
             } else {
                 canvas.drawBitmap(mImage[cur_sprite], matrix, null);
             }
+
+            if(!(System.currentTimeMillis() - mRapidFireStart < RAPID_FIRE_DURATION && mHasRapidFire)){
+                shotCoolDown = NORMAL_SHOT_COOLDOWN;
+                mHasRapidFire = false;
+            }
         }
     }
 
@@ -177,5 +191,11 @@ public class Player extends Character {
 
     public boolean isGameOver() {
         return mGameOverStatus;
+    }
+
+    public void activateRapidFire(){
+        mRapidFireStart = System.currentTimeMillis();
+        mHasRapidFire = true;
+        shotCoolDown = 0;
     }
 }

@@ -85,6 +85,7 @@ public class SanitizorGame {
 
         //Initialize power ups array
         mPowerUps = new PowerUp[1000];
+        mPowerPointer = 0;
 
 
         //Start the game
@@ -156,6 +157,7 @@ public class SanitizorGame {
             mPlayer.move(velocity);
             mPlayer.checkInvincibility();
             moveProjectiles();
+            movePowerUps();
 
         } else {
             Intent gameIntent = new Intent(mContext, GameOver.class);
@@ -198,6 +200,20 @@ public class SanitizorGame {
         }
     }
 
+    private void movePowerUps() {
+        //Move Projectiles
+        int i = 0;
+        for (PowerUp powerUp: mPowerUps) {
+            if (powerUp != null && !powerUp.shouldDestroy()) {
+                powerUp.move();
+                movePowerUp(powerUp);
+            } else {
+                mPowerUps[i] = null;
+            }
+            i++;
+        }
+    }
+
     private void moveProjectile(Projectile projectile) {
         if (projectile.isFromPlayer()) {
             for (Enemy enemy : enemies) {// check if enemy got hit
@@ -225,6 +241,12 @@ public class SanitizorGame {
                     mPlayer.damagePlayer();
                 }
             }
+        }
+    }
+
+    private void movePowerUp(PowerUp powerUp) {
+        if (Rect.intersects(powerUp.getRect(), mPlayer.getRect())) {
+            powerUp.upgradePlayer(mPlayer);
         }
     }
 

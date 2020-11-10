@@ -54,6 +54,7 @@ public class PowerUp extends Projectile {
 
     @Override
     public void move(){
+        Log.d("powerUp", "Current location:" + bounds.left +','+bounds.top);
         bounds.offset(0, (int)(SPEED * (System.currentTimeMillis())));
         mLastMoved = System.currentTimeMillis();
     }
@@ -69,7 +70,8 @@ public class PowerUp extends Projectile {
 
     @Override
     public boolean shouldDestroy(){
-        return (bounds.top >=SanitizorGame.mSurfaceHeight);
+        Log.d("PowerUp: shouldDestroy", ""+ (bounds.top < SanitizorGame.mSurfaceHeight));
+        return (bounds.top <= SanitizorGame.mSurfaceHeight);
     }
 
     public void draw(Canvas canvas) {
@@ -104,5 +106,9 @@ public class PowerUp extends Projectile {
                     Matrix.ScaleToFit.FILL);
             canvas.drawBitmap(mImage[mStatus], matrix, null);
         }
+    }
+
+    public void upgradePlayer(Player player){
+        player.activateRapidFire();
     }
 }
