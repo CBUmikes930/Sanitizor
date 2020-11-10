@@ -210,8 +210,10 @@ public class SanitizorGame {
                 movePowerUp(powerUp);
             } else {
                 if(powerUp!= null) {
+                    Log.d("PowerUp", "" + powerUp);
                     powerUp.upgradePlayer(mPlayer);
                     powerUp.destroyPowerUp();
+                    powerUp.stopAnimation();
                 }
                 mPowerUps[i] = null;
             }
