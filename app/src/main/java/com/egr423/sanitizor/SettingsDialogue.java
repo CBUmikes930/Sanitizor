@@ -80,13 +80,10 @@ public class SettingsDialogue extends BottomSheetDialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         BottomSheetDialog dialog = (BottomSheetDialog) super.onCreateDialog(savedInstanceState);
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialog) {
-                BottomSheetDialog d = (BottomSheetDialog) dialog;
-                FrameLayout bottomSheet = (FrameLayout) d.findViewById(com.google.android.material.R.id.design_bottom_sheet);
-                BottomSheetBehavior.from(bottomSheet).setState(BottomSheetBehavior.STATE_EXPANDED);
-            }
+        dialog.setOnShowListener((DialogInterface.OnShowListener) dialog1 -> {
+            BottomSheetDialog d = (BottomSheetDialog) dialog1;
+            FrameLayout bottomSheet = (FrameLayout) d.findViewById(com.google.android.material.R.id.design_bottom_sheet);
+            BottomSheetBehavior.from(bottomSheet).setState(BottomSheetBehavior.STATE_EXPANDED);
         });
 
         // Do something with your dialog like setContentView() or whatever
@@ -155,13 +152,9 @@ public class SettingsDialogue extends BottomSheetDialogFragment {
     private RadioGroup.OnCheckedChangeListener setOnCheckedChangeListener(int id) {
         switch (id) {
             case R.id.control_scheme:
-                return new RadioGroup.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(RadioGroup group, int checkedId) {
-                        sharedPref.edit().putInt("controlScheme", checkedId).apply();
-                        controlScheme = checkedId;
-                    }
-
+                return (group, checkedId) -> {
+                    sharedPref.edit().putInt("controlScheme", checkedId).apply();
+                    controlScheme = checkedId;
                 };
             default:
                 throw new IllegalArgumentException("id should be an id one of the associated " +
@@ -181,35 +174,26 @@ public class SettingsDialogue extends BottomSheetDialogFragment {
 
         switch (id) {
             case R.id.mute_unmute_button:
-                return new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        playGameAudio = !playGameAudio;
-                        onClickSettingsButton((Button) v, playGameAudio, "playGameAudio",
-                                "Game audio has been turned");
-                        setDisplay(muteUnmuteButton);
-                    }
+                return v -> {
+                    playGameAudio = !playGameAudio;
+                    onClickSettingsButton((Button) v, playGameAudio, "playGameAudio",
+                            "Game audio has been turned");
+                    setDisplay(muteUnmuteButton);
                 };
 
             case R.id.dark_mode_light_mode_button:
-                return new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        useDarkMode = !useDarkMode;
-                        onClickSettingsButton((Button) v, useDarkMode, "useDarkMode",
-                                "Dark Mode has been turned");
-                        setDisplay(darkModeLightModeButton);
-                        getActivity().recreate();
-                    }
+                return v -> {
+                    useDarkMode = !useDarkMode;
+                    onClickSettingsButton((Button) v, useDarkMode, "useDarkMode",
+                            "Dark Mode has been turned");
+                    setDisplay(darkModeLightModeButton);
+                    getActivity().recreate();
                 };
 
             case R.id.clear_local_leaderboard_button:
-                return new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        sendToast(v, "Local Database has been cleared.");
-                        setDisplay(clearLeaderboardButton);
-                    }
+                return v -> {
+                    sendToast(v, "Local Database has been cleared.");
+                    setDisplay(clearLeaderboardButton);
                 };
             default:
                 throw new IllegalArgumentException("id should be an id one of the associated buttons" +

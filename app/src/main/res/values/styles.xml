@@ -18,10 +18,15 @@
         <item name="gameBackgroundColor">@color/colorBackgroundLight</item>
         <item name="joystick_bg">@color/joystickBackgroundLight</item>
         <item name="joystick_handle">@color/joystickHandleLight</item>
-        <item name="buttonTextColor">@color/buttonTextLight</item>
         <item name="settingsTextColor">@color/settingsTextColorLight</item>
         <item name="gameButtonColor">@color/gameButtonBGColorLight</item>
         <item name="gameButtonTextColor">@color/gameButtonTextColorLight</item>
+        <item name="buttonHeight">75dp</item>
+        <item name="buttonHorMargin">25dp</item>
+        <item name="buttonVerMargin">15dp</item>
+        <item name="buttonTextColor">@color/buttonTextLight</item>
+        <item name="buttonTextSize">25sp</item>
+        <item name="buttonBackground">@drawable/button_frame_med</item>
     </style>
 
     <style name="DarkTheme" parent="Theme.AppCompat.NoActionBar">
@@ -32,10 +37,15 @@
         <item name="gameBackgroundColor">@color/colorBackgroundDark</item>
         <item name="joystick_bg">@color/joystickBackgroundDark</item>
         <item name="joystick_handle">@color/joystickHandleDark</item>
-        <item name="buttonTextColor">@color/buttonTextDark</item>
         <item name="settingsTextColor">@color/settingsTextColorDark</item>
         <item name="gameButtonColor">@color/gameButtonBGColorDark</item>
         <item name="gameButtonTextColor">@color/gameButtonTextColorDark</item>
+        <item name="buttonHeight">75dp</item>
+        <item name="buttonHorMargin">25dp</item>
+        <item name="buttonVerMargin">15dp</item>
+        <item name="buttonTextColor">@color/buttonTextDark</item>
+        <item name="buttonTextSize">25sp</item>
+        <item name="buttonBackground">@drawable/button_frame_med</item>
     </style>
 
     <style name="leaderboard_name">

@@ -15,7 +15,6 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
     private GameThread mGameThread;
 
-
     public GameSurfaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
 

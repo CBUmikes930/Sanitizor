@@ -1,13 +1,32 @@
 package com.egr423.sanitizor;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 
+public class MainActivity extends AppCompatActivity implements AccountManager.signedInListener {
+
+    private AccountManager mAccountManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -15,7 +34,17 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.main_unlogged);
+        setContentView(R.layout.main_activity);
+
+        mAccountManager = AccountManager.getInstance(this);
+        mAccountManager.setListener(this::updateUI);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        updateUI(mAccountManager.getCurrentUser());
     }
 
     /**
@@ -42,14 +71,56 @@ public class MainActivity extends AppCompatActivity {
         settingsDialogue.show(getSupportFragmentManager(), "settingsFragment");
     }
 
+    /**
+     * Added by Micah Steinbock on 10/20/2020
+     *
+     * A method that is triggered by the "Leaderboard" button
+     * Starts and switches to the Leaderboard activity
+     * @param view
+     */
     public void viewLeaderboard(View view) {
         Intent leaderboardIntent = new Intent(MainActivity.this, LeaderboardActivity.class);
         startActivity(leaderboardIntent);
     }
 
-    @Override
-    public void recreate() {
-        super.recreate();
+    /**
+     * Added by Micah Steinbock on 11/4/2020
+     *
+     * A method that is triggered by the "Log in" button
+     * Starts the google sign in intent
+     * triggers onActivityReuslt when completed
+     * @param view
+     */
+    public void signIn(View view) {
+        mAccountManager.signIn();
     }
 
+    /**
+     * Added by Micah Steinbock on 11/4/2020
+     *
+     * A method that is triggered by the "Log out" button
+     * Signs out the currently logged in user and updates the UI
+     * @param view
+     */
+    public void signOut(View view) {
+        mAccountManager.signOut();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        mAccountManager.handleActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void updateUI(FirebaseUser user) {
+        if (user != null) {
+            findViewById(R.id.button_signin).setVisibility(View.INVISIBLE);
+            findViewById(R.id.button_signout).setVisibility(View.VISIBLE);
+        } else {
+            findViewById(R.id.button_signin).setVisibility(View.VISIBLE);
+            findViewById(R.id.button_signout).setVisibility(View.INVISIBLE);
+        }
+    }
 }
