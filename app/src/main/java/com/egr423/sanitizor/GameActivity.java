@@ -134,6 +134,11 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
     @Override
     protected void onResume() {
         super.onResume();
+
+        SoundManager soundManager = SoundManager.getInstance();
+        soundManager.stopSounds();
+        soundManager.playSound("InGame_Final.ogg", -1);
+
         if (SettingsDialogue.controlScheme == R.id.gyro_controls) {
             mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         }
@@ -142,6 +147,9 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
     @Override
     protected void onPause() {
         super.onPause();
+
+        SoundManager.getInstance().stopSounds();
+
         if (SettingsDialogue.controlScheme == R.id.gyro_controls) {
             mSensorManager.unregisterListener(this, mAccelerometer);
         }

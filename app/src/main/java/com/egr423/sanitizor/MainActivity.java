@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -27,6 +29,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 public class MainActivity extends AppCompatActivity implements AccountManager.signedInListener {
 
     private AccountManager mAccountManager;
+    private SoundManager mSoundManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,12 +41,16 @@ public class MainActivity extends AppCompatActivity implements AccountManager.si
 
         mAccountManager = AccountManager.getInstance(this);
         mAccountManager.setListener(this::updateUI);
+
+        mSoundManager = SoundManager.getInstance();
+        mSoundManager.loadSounds(this);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
+        mSoundManager.playSound("Home Screen.ogg", -1);
         updateUI(mAccountManager.getCurrentUser());
     }
 

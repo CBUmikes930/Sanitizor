@@ -73,7 +73,6 @@ public class PowerUp extends Projectile {
         if(!mAnimationIsRunning){
             mStartTime=System.currentTimeMillis();
             mAnimationIsRunning = true;
-            //collectSound.start();
         }
     }
 
@@ -128,5 +127,6 @@ public class PowerUp extends Projectile {
 
     public void upgradePlayer(Player player){
         player.activateRapidFire();
+        SoundManager.getInstance().playSound("Powerup.ogg");
     }
 }

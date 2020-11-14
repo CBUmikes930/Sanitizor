@@ -96,6 +96,7 @@ public class SanitizorGame {
     private void endLevel() {
         levelEnding = true;
         clearLevel();
+        SoundManager.getInstance().playSound("LevelCleared.ogg");
     }
 
     private void progressLevel() {

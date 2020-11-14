@@ -120,10 +120,10 @@ public class Player extends Character {
     }
 
     public void draw(Canvas canvas) {
-        float ROTATION_RATE = 0.1f;
+        float ROTATION_RATE = 0.033f;
 
         if (mImage[cur_sprite] != null) {
-            final float ANIMATION_SPEED = 90;
+            final float ANIMATION_SPEED = 270;
             if (mDeathAnimationIsRunning) {
                 long elapsedTime = System.currentTimeMillis()   -mDeathStartTime;
                 cur_sprite = (int) Math.floor(elapsedTime/ANIMATION_SPEED);
@@ -181,6 +181,7 @@ public class Player extends Character {
         if (!mDeathAnimationIsRunning) {
             mDeathStartTime = System.currentTimeMillis();
             mDeathAnimationIsRunning = true;
+            SoundManager.getInstance().playSound("GameOver01.ogg");
         }
     }
 
