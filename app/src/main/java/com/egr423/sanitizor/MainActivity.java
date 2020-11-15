@@ -50,8 +50,29 @@ public class MainActivity extends AppCompatActivity implements AccountManager.si
     protected void onStart() {
         super.onStart();
 
-        mSoundManager.playSound("Home Screen.ogg", -1);
+        mSoundManager.stopAll();
+        mSoundManager.playSound("Home_Screen.ogg", -1);
+
         updateUI(mAccountManager.getCurrentUser());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        mSoundManager.resume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        SoundManager.getInstance().pause();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        SoundManager.getInstance().stopSound("Home_Screen.ogg");
     }
 
     /**

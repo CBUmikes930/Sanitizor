@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
@@ -12,6 +13,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -37,6 +39,7 @@ public class SanitizorGame {
     private final int ENEMY_ROWS = 2;
     private final int ENEMIES_IN_ROW = 5;
     private final int BG_COLOR;
+    private final int TEXT_COLOR;
     private final boolean mPlayerIsInvincible = false;
     private final Joystick mJoystick = Joystick.getInstance();
     private final Enemy[] enemies;
@@ -74,6 +77,8 @@ public class SanitizorGame {
         TypedValue a = new TypedValue();
         mContext.getTheme().resolveAttribute(R.attr.gameBackgroundColor, a, true);
         BG_COLOR = a.data;
+        mContext.getTheme().resolveAttribute(R.attr.inGameTextColor, a, true);
+        TEXT_COLOR = a.data;
         mContext.getTheme().resolveAttribute(R.attr.joystick_bg, a, true);
         mJoystick.setOuterColor(a.data);
         mContext.getTheme().resolveAttribute(R.attr.joystick_handle, a, true);
@@ -256,6 +261,7 @@ public class SanitizorGame {
     private void movePowerUp(PowerUp powerUp) {
         if (Rect.intersects(powerUp.getRect(), mPlayer.getRect())) {
             Log.d("PowerUp", "upgrade player");
+            mPlayerScore += 200;
             powerUp.upgradePlayer(mPlayer);
             powerUp.destroyPowerUp();
         }
@@ -367,6 +373,11 @@ public class SanitizorGame {
         //Clear Canvas
         canvas.drawColor(BG_COLOR);
 
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setColor(TEXT_COLOR);
+        paint.setTextSize(40f);
+        canvas.drawText(mContext.getString(R.string.score_display, Integer.toString(mPlayerScore)), 0, 40, paint);
+
         //Draw Player
         mPlayer.draw(canvas);
 
@@ -413,6 +424,7 @@ public class SanitizorGame {
     }
 
     private void clearLevel() {
+        mPlayerScore += 1000;
         Thread thread = new Thread() {
             @Override
             public void run() {

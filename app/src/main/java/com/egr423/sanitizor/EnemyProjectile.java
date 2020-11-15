@@ -23,6 +23,7 @@ import androidx.core.content.res.ResourcesCompat;
 public class EnemyProjectile extends Projectile {
     public EnemyProjectile(Context context) {
         super(context);
+        soundName = null;
         mImage = new Bitmap[1];
         SPEED = -SPEED;
         mImage[0] = BitmapFactory.decodeResource(context.getResources(), R.drawable.enemy_projectile);

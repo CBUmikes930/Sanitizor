@@ -35,6 +35,7 @@ public class Projectile {
     boolean mAnimationIsRunning = false;
     private boolean fromPlayer;
     long mLastMoved;
+    String soundName;
     //Sound FX
     private MediaPlayer splashSound;
 
@@ -45,6 +46,7 @@ public class Projectile {
     }
 
     public Projectile(Context context) {
+        soundName = "Splash.ogg";
         mImage = new Bitmap[6];
         //Start with the first sprite
         mStatus = 0;
@@ -98,8 +100,8 @@ public class Projectile {
         if (!mAnimationIsRunning) {
             mStartTime = System.currentTimeMillis();
             mAnimationIsRunning = true;
-            //TODO: Make sound play in sync
-            //splashSound.start();
+
+            SoundManager.getInstance().playSound(soundName);
         }
     }
 

@@ -27,6 +27,7 @@ public class PowerUp extends Projectile {
 
     public PowerUp(Context context) {
         super(context);
+        soundName = null;
         mImage = new Bitmap[17];
         //Start with the first sprite
         mStatus = 0;

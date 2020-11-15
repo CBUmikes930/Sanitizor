@@ -10,6 +10,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
@@ -26,6 +27,7 @@ public class SoundManager {
 
     private Map<String, Integer> sounds;
     private Map<Integer, Boolean> soundIsReady;
+    private Map<Integer, String> runningSounds;
 
     // Variables for a readied song to play after loading is complete
     private int readiedId;
@@ -50,6 +52,7 @@ public class SoundManager {
                 .setMaxStreams(MAX_SOUNDS)
                 .setAudioAttributes(audioAttrs)
                 .build();
+        runningSounds = new ArrayMap<>();
     }
 
     public void loadSounds(Context context) {
@@ -109,12 +112,15 @@ public class SoundManager {
 
     // Play the sound with the given loop setting
     public void playSound(String soundName, int loop) {
+        if (soundName == null) return;
+
         Integer soundId = sounds.get(soundName);
         if (soundId != null) {
             // If the sound is readied, then play it
             if (soundIsReady.get(soundId)) {
                 Log.d("SoundManager", "Playing sound: " + soundId + ", " + soundName);
-                mSoundPool.play(soundId, 0.5f, 0.5f, 1, loop, 1.0f);
+                int playId = mSoundPool.play(soundId, 0.5f, 0.5f, 1, loop, 1.0f);
+                runningSounds.put(playId, soundName);
             } else {
                 //Otherwise, ready it
                 Log.d("SoundManager", "Readied sound: " + soundName);
@@ -127,9 +133,28 @@ public class SoundManager {
         }
     }
 
-    public void stopSounds() {
-        for (String key : sounds.keySet()) {
-            mSoundPool.stop(sounds.get(key));
+    public void pause() {
+        Log.d("SoundManager", "Audio Paused");
+        mSoundPool.autoPause();
+    }
+
+    public void resume() {
+        Log.d("SoundManager", "Audio Resumed");
+        mSoundPool.autoResume();
+    }
+
+    public void stopAll() {
+        Log.d("SoundManager", "Audio Stopped");
+        for (int id : runningSounds.keySet()) {
+            mSoundPool.stop(id);
+        }
+    }
+
+    public void stopSound(String soundName) {
+        for (int id : runningSounds.keySet()) {
+            if (runningSounds.get(id).equals(soundName)) {
+                mSoundPool.stop(id);
+            }
         }
     }
 }

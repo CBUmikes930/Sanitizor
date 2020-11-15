@@ -73,7 +73,7 @@ public class Player extends Character {
 
         SPEED = 0.1;
         justTookDamage = false;
-        isInvincible = true;
+        isInvincible = false;
         playerLives = 3;
         mGameOverStatus = false;
         shotCoolDown = NORMAL_SHOT_COOLDOWN;
@@ -86,6 +86,7 @@ public class Player extends Character {
 
     public void damagePlayer() {
         if(!justTookDamage){
+            SoundManager.getInstance().playSound("Player_Damage.ogg");
             Log.d("Player", "Player took damage!");
             playerLives--;
             Log.d("Player","Player has "+ playerLives +" lives left");
@@ -181,6 +182,7 @@ public class Player extends Character {
         if (!mDeathAnimationIsRunning) {
             mDeathStartTime = System.currentTimeMillis();
             mDeathAnimationIsRunning = true;
+            SoundManager.getInstance().stopAll();
             SoundManager.getInstance().playSound("GameOver01.ogg");
         }
     }
