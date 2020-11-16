@@ -319,6 +319,6 @@ public abstract class Enemy extends Character {
         return (bounds.bottom - bounds.top);
     }
 
-    protected enum ENEMY_COLORS {RED, BLUE}
+    protected enum ENEMY_COLORS {RED, BLUE, GREEN}
 
 }
