@@ -7,6 +7,7 @@ import android.graphics.PointF;
 import androidx.annotation.NonNull;
 
 public class GreenEnemy extends Enemy {
+    // -ONLY SHOOTS-
     private final int TOTAL_SHOTS =2;
     private boolean greenIsShooting;
     private final int FRAME_BUFFER = 0;
