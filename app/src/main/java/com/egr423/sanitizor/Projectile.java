@@ -69,8 +69,6 @@ public class Projectile {
                     (int) (mImage[0].getWidth() * SanitizorGame.PIXEL_MULTIPLIER),
                     (int) (mImage[0].getHeight() * SanitizorGame.PIXEL_MULTIPLIER));
         }
-        //Load SoundFX
-        //splashSound = MediaPlayer.create(context, R.raw.splash);
         mLastMoved = System.currentTimeMillis();
     }
 
@@ -81,7 +79,11 @@ public class Projectile {
     public void move() {
         if (!mAnimationIsRunning) {
             //Move up a speed
-            bounds.offset(0, (int) (-SPEED * (System.currentTimeMillis() - mLastMoved)));
+            if (mLastMoved < SanitizorGame.pauseStart) {
+                mLastMoved += SanitizorGame.elapsedPauseTime;
+            }
+            long elapsedTime = System.currentTimeMillis() - mLastMoved;
+            bounds.offset(0, (int) (-SPEED * elapsedTime));
             mLastMoved = System.currentTimeMillis();
             //If collided with the top of screen, then play animation
             if (bounds.top <= 0) {
@@ -123,6 +125,9 @@ public class Projectile {
 
         //Calculate what frame of animation we should be on
         if (mAnimationIsRunning) {
+            if (mStartTime < SanitizorGame.pauseStart) {
+                mStartTime += SanitizorGame.elapsedPauseTime;
+            }
             long elapsedTime = System.currentTimeMillis() - mStartTime;
             int oldStatus = mStatus;
             mStatus = (int) Math.floor(elapsedTime / ANIMATION_SPEED);

@@ -99,15 +99,25 @@ public class Player extends Character {
     }
 
     public void checkInvincibility() {
-        if (System.currentTimeMillis() - lastDamaged > INVICIBILITY_DURATION && !isInvincible) {
+        if (lastDamaged < SanitizorGame.pauseStart) {
+            lastDamaged += SanitizorGame.elapsedPauseTime;
+        }
+        long elapsedTime = System.currentTimeMillis() - lastDamaged;
+        if (elapsedTime > INVICIBILITY_DURATION && !isInvincible) {
             justTookDamage = false;
             cur_sprite = 0;
         }
     }
 
     public void move(PointF velocity) {
+        if (mDeathAnimationIsRunning) return;
+
+        if (mLastMoved < SanitizorGame.pauseStart) {
+            mLastMoved += SanitizorGame.elapsedPauseTime;
+        }
+        long elapsedTime = System.currentTimeMillis() - mLastMoved;
         //Move center by velocity on x-axis, but anchor y
-        bounds.offset((int) (-velocity.x * SPEED * (System.currentTimeMillis() - mLastMoved)), 0);
+        bounds.offset((int) (-velocity.x * SPEED * elapsedTime), 0);
         mLastMoved = System.currentTimeMillis();
 
         //Check if still on screen
@@ -126,9 +136,12 @@ public class Player extends Character {
         if (mImage[cur_sprite] != null) {
             final float ANIMATION_SPEED = 270;
             if (mDeathAnimationIsRunning) {
-                long elapsedTime = System.currentTimeMillis()   -mDeathStartTime;
+                if (mDeathStartTime < SanitizorGame.pauseStart) {
+                    mDeathStartTime += SanitizorGame.elapsedPauseTime;
+                }
+                long elapsedTime = System.currentTimeMillis() - mDeathStartTime;
                 cur_sprite = (int) Math.floor(elapsedTime/ANIMATION_SPEED);
-                rotation = (int) ((System.currentTimeMillis() - mDeathStartTime) * ROTATION_RATE);
+                rotation = (int) (elapsedTime * ROTATION_RATE);
                 if (rotation > 90) {
                     rotation = 90;
                     mGameOverStatus = true;
@@ -143,18 +156,26 @@ public class Player extends Character {
             //Rotate
             matrix.postRotate(rotation, bounds.centerX(), bounds.centerY());
 
-            if (System.currentTimeMillis() - lastDamaged < 100 && !mDeathAnimationIsRunning) {
+            if (lastDamaged < SanitizorGame.pauseStart) {
+                lastDamaged += SanitizorGame.elapsedPauseTime;
+            }
+            long elapsedTime = System.currentTimeMillis() - lastDamaged;
+            if (elapsedTime < 100 && !mDeathAnimationIsRunning) {
                 //Show damaged player animation
                 canvas.drawBitmap(mImage[1], matrix, null);
-            } else if (System.currentTimeMillis() - lastDamaged < INVICIBILITY_DURATION && !mDeathAnimationIsRunning) {
+            } else if (elapsedTime < INVICIBILITY_DURATION && !mDeathAnimationIsRunning) {
                 //Show invincibility flash
-                cur_sprite = (((System.currentTimeMillis() - lastDamaged) / 200) % 2 == 0) ? 2 : 0;
+                cur_sprite = ((elapsedTime / 200) % 2 == 0) ? 2 : 0;
                 canvas.drawBitmap(mImage[cur_sprite], matrix, null);
             } else {
                 canvas.drawBitmap(mImage[cur_sprite], matrix, null);
             }
 
-            if(!(System.currentTimeMillis() - mRapidFireStart < RAPID_FIRE_DURATION && mHasRapidFire)){
+            if (mRapidFireStart < SanitizorGame.pauseStart) {
+                mRapidFireStart += SanitizorGame.elapsedPauseTime;
+            }
+            elapsedTime = System.currentTimeMillis() - mRapidFireStart;
+            if(!(elapsedTime < RAPID_FIRE_DURATION && mHasRapidFire)){
                 shotCoolDown = NORMAL_SHOT_COOLDOWN;
                 mHasRapidFire = false;
             }

@@ -3,6 +3,7 @@ package com.egr423.sanitizor;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -14,6 +15,8 @@ import android.view.SurfaceView;
 public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
 
     private GameThread mGameThread;
+    public int width;
+    public int height;
 
     public GameSurfaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -60,5 +63,18 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
     public GameThread getmGameThread(){
         return mGameThread;
+    }
+
+    public void pauseGame() {
+        mGameThread.pauseGame();
+    }
+
+    public void resumeGame() {
+        Log.d("GamePause", "Game Resumed");
+        mGameThread.resumeGame();
+    }
+
+    public void resetJoystick() {
+        mGameThread.resetJoystick();
     }
 }

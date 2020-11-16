@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements AccountManager.si
         mAccountManager.setListener(this::updateUI);
 
         mSoundManager = SoundManager.getInstance();
+        mSoundManager.setAudioStatus(SettingsDialogue.playGameAudio);
         mSoundManager.loadSounds(this);
     }
 

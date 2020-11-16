@@ -23,7 +23,6 @@ public class SoundManager {
 
     private AssetManager mAssets;
     private SoundPool mSoundPool;
-    private boolean loaded;
 
     private Map<String, Integer> sounds;
     private Map<Integer, Boolean> soundIsReady;
@@ -33,6 +32,8 @@ public class SoundManager {
     private int readiedId;
     private String readiedName;
     private int readiedLoop;
+
+    private boolean playGameAudio;
 
     public static SoundManager getInstance() {
         if (mManager == null) {
@@ -47,12 +48,12 @@ public class SoundManager {
                 .setUsage(AudioAttributes.USAGE_MEDIA)
                 .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
                 .build();
-        loaded = false;
         mSoundPool = new SoundPool.Builder()
                 .setMaxStreams(MAX_SOUNDS)
                 .setAudioAttributes(audioAttrs)
                 .build();
         runningSounds = new ArrayMap<>();
+        playGameAudio = false;
     }
 
     public void loadSounds(Context context) {
@@ -119,7 +120,12 @@ public class SoundManager {
             // If the sound is readied, then play it
             if (soundIsReady.get(soundId)) {
                 Log.d("SoundManager", "Playing sound: " + soundId + ", " + soundName);
-                int playId = mSoundPool.play(soundId, 0.5f, 0.5f, 1, loop, 1.0f);
+                int playId;
+                if (playGameAudio) {
+                    playId = mSoundPool.play(soundId, 0.75f, 0.75f, 1, loop, 1.0f);
+                } else {
+                    playId = mSoundPool.play(soundId, 0, 0, 1, loop, 1.0f);
+                }
                 runningSounds.put(playId, soundName);
             } else {
                 //Otherwise, ready it
@@ -154,6 +160,18 @@ public class SoundManager {
         for (int id : runningSounds.keySet()) {
             if (runningSounds.get(id).equals(soundName)) {
                 mSoundPool.stop(id);
+            }
+        }
+    }
+
+    public void setAudioStatus(boolean play) {
+        playGameAudio = play;
+
+        for (int id : runningSounds.keySet()) {
+            if (!play) {
+                mSoundPool.setVolume(id, 0, 0);
+            } else {
+                mSoundPool.setVolume(id, 0.75f, 0.75f);
             }
         }
     }

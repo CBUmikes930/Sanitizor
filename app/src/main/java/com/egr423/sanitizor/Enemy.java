@@ -111,7 +111,11 @@ public abstract class Enemy extends Character {
     //To check if I can attack, I have to check if it has been enough time since I last attacked.
     public boolean checkAttackCooldown() {
         checkAtOriginalPos(false);
-        if (isAttacking || System.currentTimeMillis() - lastAttacked >= ATTACK_COOL_DOWN) {
+        if (lastAttacked < SanitizorGame.pauseStart) {
+            lastAttacked += SanitizorGame.elapsedPauseTime;
+        }
+        long elapsedTime = System.currentTimeMillis() - lastAttacked;
+        if (isAttacking || elapsedTime >= ATTACK_COOL_DOWN) {
             gridPos = new Rect(bounds);
             return true;
         } else {
@@ -130,7 +134,11 @@ public abstract class Enemy extends Character {
             isAttacking = true;
             attackTime = System.currentTimeMillis();
         }
-        if (System.currentTimeMillis() - attackTime <= ATTACK_PHASE) {
+        if (attackTime < SanitizorGame.pauseStart) {
+            attackTime += SanitizorGame.elapsedPauseTime;
+        }
+        long elapsedTime = System.currentTimeMillis() - attackTime;
+        if (elapsedTime <= ATTACK_PHASE) {
             //Log.d("Enemy.attack","Enemy should be attacking");
             attack(new PointF(0, 80));
         } else {
@@ -245,6 +253,9 @@ public abstract class Enemy extends Character {
             final float ANIMATION_SPEED = 50;
 
             if (mDeathAnimationIsRunning) {
+                if (mDeathStartTime < SanitizorGame.pauseStart) {
+                    mDeathStartTime += SanitizorGame.elapsedPauseTime;
+                }
                 long elapsedTime = System.currentTimeMillis() - mDeathStartTime;
                 mDeathStatus = (int) Math.floor(elapsedTime / ANIMATION_SPEED);
             }

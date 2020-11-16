@@ -8,6 +8,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -29,7 +30,6 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
     //Used in gyro controls
     private Sensor mAccelerometer;
 
-    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         int themeID = (SettingsDialogue.useDarkMode) ? R.style.DarkTheme : R.style.LightTheme;
@@ -47,6 +47,15 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
                 killPlayer();
             }
         });
+
+        setControlScheme();
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private void setControlScheme() {
+        if (SettingsDialogue.controlScheme == R.id.joystick_controls) {
+            mSurfaceView.resetJoystick();
+        }
 
         if (SettingsDialogue.controlScheme == R.id.gyro_controls) {
             //Initialize sensors for motion control
@@ -181,6 +190,19 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
+    }
+
+    public void pauseGame(View view) {
+        Log.d("GamePause", "Game Paused");
+        mSurfaceView.pauseGame();
+        SettingsDialogue settingsDialogue = new SettingsDialogue();
+        settingsDialogue.show(getSupportFragmentManager(), "settingsFragment");
+        settingsDialogue.setActivity(this);
+    }
+
+    public void resumeGame() {
+        setControlScheme();
+        mSurfaceView.resumeGame();
     }
 
     public void killPlayer() {

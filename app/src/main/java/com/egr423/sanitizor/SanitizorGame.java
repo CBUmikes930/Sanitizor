@@ -53,6 +53,9 @@ public class SanitizorGame {
     private int mPowerPointer;
     private int level;
     private boolean levelEnding;
+    public static long pauseStart;
+    public static long pauseEnd;
+    public static long elapsedPauseTime;
 
     public SanitizorGame(Context context, int surfaceWidth, int surfaceHeight) {
         mContext = context;
@@ -70,8 +73,7 @@ public class SanitizorGame {
         generateEnemies();
 
         //Set joystick position to bottom center of screen and set handle to center
-        mJoystick.setCenter(new PointF((float) mSurfaceWidth / 2, (float) mSurfaceHeight - 150));
-        mJoystick.resetHandlePos();
+        resetJoystick();
 
         //Set colors based on theme
         TypedValue a = new TypedValue();
@@ -95,6 +97,19 @@ public class SanitizorGame {
 
         //Start the game
         newGame();
+    }
+
+    public static void setPauseStart(long pauseStartTime) {
+        pauseStart = pauseStartTime;
+    }
+
+    public static void setPauseEnd(long pauseEndTime) {
+        pauseEnd = pauseEndTime;
+    }
+
+    public void resetJoystick() {
+        mJoystick.setCenter(new PointF((float) mSurfaceWidth / 2, (float) mSurfaceHeight - 150));
+        mJoystick.resetHandlePos();
     }
 
 
@@ -154,6 +169,7 @@ public class SanitizorGame {
     }
 
     public void update(PointF velocity) {
+        elapsedPauseTime = pauseEnd - pauseStart;
         updateGameOver();
         if (!mGameOver) {
             //level progression
@@ -333,7 +349,11 @@ public class SanitizorGame {
     //the mProjectils array
     private void createProjectile(Character character) {
         Projectile projectile;
-        if (levelEnding || System.currentTimeMillis() - character.lastFired < character.shotCoolDown) {
+        if (character.lastFired < SanitizorGame.pauseStart) {
+            character.lastFired += SanitizorGame.elapsedPauseTime;
+        }
+        long elapsedTime = System.currentTimeMillis() - character.lastFired;
+        if (levelEnding || elapsedTime < character.shotCoolDown) {
             return;
         }
 

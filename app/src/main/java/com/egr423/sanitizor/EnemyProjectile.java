@@ -37,8 +37,12 @@ public class EnemyProjectile extends Projectile {
 
     public void move() {
         if (!mAnimationIsRunning) {
+            if (mLastMoved < SanitizorGame.pauseStart) {
+                mLastMoved += SanitizorGame.elapsedPauseTime;
+            }
+            long elapsedTime = System.currentTimeMillis() - mLastMoved;
             //Move down a speed
-            bounds.offset(0, (int) (-SPEED * (System.currentTimeMillis() - mLastMoved)));
+            bounds.offset(0, (int) (-SPEED * elapsedTime));
             mLastMoved = System.currentTimeMillis();
         } else {
             mStatus++;

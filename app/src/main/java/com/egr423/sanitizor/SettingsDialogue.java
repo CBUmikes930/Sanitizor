@@ -35,6 +35,8 @@ public class SettingsDialogue extends BottomSheetDialogFragment {
     private Button darkModeLightModeButton;
     private Button clearLeaderboardButton;
 
+    private Context mContext;
+
     private static SharedPreferences sharedPref;
 
 
@@ -69,6 +71,20 @@ public class SettingsDialogue extends BottomSheetDialogFragment {
         setDisplay(clearLeaderboardButton);
 
         return view;
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        super.onCancel(dialog);
+
+        Log.d("GamePause", "Dismissed");
+        if (mContext != null) {
+            ((GameActivity) mContext).resumeGame();
+        }
+    }
+
+    public void setActivity(Context context) {
+        mContext = context;
     }
 
     /**
@@ -178,6 +194,7 @@ public class SettingsDialogue extends BottomSheetDialogFragment {
                     playGameAudio = !playGameAudio;
                     onClickSettingsButton((Button) v, playGameAudio, "playGameAudio",
                             "Game audio has been turned");
+                    SoundManager.getInstance().setAudioStatus(playGameAudio);
                     setDisplay(muteUnmuteButton);
                 };
 
@@ -254,5 +271,4 @@ public class SettingsDialogue extends BottomSheetDialogFragment {
         int themeID = (useDarkMode) ? R.style.DarkTheme : R.style.LightTheme;
         context.setTheme(themeID);
     }
-
 }
