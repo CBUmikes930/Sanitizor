@@ -397,7 +397,13 @@ public class SanitizorGame {
             return;
         }
         Log.d("PowerUp", "create Powerup");
-        powerUp = new PowerUp(mContext);
+        Random rand = new Random();
+        int r = rand.nextInt(2);
+        if (r == 0) {
+            powerUp = new rapidPowerup(mContext);
+        } else {
+            powerUp = new lifePowerup(mContext);
+        }
         powerUp.setPosition(enemy.getPosition());
         mPowerUps[mPowerPointer++] = powerUp;
         mPowerPointer %= mPowerUps.length;
