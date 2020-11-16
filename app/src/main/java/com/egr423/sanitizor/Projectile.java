@@ -35,6 +35,7 @@ public class Projectile {
     boolean mAnimationIsRunning = false;
     private boolean fromPlayer;
     long mLastMoved;
+    String soundName;
     //Sound FX
     private MediaPlayer splashSound;
 
@@ -45,6 +46,7 @@ public class Projectile {
     }
 
     public Projectile(Context context) {
+        soundName = "Splash.ogg";
         mImage = new Bitmap[6];
         //Start with the first sprite
         mStatus = 0;
@@ -67,8 +69,6 @@ public class Projectile {
                     (int) (mImage[0].getWidth() * SanitizorGame.PIXEL_MULTIPLIER),
                     (int) (mImage[0].getHeight() * SanitizorGame.PIXEL_MULTIPLIER));
         }
-        //Load SoundFX
-        //splashSound = MediaPlayer.create(context, R.raw.splash);
         mLastMoved = System.currentTimeMillis();
     }
 
@@ -79,7 +79,11 @@ public class Projectile {
     public void move() {
         if (!mAnimationIsRunning) {
             //Move up a speed
-            bounds.offset(0, (int) (-SPEED * (System.currentTimeMillis() - mLastMoved)));
+            if (mLastMoved < SanitizorGame.pauseStart) {
+                mLastMoved += SanitizorGame.elapsedPauseTime;
+            }
+            long elapsedTime = System.currentTimeMillis() - mLastMoved;
+            bounds.offset(0, (int) (-SPEED * elapsedTime));
             mLastMoved = System.currentTimeMillis();
             //If collided with the top of screen, then play animation
             if (bounds.top <= 0) {
@@ -98,8 +102,8 @@ public class Projectile {
         if (!mAnimationIsRunning) {
             mStartTime = System.currentTimeMillis();
             mAnimationIsRunning = true;
-            //TODO: Make sound play in sync
-            //splashSound.start();
+
+            SoundManager.getInstance().playSound(soundName);
         }
     }
 
@@ -121,6 +125,9 @@ public class Projectile {
 
         //Calculate what frame of animation we should be on
         if (mAnimationIsRunning) {
+            if (mStartTime < SanitizorGame.pauseStart) {
+                mStartTime += SanitizorGame.elapsedPauseTime;
+            }
             long elapsedTime = System.currentTimeMillis() - mStartTime;
             int oldStatus = mStatus;
             mStatus = (int) Math.floor(elapsedTime / ANIMATION_SPEED);

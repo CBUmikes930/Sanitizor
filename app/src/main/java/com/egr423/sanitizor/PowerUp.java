@@ -27,6 +27,7 @@ public class PowerUp extends Projectile {
 
     public PowerUp(Context context) {
         super(context);
+        soundName = null;
         mImage = new Bitmap[17];
         //Start with the first sprite
         mStatus = 0;
@@ -63,7 +64,11 @@ public class PowerUp extends Projectile {
     @Override
     public void move(){
         Log.d("powerUp", "Current location:" + bounds.left +','+bounds.top);
-        bounds.offset(0, (int)(SPEED * (mLastMoved - System.currentTimeMillis())));
+        if (mLastMoved < SanitizorGame.pauseStart) {
+            mLastMoved += SanitizorGame.elapsedPauseTime;
+        }
+        long elapsedTime = System.currentTimeMillis() - mLastMoved;
+        bounds.offset(0, (int)(-SPEED * elapsedTime));
         mLastMoved = System.currentTimeMillis();
         mShouldDestroy = bounds.top >= SanitizorGame.mSurfaceHeight;
     }
@@ -71,9 +76,8 @@ public class PowerUp extends Projectile {
     @Override
     public void startAnimation(){
         if(!mAnimationIsRunning){
-            mStartTime=System.currentTimeMillis();
+            mStartTime = System.currentTimeMillis();
             mAnimationIsRunning = true;
-            //collectSound.start();
         }
     }
 
@@ -93,6 +97,9 @@ public class PowerUp extends Projectile {
 
         //Calculate what frame of animation we should be on
         if (mAnimationIsRunning) {
+            if (mStartTime < SanitizorGame.pauseStart) {
+                mStartTime += SanitizorGame.elapsedPauseTime;
+            }
             long elapsedTime = System.currentTimeMillis() - mStartTime;
             int oldStatus = mStatus;
             mStatus = (int) Math.floor(elapsedTime / ANIMATION_SPEED);
@@ -128,5 +135,6 @@ public class PowerUp extends Projectile {
 
     public void upgradePlayer(Player player){
         player.activateRapidFire();
+        SoundManager.getInstance().playSound("Powerup.ogg");
     }
 }

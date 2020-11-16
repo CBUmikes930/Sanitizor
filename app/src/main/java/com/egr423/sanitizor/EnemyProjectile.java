@@ -23,6 +23,7 @@ import androidx.core.content.res.ResourcesCompat;
 public class EnemyProjectile extends Projectile {
     public EnemyProjectile(Context context) {
         super(context);
+        soundName = null;
         mImage = new Bitmap[1];
         SPEED = -SPEED;
         mImage[0] = BitmapFactory.decodeResource(context.getResources(), R.drawable.enemy_projectile);
@@ -36,8 +37,12 @@ public class EnemyProjectile extends Projectile {
 
     public void move() {
         if (!mAnimationIsRunning) {
+            if (mLastMoved < SanitizorGame.pauseStart) {
+                mLastMoved += SanitizorGame.elapsedPauseTime;
+            }
+            long elapsedTime = System.currentTimeMillis() - mLastMoved;
             //Move down a speed
-            bounds.offset(0, (int) (-SPEED * (System.currentTimeMillis() - mLastMoved)));
+            bounds.offset(0, (int) (-SPEED * elapsedTime));
             mLastMoved = System.currentTimeMillis();
         } else {
             mStatus++;

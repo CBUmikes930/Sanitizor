@@ -16,11 +16,13 @@ public class GameThread extends Thread {
     private SurfaceHolder mSurfaceHolder;
     private SanitizorGame mSanitizorGame;
     private boolean mThreadRunning;
+    private boolean mIsPaused;
     private PointF mVelocity;
 
     public GameThread(SurfaceHolder holder, Context context) {
         mSurfaceHolder = holder;
         mThreadRunning = true;
+        mIsPaused = false;
 
         mVelocity = new PointF();
 
@@ -33,11 +35,15 @@ public class GameThread extends Thread {
     @Override
     public void run() {
         try {
-            while (!getmSanitizorGame().getGameOver() && mThreadRunning ) {
-                Canvas canvas = mSurfaceHolder.lockCanvas();
-                mSanitizorGame.update(mVelocity);
-                mSanitizorGame.draw(canvas);
-                mSurfaceHolder.unlockCanvasAndPost(canvas);
+            while (!getmSanitizorGame().getGameOver() && mThreadRunning) {
+                if (!mIsPaused) {
+                    Canvas canvas = mSurfaceHolder.lockCanvas();
+                    mSanitizorGame.update(mVelocity);
+                    mSanitizorGame.draw(canvas);
+                    mSurfaceHolder.unlockCanvasAndPost(canvas);
+                    SanitizorGame.setPauseStart(System.currentTimeMillis());
+                    SanitizorGame.setPauseEnd(System.currentTimeMillis());
+                }
             }
         } catch (NullPointerException ex) {
             //Canvas is destroyed while thread is running
@@ -55,6 +61,10 @@ public class GameThread extends Thread {
         mSanitizorGame.buttonClicked();
     }
 
+    public void startThread() {
+        mThreadRunning = true;
+    }
+
     public void stopThread() {
         mThreadRunning = false;
     }
@@ -67,4 +77,17 @@ public class GameThread extends Thread {
         return mSanitizorGame;
     }
 
+    public void pauseGame() {
+        SanitizorGame.setPauseStart(System.currentTimeMillis());
+        mIsPaused = true;
+    }
+
+    public void resumeGame() {
+        SanitizorGame.setPauseEnd(System.currentTimeMillis());
+        mIsPaused = false;
+    }
+
+    public void resetJoystick() {
+        mSanitizorGame.resetJoystick();
+    }
 }
