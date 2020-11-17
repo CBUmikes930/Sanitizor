@@ -11,7 +11,7 @@ import android.graphics.RectF;
 import android.media.MediaPlayer;
 import android.util.Log;
 
-public class PowerUp extends Projectile {
+public abstract class PowerUp extends Projectile {
     float SPEED = -1f;
     protected Bitmap[] mImage;
     int mStatus;
@@ -25,7 +25,7 @@ public class PowerUp extends Projectile {
     private MediaPlayer collectSound;
 
 
-    public PowerUp(Context context) {
+    public PowerUp(POWER_UPS type,Context context) {
         super(context);
         soundName = null;
         mImage = new Bitmap[17];
@@ -34,7 +34,7 @@ public class PowerUp extends Projectile {
         //Load in all the sprites into an array
         for (int i = 0; i < mImage.length; i++) {
             //Get sprite name
-            String name = "powerup_rapid_" + (i + 1);
+            String name = ("powerup_" + type+"_" + (i + 1)).toLowerCase();
             //Get sprite id
             int id = context.getResources().getIdentifier(name, "drawable", context.getPackageName());
             if (id == 0) {
@@ -137,4 +137,6 @@ public class PowerUp extends Projectile {
         player.activateRapidFire();
         SoundManager.getInstance().playSound("Powerup.ogg");
     }
+
+    protected enum POWER_UPS {RAPID, LIFE}
 }
