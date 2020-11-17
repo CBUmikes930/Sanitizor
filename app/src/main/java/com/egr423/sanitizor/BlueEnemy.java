@@ -7,6 +7,7 @@ import android.graphics.PointF;
 import androidx.annotation.NonNull;
 
 public class BlueEnemy extends Enemy {
+
     public BlueEnemy(@NonNull Context context, Point location) {
         super(ENEMY_COLORS.BLUE, context, location, 6);
         ATTACK_PHASE = 8000;
@@ -30,7 +31,7 @@ public class BlueEnemy extends Enemy {
         }
         int speed = 40;
         bounds.offset((int) ((speed * Math.cos(direction) * sign)),
-                (int) (velocity.y*SPEED));
+                (int) (velocity.y * SPEED));
         wrapScreen();
     }
 }

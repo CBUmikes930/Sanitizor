@@ -29,20 +29,34 @@ public class SettingsDialogue extends BottomSheetDialogFragment {
     public static Boolean playGameAudio;
     public static Boolean useDarkMode;
     public static Integer controlScheme;
-
+    private static SharedPreferences sharedPref;
+    private static boolean hideThemeOption;
     private RadioGroup controlSchemeRadioGroup;
     private Button muteUnmuteButton;
     private Button darkModeLightModeButton;
-
     private Context mContext;
-
-    private static SharedPreferences sharedPref;
-    private static boolean hideThemeOption;
-
 
     /**
      * Added by Chase Crossley on 10/6/2020
+     * <p>
+     * a helper method made to initialize the preferences in the SettingsDialogue class should only
+     * be called once in MainActivity.java
      *
+     * @param context: allows for the ability to initialize the preferences in the
+     */
+    public static void initialize(Context context) {
+        sharedPref = context.getSharedPreferences(PREFERENCE_FILE, Context.MODE_PRIVATE);
+        controlScheme = sharedPref.getInt("controlScheme", R.id.gyro_controls);
+        playGameAudio = sharedPref.getBoolean("playGameAudio", true);
+        useDarkMode = sharedPref.getBoolean("useDarkMode", true);
+
+        int themeID = (useDarkMode) ? R.style.DarkTheme : R.style.LightTheme;
+        context.setTheme(themeID);
+    }
+
+    /**
+     * Added by Chase Crossley on 10/6/2020
+     * <p>
      * inflates the settings_layout in res/layouts and morphs the layout into a modal sheet
      */
     @Nullable
@@ -90,16 +104,16 @@ public class SettingsDialogue extends BottomSheetDialogFragment {
 
     /**
      * Added by Chase Crossley on 10/6/2020
-     *
+     * <p>
      * this needs to be overridden to allow the modal sheet to be fully expanded upon being shown
      */
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         BottomSheetDialog dialog = (BottomSheetDialog) super.onCreateDialog(savedInstanceState);
-        dialog.setOnShowListener((DialogInterface.OnShowListener) dialog1 -> {
+        dialog.setOnShowListener(dialog1 -> {
             BottomSheetDialog d = (BottomSheetDialog) dialog1;
-            FrameLayout bottomSheet = (FrameLayout) d.findViewById(com.google.android.material.R.id.design_bottom_sheet);
+            FrameLayout bottomSheet = d.findViewById(com.google.android.material.R.id.design_bottom_sheet);
             BottomSheetBehavior.from(bottomSheet).setState(BottomSheetBehavior.STATE_EXPANDED);
         });
 
@@ -109,8 +123,9 @@ public class SettingsDialogue extends BottomSheetDialogFragment {
 
     /**
      * Added by Chase Crossley on 10/6/2020
-     *
+     * <p>
      * a method to allows for preference button to display the correct setting
+     *
      * @param view: any object in relation to the preference screen
      * @throws IllegalArgumentException: if the view passed
      */
@@ -154,11 +169,12 @@ public class SettingsDialogue extends BottomSheetDialogFragment {
 
     /**
      * Added by Chase Crossley on 10/5/2020
-     *
+     * <p>
      * a method to set the onCheckedChangeListener for RadioGroups of SettingsDialogue Class
+     *
      * @param id: should correspond to any RadioGroup Preference id
      * @throws IllegalArgumentException: if id passed in is not a correct RadioGroup id associated
-     * with the SettingsDialogue Class
+     *                                   with the SettingsDialogue Class
      */
     private RadioGroup.OnCheckedChangeListener setOnCheckedChangeListener(int id) {
         switch (id) {
@@ -175,11 +191,12 @@ public class SettingsDialogue extends BottomSheetDialogFragment {
 
     /**
      * Added by Chase Crossley on 10/5/2020
-     *
+     * <p>
      * a method to set the setOnClickListener for Buttons of SettingsDialogue Class
+     *
      * @param id: should correspond to any Button preference id
      * @throws IllegalArgumentException: if id passed in is not a correct Button id associated
-     *      * with the SettingsDialogue Class
+     *                                   * with the SettingsDialogue Class
      */
     private View.OnClickListener setOnClickListenerById(int id) {
         switch (id) {
@@ -207,15 +224,15 @@ public class SettingsDialogue extends BottomSheetDialogFragment {
         }
     }
 
-
     /**
      * Added by Chase Crossley on 10/6/2020
-     *
+     * <p>
      * a helper method to for boolean onClickButtonListeners, reduced some redundancy
-     * @param button: should correspond to any boolean button of the SettingsDialogue Class
+     *
+     * @param button:       should correspond to any boolean button of the SettingsDialogue Class
      * @param booleanField: should correspond to the value of a changed boolean field in SettingsDialogue Class
-     * @param key: should correspond to the sharedPreference key of the passed in booleanField
-     * @param toastText: text that will let the user know how the preference has been changed
+     * @param key:          should correspond to the sharedPreference key of the passed in booleanField
+     * @param toastText:    text that will let the user know how the preference has been changed
      */
     private void onClickSettingsButton(Button button, boolean booleanField, String key, String toastText) {
         sharedPref.edit().putBoolean(key, booleanField).apply();
@@ -232,9 +249,10 @@ public class SettingsDialogue extends BottomSheetDialogFragment {
 
     /**
      * Added by Chase Crossley on 10/6/2020
-     *
+     * <p>
      * helper class to reduce redundancy to display a toast message for a short time
-     * @param v: allows for the context of the toast message
+     *
+     * @param v:         allows for the context of the toast message
      * @param toastText: text that will let the user know how the preference has been changed
      */
     private void sendToast(View v, CharSequence toastText) {
@@ -242,23 +260,6 @@ public class SettingsDialogue extends BottomSheetDialogFragment {
         int duration = Toast.LENGTH_SHORT;
         Toast toast = Toast.makeText(context, toastText, duration);
         toast.show();
-    }
-
-    /**
-     * Added by Chase Crossley on 10/6/2020
-     *
-     * a helper method made to initialize the preferences in the SettingsDialogue class should only
-     * be called once in MainActivity.java
-     * @param context: allows for the ability to initialize the preferences in the
-     */
-    public static void initialize(Context context) {
-        sharedPref = context.getSharedPreferences(PREFERENCE_FILE, Context.MODE_PRIVATE);
-        controlScheme = sharedPref.getInt("controlScheme", R.id.gyro_controls);
-        playGameAudio = sharedPref.getBoolean("playGameAudio", true);
-        useDarkMode = sharedPref.getBoolean("useDarkMode", true);
-
-        int themeID = (useDarkMode) ? R.style.DarkTheme : R.style.LightTheme;
-        context.setTheme(themeID);
     }
 
     public void hideThemeOption(boolean option) {

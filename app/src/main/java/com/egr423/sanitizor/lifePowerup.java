@@ -4,9 +4,9 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-public class lifePowerup extends  PowerUp {
+public class lifePowerup extends PowerUp {
     public lifePowerup(@NonNull Context context) {
-        super(POWER_UPS.LIFE,context);
+        super(POWER_UPS.LIFE, context);
     }
 
     @Override

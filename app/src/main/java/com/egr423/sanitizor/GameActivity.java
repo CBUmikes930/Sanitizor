@@ -1,7 +1,6 @@
 package com.egr423.sanitizor;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.graphics.PointF;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -17,16 +16,15 @@ import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * Created by Micah Steinbock on 10/6/2020
- *
+ * <p>
  * The base GameActivity which handles Accelerometer input and passes that through to the surfaceView
  */
-public class GameActivity extends AppCompatActivity implements SensorEventListener{
-
-    private SensorManager mSensorManager;
-    private GameSurfaceView mSurfaceView;
+public class GameActivity extends AppCompatActivity implements SensorEventListener {
 
     //Used in swipe and joystick controls
     private static final Joystick joystick = Joystick.getInstance();
+    private SensorManager mSensorManager;
+    private GameSurfaceView mSurfaceView;
     //Used in gyro controls
     private Sensor mAccelerometer;
 
@@ -142,6 +140,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
 
     /**
      * Helper method used by the touch listener in order to calculate player speed based on Joystick
+     *
      * @param x - the touch x coord
      * @param y - the touch y coord
      */

@@ -13,7 +13,6 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -33,6 +32,9 @@ public class SanitizorGame {
     private static final int SECOND = 1000;
     private static final int SECONDS_BETWEEN_LEVELS = 5;
     private static final int MAX_LEVEL = 10;
+    public static long pauseStart;
+    public static long pauseEnd;
+    public static long elapsedPauseTime;
     static Player mPlayer;
     static int mSurfaceWidth;
     static int mSurfaceHeight;
@@ -53,10 +55,6 @@ public class SanitizorGame {
     private int mPowerPointer;
     private int level;
     private boolean levelEnding;
-    public static long pauseStart;
-    public static long pauseEnd;
-    public static long elapsedPauseTime;
-
 
 
     public SanitizorGame(Context context, int surfaceWidth, int surfaceHeight) {
@@ -151,10 +149,10 @@ public class SanitizorGame {
             int ran = rand.nextInt(3);
             if (ran == 0) {
                 enemies[enemySize++] = new GreenEnemy(mContext, location);
-            } else if(ran == 1) {
+            } else if (ran == 1) {
                 enemies[enemySize++] = new RedEnemy(mContext, location);
             } else {
-                enemies[enemySize++] = new BlueEnemy(mContext,location);
+                enemies[enemySize++] = new BlueEnemy(mContext, location);
             }
         }
     }
@@ -207,7 +205,7 @@ public class SanitizorGame {
             if (enemy != null && enemy.shouldDestroy()) {
                 Random rand = new Random();
                 int spawn = rand.nextInt(10);
-                if(spawn < 7){
+                if (spawn < 7) {
                     Log.d("PowerUp", "PowerUp should have spawned");
                     createPowerup(enemy);
                 }
@@ -235,12 +233,12 @@ public class SanitizorGame {
     private void movePowerUps() {
         //Move Projectiles
         int i = 0;
-        for (PowerUp powerUp: mPowerUps) {
+        for (PowerUp powerUp : mPowerUps) {
             if (powerUp != null && !powerUp.shouldDestroy()) {
                 powerUp.move();
                 movePowerUp(powerUp);
             } else {
-                if(powerUp != null) {
+                if (powerUp != null) {
                     Log.d("PowerUp", "Destroy");
                 }
                 mPowerUps[i] = null;
@@ -337,9 +335,9 @@ public class SanitizorGame {
                     }
                 } else {
                     if (!enemy.getIsAttacking()) {
-                        if(enemy.getClass().equals(GreenEnemy.class) && ((GreenEnemy) enemy).getGreenIsShooting()){
+                        if (enemy.getClass().equals(GreenEnemy.class) && ((GreenEnemy) enemy).getGreenIsShooting()) {
                             createProjectile(enemy);
-                            Log.d("Projectile","Enemy Shot");
+                            Log.d("Projectile", "Enemy Shot");
                         }
                         enemy.move(new PointF(30, 0));
                     }
@@ -349,7 +347,7 @@ public class SanitizorGame {
             attack = ran.nextInt(500);
             if (attack <= 1 && enemy.getClass().equals(GreenEnemy.class)) {
                 ((GreenEnemy) enemy).setGreenIsShooting(true);
-            } else if(attack<=1){
+            } else if (attack <= 1) {
                 createProjectile(enemy);
             }
         }
@@ -376,7 +374,7 @@ public class SanitizorGame {
         } else {
             //Create a new projectile at enemy position
             projectile = new EnemyProjectile(mContext);
-            if(character.getClass().equals(GreenEnemy.class)){
+            if (character.getClass().equals(GreenEnemy.class)) {
                 ((GreenEnemy) character).shoot();
             }
         }
@@ -391,9 +389,9 @@ public class SanitizorGame {
         mProjPointer %= mProjectiles.length;
     }
 
-    private void createPowerup(Enemy enemy){
+    private void createPowerup(Enemy enemy) {
         PowerUp powerUp;
-        if (levelEnding){
+        if (levelEnding) {
             return;
         }
         Log.d("PowerUp", "create Powerup");
@@ -446,8 +444,8 @@ public class SanitizorGame {
         mJoystick.draw(canvas);
     }
 
-    private void updateGameOver(){
-        if(mPlayer.isGameOver() || level >= MAX_LEVEL){
+    private void updateGameOver() {
+        if (mPlayer.isGameOver() || level >= MAX_LEVEL) {
             mGameOver = true;
         }
     }

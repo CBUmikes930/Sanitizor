@@ -4,14 +4,11 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -31,19 +28,19 @@ import androidx.annotation.NonNull;
 public abstract class Enemy extends Character {
 
     private final float ROTATION_RATE = 0.5f;
+    private final int TIME_TO_ATTACK = 20;
     //VARIABLE Fields
     int ATTACK_PHASE = 4000;
     int hitPoints = 2;
     int ATTACK_COOL_DOWN = 5000;
+    int mPointValue;
     private float rotation = 0;
     private int mDeathStatus;
     private boolean mDeathAnimationIsRunning = false;
     private boolean wrappingx = false;
     private boolean wrappingy = false;
     private long mDeathStartTime;
-
     private long mLastMovedTime;
-    private final int TIME_TO_ATTACK = 20;
     private long lastAttacked;
     private long attackTime;
     private Rect gridPos;
@@ -317,6 +314,10 @@ public abstract class Enemy extends Character {
 
     public int getEnemyHeight() {
         return (bounds.bottom - bounds.top);
+    }
+
+    public int getPointValue() {
+        return mPointValue;
     }
 
     protected enum ENEMY_COLORS {RED, BLUE, GREEN}
