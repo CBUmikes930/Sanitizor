@@ -215,6 +215,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
         SettingsDialogue settingsDialogue = new SettingsDialogue();
         settingsDialogue.show(getSupportFragmentManager(), "settingsFragment");
         settingsDialogue.setActivity(this);
+        settingsDialogue.hideThemeOption(true);
     }
 
     public void resumeGame() {

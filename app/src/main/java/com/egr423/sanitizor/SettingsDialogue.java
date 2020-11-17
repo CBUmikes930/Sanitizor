@@ -33,11 +33,11 @@ public class SettingsDialogue extends BottomSheetDialogFragment {
     private RadioGroup controlSchemeRadioGroup;
     private Button muteUnmuteButton;
     private Button darkModeLightModeButton;
-    private Button clearLeaderboardButton;
 
     private Context mContext;
 
     private static SharedPreferences sharedPref;
+    private static boolean hideThemeOption;
 
 
     /**
@@ -56,19 +56,20 @@ public class SettingsDialogue extends BottomSheetDialogFragment {
         controlSchemeRadioGroup = view.findViewById(R.id.control_scheme);
         muteUnmuteButton = view.findViewById(R.id.mute_unmute_button);
         darkModeLightModeButton = view.findViewById(R.id.dark_mode_light_mode_button);
-        clearLeaderboardButton = view.findViewById(R.id.clear_local_leaderboard_button);
+
+        if (hideThemeOption) {
+            darkModeLightModeButton.setVisibility(View.GONE);
+        }
 
         //set the on click listeners for each button or possible preference
         controlSchemeRadioGroup.setOnCheckedChangeListener(setOnCheckedChangeListener(controlSchemeRadioGroup.getId()));
         muteUnmuteButton.setOnClickListener(setOnClickListenerById(muteUnmuteButton.getId()));
         darkModeLightModeButton.setOnClickListener(setOnClickListenerById(darkModeLightModeButton.getId()));
-        clearLeaderboardButton.setOnClickListener(setOnClickListenerById(clearLeaderboardButton.getId()));
 
         //set the display to represent the current state of the buttons
         setDisplay(controlSchemeRadioGroup);
         setDisplay(muteUnmuteButton);
         setDisplay(darkModeLightModeButton);
-        setDisplay(clearLeaderboardButton);
 
         return view;
     }
@@ -144,12 +145,6 @@ public class SettingsDialogue extends BottomSheetDialogFragment {
                 darkModeButton.setText(darkModeButtonText);
                 return;
 
-            case R.id.clear_local_leaderboard_button:
-                Button clearLeaderBoardButton = (Button) view;
-                //todo dynamically set style?????????
-                return;
-
-
             default:
                 throw new IllegalArgumentException("id should be an id one of the associated buttons" +
                         "of the SettingsDialogue");
@@ -187,7 +182,6 @@ public class SettingsDialogue extends BottomSheetDialogFragment {
      *      * with the SettingsDialogue Class
      */
     private View.OnClickListener setOnClickListenerById(int id) {
-
         switch (id) {
             case R.id.mute_unmute_button:
                 return v -> {
@@ -207,11 +201,6 @@ public class SettingsDialogue extends BottomSheetDialogFragment {
                     getActivity().recreate();
                 };
 
-            case R.id.clear_local_leaderboard_button:
-                return v -> {
-                    sendToast(v, "Local Database has been cleared.");
-                    setDisplay(clearLeaderboardButton);
-                };
             default:
                 throw new IllegalArgumentException("id should be an id one of the associated buttons" +
                         "of the SettingsDialogue");
@@ -270,5 +259,9 @@ public class SettingsDialogue extends BottomSheetDialogFragment {
 
         int themeID = (useDarkMode) ? R.style.DarkTheme : R.style.LightTheme;
         context.setTheme(themeID);
+    }
+
+    public void hideThemeOption(boolean option) {
+        hideThemeOption = option;
     }
 }
