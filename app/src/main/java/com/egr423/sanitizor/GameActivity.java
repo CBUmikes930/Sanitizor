@@ -53,14 +53,12 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
 
     @SuppressLint("ClickableViewAccessibility")
     private void setControlScheme() {
-        if (SettingsDialogue.controlScheme == R.id.joystick_controls) {
-            mSurfaceView.resetJoystick();
-        }
-
         if (SettingsDialogue.controlScheme == R.id.gyro_controls) {
             //Initialize sensors for motion control
             mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
             mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
+            mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
 
             //Set tap listener to fire projectile
             mSurfaceView.setOnTouchListener(new View.OnTouchListener() {
@@ -73,6 +71,9 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
                     return false;
                 }
             });
+
+            Button fireButton = findViewById(R.id.FireButton);
+            fireButton.setVisibility(View.GONE);
         } else {
             //Initialize Touch settings for motion control
             mSurfaceView.setOnTouchListener(new View.OnTouchListener() {
@@ -122,6 +123,21 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
                 }
             });
         }
+    }
+
+    private void resetControlScheme() {
+        if (SettingsDialogue.controlScheme != R.id.gyro_controls) {
+            try {
+                mSensorManager.unregisterListener(this, mAccelerometer);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (SettingsDialogue.controlScheme == R.id.joystick_controls) {
+            mSurfaceView.resetJoystick();
+        }
+        setControlScheme();
     }
 
     /**
@@ -195,13 +211,15 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
     public void pauseGame(View view) {
         Log.d("GamePause", "Game Paused");
         mSurfaceView.pauseGame();
+        SoundManager.getInstance().pause();
         SettingsDialogue settingsDialogue = new SettingsDialogue();
         settingsDialogue.show(getSupportFragmentManager(), "settingsFragment");
         settingsDialogue.setActivity(this);
     }
 
     public void resumeGame() {
-        setControlScheme();
+        resetControlScheme();
+        SoundManager.getInstance().resume();
         mSurfaceView.resumeGame();
     }
 
