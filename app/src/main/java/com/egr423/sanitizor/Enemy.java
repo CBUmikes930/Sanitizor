@@ -4,14 +4,11 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -54,7 +51,10 @@ public abstract class Enemy extends Character {
     private boolean wrappingGx = false;
     private boolean wrappingGy = false;
 
+    protected int mPointValue;
+
     public Enemy(ENEMY_COLORS color, @NonNull Context context, Point location, int numberOfSprites) {
+        mPointValue = 0;
         mImage = new Bitmap[numberOfSprites];
         for (int i = 0; i < numberOfSprites; i++) {
             //Get sprite name
@@ -317,6 +317,10 @@ public abstract class Enemy extends Character {
 
     public int getEnemyHeight() {
         return (bounds.bottom - bounds.top);
+    }
+
+    public int getPointValue() {
+        return mPointValue;
     }
 
     protected enum ENEMY_COLORS {RED, BLUE}
