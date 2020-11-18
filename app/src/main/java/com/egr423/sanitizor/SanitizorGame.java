@@ -180,7 +180,9 @@ public class SanitizorGame {
 
     //Called from GameThread when a button is clicked
     public void buttonClicked() {
-        createProjectile(mPlayer);
+        if (mPlayer.getPlayerLives() > 0) {
+            createProjectile(mPlayer);
+        }
     }
 
     public void update(PointF velocity) {
@@ -197,8 +199,10 @@ public class SanitizorGame {
                 checkForDeadEnemies();
             }
             //Move player
-            mPlayer.move(velocity);
-            mPlayer.checkInvincibility();
+            if (mPlayer.getPlayerLives() > 0) {
+                mPlayer.move(velocity);
+                mPlayer.checkInvincibility();
+            }
             moveProjectiles();
             movePowerUps();
 
