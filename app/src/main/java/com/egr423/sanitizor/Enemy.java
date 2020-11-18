@@ -157,20 +157,12 @@ public abstract class Enemy extends Character {
     }
 
     public void move(@NonNull PointF velocity) {
-        if(mDeathAnimationIsRunning) return;
-
-        if(mLastMovedTime < SanitizorGame.pauseStart){
-            mLastMovedTime += SanitizorGame.elapsedPauseTime;
-        }
-        long elapsedTime = System.currentTimeMillis() - mLastMovedTime;
-
-
         checkAtOriginalPos(false);
         gridSpeed = velocity;
         moveGridPos();
 //        checkAtOriginalPos();
-        bounds.offset((int) (velocity.x * SPEED * elapsedTime),
-                (int) (velocity.y * SPEED * elapsedTime));
+        bounds.offset((int) (velocity.x * SPEED),
+                (int) (velocity.y * SPEED));
         wrapScreen();
         wrapGrid();
     }

@@ -19,6 +19,8 @@ import android.widget.TextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 
+import org.w3c.dom.Text;
+
 import java.util.Random;
 
 
@@ -56,8 +58,6 @@ public class SanitizorGame {
     public static long pauseStart;
     public static long pauseEnd;
     public static long elapsedPauseTime;
-
-
 
     public SanitizorGame(Context context, int surfaceWidth, int surfaceHeight) {
         mContext = context;
@@ -148,13 +148,10 @@ public class SanitizorGame {
                 location = new Point(20, 100);
             }
             Random rand = new Random();
-            int ran = rand.nextInt(3);
-            if (ran == 0) {
-                enemies[enemySize++] = new GreenEnemy(mContext, location);
-            } else if(ran == 1) {
-                enemies[enemySize++] = new RedEnemy(mContext, location);
+            if (rand.nextBoolean()) {
+                enemies[enemySize++] = new BlueEnemy(mContext, location);
             } else {
-                enemies[enemySize++] = new BlueEnemy(mContext,location);
+                enemies[enemySize++] = new RedEnemy(mContext, location);
             }
         }
     }
@@ -177,6 +174,7 @@ public class SanitizorGame {
         elapsedPauseTime = pauseEnd - pauseStart;
         updateGameOver();
         if (!mGameOver) {
+//            updateLives();
             //level progression
             if (enemySize == 0) {
                 if (!levelEnding)
@@ -208,7 +206,7 @@ public class SanitizorGame {
                 Random rand = new Random();
                 int spawn = rand.nextInt(10);
                 if(spawn < 7){
-                    Log.d("PowerUp", "PowerUp should have spawned");
+                    //Log.d("PowerUp", "PowerUp should have spawned");
                     createPowerup(enemy);
                 }
                 enemies[currentEnemyIndex] = null;
@@ -240,9 +238,9 @@ public class SanitizorGame {
                 powerUp.move();
                 movePowerUp(powerUp);
             } else {
-                if(powerUp != null) {
-                    Log.d("PowerUp", "Destroy");
-                }
+//                if(powerUp != null) {
+//                    Log.d("PowerUp", "Destroy");
+//                }
                 mPowerUps[i] = null;
             }
             i++;
@@ -274,6 +272,7 @@ public class SanitizorGame {
                 projectile.startAnimation();
                 if (!mPlayerIsInvincible) {
                     mPlayer.damagePlayer();
+//                    updateLives();
                 }
             }
         }
@@ -281,9 +280,10 @@ public class SanitizorGame {
 
     private void movePowerUp(PowerUp powerUp) {
         if (Rect.intersects(powerUp.getRect(), mPlayer.getRect())) {
-            Log.d("PowerUp", "upgrade player");
+//            Log.d("PowerUp", "upgrade player");
             mPlayerScore += 200;
             powerUp.upgradePlayer(mPlayer);
+//            updateLives();
             powerUp.destroyPowerUp();
         }
     }
@@ -301,6 +301,7 @@ public class SanitizorGame {
 //                Log.d("Enemy", "Enemy collided with Player");
                 if (!mPlayerIsInvincible) {
                     mPlayer.damagePlayer();
+//                    updateLives();
                 }
             }
             int attack = ran.nextInt(1001);
@@ -321,7 +322,7 @@ public class SanitizorGame {
                     // Do nothing
                 }
             } else {
-                if (attack <= 1 && !enemy.getClass().equals(GreenEnemy.class)) {
+                if (attack <= 1) {
                     try {
                         if (enemy.checkAttackCooldown()) {
 //                            Log.d("Enemy update", "Enemy is attacking: " + enemy);
@@ -337,19 +338,13 @@ public class SanitizorGame {
                     }
                 } else {
                     if (!enemy.getIsAttacking()) {
-                        if(enemy.getClass().equals(GreenEnemy.class) && ((GreenEnemy) enemy).getGreenIsShooting()){
-                            createProjectile(enemy);
-                            Log.d("Projectile","Enemy Shot");
-                        }
                         enemy.move(new PointF(30, 0));
                     }
                 }
             }
             //Randomize whether to attack
             attack = ran.nextInt(500);
-            if (attack <= 1 && enemy.getClass().equals(GreenEnemy.class)) {
-                ((GreenEnemy) enemy).setGreenIsShooting(true);
-            } else if(attack<=1){
+            if (attack <= 1) {
                 createProjectile(enemy);
             }
         }
@@ -365,7 +360,6 @@ public class SanitizorGame {
         }
         long elapsedTime = System.currentTimeMillis() - character.lastFired;
         if (levelEnding || elapsedTime < character.shotCoolDown) {
-
             return;
         }
 
@@ -376,9 +370,6 @@ public class SanitizorGame {
         } else {
             //Create a new projectile at enemy position
             projectile = new EnemyProjectile(mContext);
-            if(character.getClass().equals(GreenEnemy.class)){
-                ((GreenEnemy) character).shoot();
-            }
         }
         //Record shot time
         character.lastFired = System.currentTimeMillis();
@@ -396,10 +387,10 @@ public class SanitizorGame {
         if (levelEnding){
             return;
         }
-        Log.d("PowerUp", "create Powerup");
-        Random rand = new Random();
-        int r = rand.nextInt(2);
-        if (r == 0) {
+//        Log.d("PowerUp", "create Powerup");
+        Random ran = new Random();
+        int r = ran.nextInt(2);
+        if(r == 0) {
             powerUp = new rapidPowerup(mContext);
         } else {
             powerUp = new lifePowerup(mContext);
@@ -418,6 +409,7 @@ public class SanitizorGame {
         paint.setColor(TEXT_COLOR);
         paint.setTextSize(40f);
         canvas.drawText(mContext.getString(R.string.score_display, Integer.toString(mPlayerScore)), 0, 40, paint);
+        canvas.drawText(mContext.getString(R.string.livestxt, mPlayer.getPlayerLives()),0,mSurfaceHeight-40,paint);
 
         //Draw Player
         mPlayer.draw(canvas);
@@ -462,6 +454,7 @@ public class SanitizorGame {
 
     public void killPlayer() {
         mPlayer.setPlayerLives(0);
+//        updateLives();
     }
 
     private void clearLevel() {

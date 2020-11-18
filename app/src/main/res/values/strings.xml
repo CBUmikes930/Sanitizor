@@ -30,6 +30,7 @@
     <!-- Game Activity -->
     <string name="fire_button">Fire!</string>
     <string name="level_cleared_message">LEVEL CLEARED!!%sNext Level Starting in %d seconds…</string>
+    <string name="livestxt">Lives: %d</string>
     <!-- Leaderboard Activity -->
     <string name="header">LEADERBOARD</string>
     <string name="name_label">Name:</string>
@@ -46,4 +47,6 @@
     <string name="sign_in_notice">Your score will not be submitted to the leaderboard because you are not signed in</string>
     <string name="high_score_sign_in">You must sign in to view your high score</string>
     <string name="score_display">Score: %s</string>
+    <string name="die">Die</string>
+
 </resources>
