@@ -33,7 +33,7 @@ public class SanitizorGame {
     public static final double PIXEL_MULTIPLIER = .5;
     private static final int SECOND = 1000;
     private static final int SECONDS_BETWEEN_LEVELS = 5;
-    private static final int MAX_LEVEL = 10;
+    private static final int MAX_LEVEL = Integer.MAX_VALUE;
     public static long pauseStart;
     public static long pauseEnd;
     public static long elapsedPauseTime;
@@ -209,9 +209,6 @@ public class SanitizorGame {
 
         } else {
             Intent gameIntent = new Intent(mContext, GameOver.class);
-            //TODO Take out random score when we implement score
-            //Generate random score for now
-            Random random = new Random();
             gameIntent.putExtra("com.egr423.sanitizor.score", mPlayerScore);
             mContext.startActivity(gameIntent);
         }
@@ -223,7 +220,7 @@ public class SanitizorGame {
             if (enemy != null && enemy.shouldDestroy()) {
                 Random rand = new Random();
                 int spawn = rand.nextInt(10);
-                if (spawn < 7) {
+                if (spawn < 2) {
                     //Log.d("PowerUp", "PowerUp should have spawned");
 
                     createPowerup(enemy);

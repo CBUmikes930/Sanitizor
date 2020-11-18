@@ -38,14 +38,6 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
         setContentView(R.layout.activity_game);
         mSurfaceView = findViewById(R.id.gameSurface);
 
-        Button killPlayer = findViewById(R.id.killPlayerButton);
-        killPlayer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                killPlayer();
-            }
-        });
-
         setControlScheme();
     }
 
