@@ -41,7 +41,10 @@ public abstract class Enemy extends Character {
     private boolean wrappingx = false;
     private boolean wrappingy = false;
     private long mDeathStartTime;
-    private long mLastMovedTime;
+    long mLastMovedTime;
+    private long mBLastMovedTime;
+    private final int TIME_TO_ATTACK = 20;
+
     private long lastAttacked;
     private long attackTime;
     private Rect gridPos;
@@ -77,6 +80,8 @@ public abstract class Enemy extends Character {
         lastFired = 0;
         gridPos = new Rect(bounds);
         atOriginalPos = true;
+        SPEED = 0.1;
+        mLastMovedTime = System.currentTimeMillis();
         // 0 0     gridspeed*20  bounds*50
     }
 
@@ -89,13 +94,17 @@ public abstract class Enemy extends Character {
             int x = gridPos.left - bounds.left;
             int y = gridPos.top - bounds.top;
             double direction = Math.atan((0.0 + y) / x);
-            int sign = 1;
+            int signx = 1;
             if (x < 0) {
-                sign = -1;
+                signx = -1;
             }
-            int speed = 40;
-            bounds.offset((int) ((speed * Math.cos(direction) * sign)),
-                    (int) (Math.ceil(speed * Math.sin(direction) * sign)));
+
+            long time = lastMoveTime(mLastMovedTime);
+            double speed = 1;
+            bounds.offset((int) ((speed * Math.cos(direction) * signx*time)),
+                    (int) (Math.min(speed * Math.sin(direction)*signx *time,-10)));
+            mLastMovedTime = setLastMoveTime();
+           // mLastMovedTime = System.currentTimeMillis() -mLastMovedTime;
             wrapScreen();
             isReturning = true;
             //Log.d("Enemy.returnToAttackPos", "Enemy is returning");
@@ -138,7 +147,7 @@ public abstract class Enemy extends Character {
         long elapsedTime = System.currentTimeMillis() - attackTime;
         if (elapsedTime <= ATTACK_PHASE) {
             //Log.d("Enemy.attack","Enemy should be attacking");
-            attack(new PointF(0, 80));
+            attack(new PointF(0.75f, 4));
         } else {
 //            Log.d("Enemy Movement","" +gridPos.left +"," + gridPos.top);
             isReturning = true;
@@ -150,7 +159,9 @@ public abstract class Enemy extends Character {
     public void attack(@NonNull PointF velocity) {
         wrapGrid();
 //        checkAtOriginalPos();
-        bounds.offset(0, (int) (velocity.y * SPEED));
+        wrapScreen();
+        bounds.offset(0, (int) (velocity.y * SPEED* lastMoveTime(mLastMovedTime)));
+        mLastMovedTime = setLastMoveTime();
         wrapScreen();
     }
 
@@ -159,8 +170,10 @@ public abstract class Enemy extends Character {
         gridSpeed = velocity;
         moveGridPos();
 //        checkAtOriginalPos();
-        bounds.offset((int) (velocity.x * SPEED),
-                (int) (velocity.y * SPEED));
+        long time = lastMoveTime(mLastMovedTime);
+        bounds.offset((int) (velocity.x * SPEED * time),
+                (int) (velocity.y * SPEED* time));
+        mLastMovedTime = setLastMoveTime();
         wrapScreen();
         wrapGrid();
     }
@@ -285,7 +298,7 @@ public abstract class Enemy extends Character {
     }
 
     private void checkAtOriginalPos(boolean shouldReturn) {
-        if (bounds.left - gridPos.left > 1 || bounds.top - gridPos.top > 1) {
+        if (bounds.left - gridPos.left > 10 || bounds.top - gridPos.top > 10) {
             //Log.d("Enemy Bounds","Bounds top:" + bounds.top + "Bounds point: " +pointOfAttack.y);
             atOriginalPos = false;
         } else {
@@ -305,8 +318,10 @@ public abstract class Enemy extends Character {
     }
 
     private void moveGridPos() {
-        gridPos.offset((int) (gridSpeed.x * SPEED),
-                (int) (gridSpeed.y * SPEED));
+        long time =lastMoveTime(mBLastMovedTime);
+        gridPos.offset((int) (gridSpeed.x * SPEED * time),
+                (int) (gridSpeed.y * SPEED  *time));
+        mBLastMovedTime = setLastMoveTime();
     }
 
     public int getEnemyWidth() {
@@ -319,6 +334,17 @@ public abstract class Enemy extends Character {
 
     public int getPointValue() {
         return mPointValue;
+    }
+  
+    protected long lastMoveTime(long lastMoveTime){
+        if(lastMoveTime < SanitizorGame.pauseStart){
+            lastMoveTime += SanitizorGame.elapsedPauseTime;
+        }
+        return System.currentTimeMillis() - lastMoveTime;
+    }
+
+    protected long setLastMoveTime(){
+        return System.currentTimeMillis();
     }
 
     protected enum ENEMY_COLORS {RED, BLUE, GREEN}

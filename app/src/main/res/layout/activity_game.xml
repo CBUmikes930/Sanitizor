@@ -34,7 +34,7 @@
         android:id="@+id/killPlayerButton"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:text="Die"
+        android:text="@string/die"
         android:background="@drawable/rounded_button"
         android:textColor="?gameButtonTextColor"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -54,6 +54,17 @@
         app:layout_constraintVertical_bias="0.954"
         app:layout_constraintHorizontal_bias="0.123"
         android:onClick="pauseGame" />
+
+    <TextView
+        android:id="@+id/lives"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textSize="30sp"
+        android:textColor="@color/buttonTextColor"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+         />
 
     <TextView
         android:id="@+id/level_cleared_text_view"

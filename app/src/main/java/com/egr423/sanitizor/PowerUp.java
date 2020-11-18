@@ -12,6 +12,7 @@ import android.media.MediaPlayer;
 import android.util.Log;
 
 public abstract class PowerUp extends Projectile {
+    float SPEED = -1f;
     protected Bitmap[] mImage;
     float SPEED = -1f;
     int mStatus;
@@ -23,6 +24,7 @@ public abstract class PowerUp extends Projectile {
     boolean mShouldDestroy = false;
     //Sound FX
     private MediaPlayer collectSound;
+
 
 
     public PowerUp(POWER_UPS type, Context context) {

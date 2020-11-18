@@ -3,14 +3,16 @@ package com.egr423.sanitizor;
 import android.content.Context;
 import android.graphics.Point;
 
+import android.graphics.PointF;
+
 import androidx.annotation.NonNull;
 
 public class GreenEnemy extends Enemy {
     // -ONLY SHOOTS-
-    private final int TOTAL_SHOTS = 2;
-    private final int FRAME_BUFFER = 0;
-    private final int framesLeft;
+    private final int TOTAL_SHOTS =2;
     private boolean greenIsShooting;
+    private final int FRAME_BUFFER = 0;
+    private int framesLeft;
     private int shotsLeft;
 
     public GreenEnemy(@NonNull Context context, Point location) {
@@ -21,8 +23,9 @@ public class GreenEnemy extends Enemy {
         shotCoolDown = 100;
         shotsLeft = TOTAL_SHOTS;
     }
-
+  
     public void shoot() {
+
         if (shotsLeft > 0) {
             shotsLeft--;
         } else {
@@ -30,10 +33,12 @@ public class GreenEnemy extends Enemy {
             greenIsShooting = false;
         }
     }
-
+  
     public boolean getGreenIsShooting() {
+
         return greenIsShooting;
     }
+
 
 
     public void setGreenIsShooting(boolean isShooting) {

@@ -189,6 +189,7 @@ public class SanitizorGame {
         elapsedPauseTime = pauseEnd - pauseStart;
         updateGameOver();
         if (!mGameOver) {
+//            updateLives();
             //level progression
             if (enemySize == 0) {
                 if (!levelEnding) {
@@ -223,7 +224,8 @@ public class SanitizorGame {
                 Random rand = new Random();
                 int spawn = rand.nextInt(10);
                 if (spawn < 7) {
-                    Log.d("PowerUp", "PowerUp should have spawned");
+                    //Log.d("PowerUp", "PowerUp should have spawned");
+
                     createPowerup(enemy);
                 }
                 enemies[currentEnemyIndex] = null;
@@ -255,9 +257,11 @@ public class SanitizorGame {
                 powerUp.move();
                 movePowerUp(powerUp);
             } else {
-                if (powerUp != null) {
-                    Log.d("PowerUp", "Destroy");
-                }
+
+//                if(powerUp != null) {
+//                    Log.d("PowerUp", "Destroy");
+//                }
+
                 mPowerUps[i] = null;
             }
             i++;
@@ -289,6 +293,7 @@ public class SanitizorGame {
                 projectile.startAnimation();
                 if (!mPlayerIsInvincible) {
                     mPlayer.damagePlayer();
+//                    updateLives();
                 }
             }
         }
@@ -296,9 +301,10 @@ public class SanitizorGame {
 
     private void movePowerUp(PowerUp powerUp) {
         if (Rect.intersects(powerUp.getRect(), mPlayer.getRect())) {
-            Log.d("PowerUp", "upgrade player");
+//            Log.d("PowerUp", "upgrade player");
             mPlayerScore += 200;
             powerUp.upgradePlayer(mPlayer);
+//            updateLives();
             powerUp.destroyPowerUp();
         }
     }
@@ -343,7 +349,7 @@ public class SanitizorGame {
                             enemy.checkAttack();
                         } else {
                             if (!enemy.getIsAttacking()) {
-                                enemy.move(new PointF(30, 0));
+                                enemy.move(new PointF(1, 0));
                             }
 //                            Log.d("Enemy update", "Enemy couldn't attack");
                         }
@@ -352,11 +358,12 @@ public class SanitizorGame {
                     }
                 } else {
                     if (!enemy.getIsAttacking()) {
-                        if (enemy.getClass().equals(GreenEnemy.class) && ((GreenEnemy) enemy).getGreenIsShooting()) {
+
+                        if(enemy.getClass().equals(GreenEnemy.class) && ((GreenEnemy) enemy).getGreenIsShooting()){
                             createProjectile(enemy);
-                            Log.d("Projectile", "Enemy Shot");
+                            Log.d("Projectile","Enemy Shot");
                         }
-                        enemy.move(new PointF(30, 0));
+                        enemy.move(new PointF(1, 0));
                     }
                 }
             }
@@ -411,10 +418,11 @@ public class SanitizorGame {
         if (levelEnding) {
             return;
         }
-        Log.d("PowerUp", "create Powerup");
-        Random rand = new Random();
-        int r = rand.nextInt(2);
-        if (r == 0) {
+//        Log.d("PowerUp", "create Powerup");
+        Random ran = new Random();
+        int r = ran.nextInt(2);
+        if(r == 0) {
+
             powerUp = new rapidPowerup(mContext);
         } else {
             powerUp = new lifePowerup(mContext);
@@ -433,6 +441,7 @@ public class SanitizorGame {
         paint.setColor(TEXT_COLOR);
         paint.setTextSize(40f);
         canvas.drawText(mContext.getString(R.string.score_display, Integer.toString(mPlayerScore)), 0, 40, paint);
+        canvas.drawText(mContext.getString(R.string.livestxt, mPlayer.getPlayerLives()),0,mSurfaceHeight-40,paint);
 
         //Draw Player
         mPlayer.draw(canvas);
@@ -477,6 +486,7 @@ public class SanitizorGame {
 
     public void killPlayer() {
         mPlayer.setPlayerLives(0);
+//        updateLives();
     }
 
     private void clearLevel() {
