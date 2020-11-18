@@ -10,6 +10,7 @@ public class BlueEnemy extends Enemy {
     public BlueEnemy(@NonNull Context context, Point location) {
         super(ENEMY_COLORS.BLUE, context, location, 6);
         ATTACK_PHASE = 8000;
+        mPointValue = 20;
     }
 
     @Override

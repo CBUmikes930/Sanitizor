@@ -98,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements AccountManager.si
     public void settingsButtonListener(View view) {
         SettingsDialogue settingsDialogue = new SettingsDialogue();
         settingsDialogue.show(getSupportFragmentManager(), "settingsFragment");
+        settingsDialogue.hideThemeOption(false);
     }
 
     /**

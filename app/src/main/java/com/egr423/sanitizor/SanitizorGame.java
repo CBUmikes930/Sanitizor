@@ -263,9 +263,9 @@ public class SanitizorGame {
                     if (enemy.isDead() && !enemy.shouldDestroy() &&
                             !enemy.isDeathAnimationRunning()) {
                         enemy.startDeathAnimation();
-                        mPlayerScore += 100;
+                        mPlayerScore += enemy.getPointValue() * 10;
                     } else {
-                        mPlayerScore += 10;
+                        mPlayerScore += enemy.getPointValue();
                     }
                 }
             }
