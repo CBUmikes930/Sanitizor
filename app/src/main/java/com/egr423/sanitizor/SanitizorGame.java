@@ -18,6 +18,8 @@ import android.widget.TextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Random;
 
 
@@ -121,9 +123,9 @@ public class SanitizorGame {
 
     private void progressLevel() {
         if (level < MAX_LEVEL) {
+            generateEnemies();
             levelEnding = false;
             level++;
-            generateEnemies();
         } else {
             updateGameOver();
         }
@@ -131,28 +133,38 @@ public class SanitizorGame {
 
     //Create enemy objects
     private void generateEnemies() {
-        int row = 0;
-        int col = 0;
+        int currentRow = 0;
+        int currentCol = 0;
+        Random rand = new Random();
         for (int i = 0; i < ENEMY_ROWS * ENEMIES_IN_ROW + 1; i++) {
-            Point location;
-            try {
-                if (((col * enemies[i - 1].getEnemyWidth()) + 20) > (mSurfaceWidth)) {
-                    col = 0;
-                    row++;
+            if (rand.nextBoolean()) {
+                int ran = rand.nextInt(Enemy.SUB_CLASSES.length);
+                Class<?> clazz = Enemy.SUB_CLASSES[ran];
+                Enemy enemy;
+                Constructor<?> constructor = null;
+                try {
+                    constructor = clazz.getConstructor(Context.class, Point.class);
+                    enemy = (Enemy) constructor.newInstance(mContext, new Point());
+                } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
+                    enemy = new RedEnemy(mContext, new Point());
                 }
-                location = new Point((col++ * enemies[i - 1].getEnemyWidth()) + 20,
-                        100 + row * enemies[i - 1].getEnemyHeight());
-            } catch (Exception e) {
-                location = new Point(20, 100);
-            }
-            Random rand = new Random();
-            int ran = rand.nextInt(3);
-            if (ran == 0) {
-                enemies[enemySize++] = new GreenEnemy(mContext, location);
-            } else if (ran == 1) {
-                enemies[enemySize++] = new RedEnemy(mContext, location);
-            } else {
-                enemies[enemySize++] = new BlueEnemy(mContext, location);
+                Point location;
+                try {
+                    if (((currentCol * enemy.getEnemyWidth()) + 20) > (mSurfaceWidth)) {
+                        currentCol = 0;
+                        currentRow++;
+                    }
+                    location = new Point((currentCol++ * enemy.getEnemyWidth()) + 20,
+                            currentRow * enemy.getEnemyHeight());
+                } catch (Exception e) {
+                    location = new Point(20, 100);
+                }
+                try {
+                    enemy = (Enemy) constructor.newInstance(mContext, location);
+                } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NullPointerException e) {
+                    e.printStackTrace();
+                }
+                enemies[enemySize++] = enemy;
             }
         }
     }
@@ -177,8 +189,9 @@ public class SanitizorGame {
         if (!mGameOver) {
             //level progression
             if (enemySize == 0) {
-                if (!levelEnding)
+                if (!levelEnding) {
                     endLevel();
+                }
             } else {
                 enemiesAttack();
                 checkForDeadEnemies();

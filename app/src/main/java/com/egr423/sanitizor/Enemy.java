@@ -27,6 +27,7 @@ import androidx.annotation.NonNull;
 
 public abstract class Enemy extends Character {
 
+    public static final Class<?>[] SUB_CLASSES = {RedEnemy.class, BlueEnemy.class, GreenEnemy.class};
     private final float ROTATION_RATE = 0.5f;
     private final int TIME_TO_ATTACK = 20;
     //VARIABLE Fields
