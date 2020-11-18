@@ -43,7 +43,6 @@ public abstract class Enemy extends Character {
     private long mDeathStartTime;
     long mLastMovedTime;
     private long mBLastMovedTime;
-    private final int TIME_TO_ATTACK = 20;
 
     private long lastAttacked;
     private long attackTime;

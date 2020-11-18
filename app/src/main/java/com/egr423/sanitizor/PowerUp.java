@@ -14,7 +14,6 @@ import android.util.Log;
 public abstract class PowerUp extends Projectile {
     float SPEED = -1f;
     protected Bitmap[] mImage;
-    float SPEED = -1f;
     int mStatus;
     //Animation start time
     Rect bounds;
