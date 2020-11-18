@@ -4,17 +4,12 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.util.Log;
-
-import androidx.core.content.res.ResourcesCompat;
 
 /**
  * Created by Micah Steinbock on 10/13/2020
@@ -23,24 +18,23 @@ import androidx.core.content.res.ResourcesCompat;
  * When it collides with something it animates into a splashing animation
  */
 public class Projectile {
-    float SPEED = 1f;
-
     //private Drawable mSprite;
     protected Bitmap[] mImage;
+    float SPEED = 1f;
     //Which sprite to draw
     int mStatus;
     //Animation start time
     Rect bounds;
     long mStartTime;
     boolean mAnimationIsRunning = false;
-    private boolean fromPlayer;
     long mLastMoved;
     String soundName;
+    private boolean fromPlayer;
     //Sound FX
     private MediaPlayer splashSound;
 
 
-    public Projectile(Context context, Character character){
+    public Projectile(Context context, Character character) {
         this(context);
         fromPlayer = character.equals(SanitizorGame.mPlayer);
     }
@@ -73,7 +67,7 @@ public class Projectile {
     }
 
     public void setPosition(Point location) {
-       bounds.offsetTo(location.x, location.y);
+        bounds.offsetTo(location.x, location.y);
     }
 
     public void move() {

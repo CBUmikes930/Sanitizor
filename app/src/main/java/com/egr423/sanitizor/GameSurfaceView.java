@@ -1,7 +1,6 @@
 package com.egr423.sanitizor;
 
 import android.content.Context;
-import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -9,14 +8,14 @@ import android.view.SurfaceView;
 
 /**
  * Created by Micah Steinbock on 10/6/2020
- *
+ * <p>
  * The GameSurfaceView which creates a Game Thread and passes information to it
  */
 public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
 
-    private GameThread mGameThread;
     public int width;
     public int height;
+    private GameThread mGameThread;
 
     public GameSurfaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -53,15 +52,15 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         mGameThread.buttonClicked();
     }
 
-    public boolean getGameOver(){
+    public boolean getGameOver() {
         return mGameThread.getmSanitizorGame().getGameOver();
     }
 
-    public int getPlayerScore(){
+    public int getPlayerScore() {
         return mGameThread.getPlayerScore();
     }
 
-    public GameThread getmGameThread(){
+    public GameThread getmGameThread() {
         return mGameThread;
     }
 

@@ -24,19 +24,17 @@ import java.lang.ref.WeakReference;
 
 /**
  * Created by Micah Steinbock - 644014
- *
+ * <p>
  * A singleton class that is used to access the sign in/sign out functions
  */
 public class AccountManager {
 
     private static AccountManager mInstance;
-
+    private static WeakReference<Context> mContext;
     //Sign in Intent Code
     private final int CODE = 14142;
-
-    private static WeakReference<Context> mContext;
-    private GoogleSignInClient mGoogleSignInClient;
-    private FirebaseAuth mAuth;
+    private final GoogleSignInClient mGoogleSignInClient;
+    private final FirebaseAuth mAuth;
     private signedInListener mListener;
 
     private AccountManager(Context context) {
@@ -58,6 +56,10 @@ public class AccountManager {
         setContext(context);
 
         return mInstance;
+    }
+
+    private static void setContext(Context context) {
+        mContext = new WeakReference<>(context);
     }
 
     public FirebaseUser getCurrentUser() {
@@ -115,11 +117,7 @@ public class AccountManager {
         mListener = listener;
     }
 
-    private static void setContext(Context context) {
-        mContext = new WeakReference<>(context);
-    }
-
     interface signedInListener {
-        public void updateUI(FirebaseUser user);
+        void updateUI(FirebaseUser user);
     }
 }

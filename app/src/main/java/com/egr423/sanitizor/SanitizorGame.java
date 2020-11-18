@@ -13,14 +13,13 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 
-import org.w3c.dom.Text;
-
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Random;
 
 
@@ -35,6 +34,9 @@ public class SanitizorGame {
     private static final int SECOND = 1000;
     private static final int SECONDS_BETWEEN_LEVELS = 5;
     private static final int MAX_LEVEL = 10;
+    public static long pauseStart;
+    public static long pauseEnd;
+    public static long elapsedPauseTime;
     static Player mPlayer;
     static int mSurfaceWidth;
     static int mSurfaceHeight;
@@ -55,9 +57,7 @@ public class SanitizorGame {
     private int mPowerPointer;
     private int level;
     private boolean levelEnding;
-    public static long pauseStart;
-    public static long pauseEnd;
-    public static long elapsedPauseTime;
+
 
     public SanitizorGame(Context context, int surfaceWidth, int surfaceHeight) {
         mContext = context;
@@ -123,9 +123,9 @@ public class SanitizorGame {
 
     private void progressLevel() {
         if (level < MAX_LEVEL) {
+            generateEnemies();
             levelEnding = false;
             level++;
-            generateEnemies();
         } else {
             updateGameOver();
         }
@@ -133,28 +133,38 @@ public class SanitizorGame {
 
     //Create enemy objects
     private void generateEnemies() {
-        int row = 0;
-        int col = 0;
+        int currentRow = 0;
+        int currentCol = 0;
+        Random rand = new Random();
         for (int i = 0; i < ENEMY_ROWS * ENEMIES_IN_ROW + 1; i++) {
-            Point location;
-            try {
-                if (((col * enemies[i - 1].getEnemyWidth()) + 20) > (mSurfaceWidth)) {
-                    col = 0;
-                    row++;
+            if (rand.nextBoolean()) {
+                int ran = rand.nextInt(Enemy.SUB_CLASSES.length);
+                Class<?> clazz = Enemy.SUB_CLASSES[ran];
+                Enemy enemy;
+                Constructor<?> constructor = null;
+                try {
+                    constructor = clazz.getConstructor(Context.class, Point.class);
+                    enemy = (Enemy) constructor.newInstance(mContext, new Point());
+                } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
+                    enemy = new RedEnemy(mContext, new Point());
                 }
-                location = new Point((col++ * enemies[i - 1].getEnemyWidth()) + 20,
-                        100 + row * enemies[i - 1].getEnemyHeight());
-            } catch (Exception e) {
-                location = new Point(20, 100);
-            }
-            Random rand = new Random();
-            int ran = rand.nextInt(3);
-            if (ran ==0) {
-                enemies[enemySize++] = new BlueEnemy(mContext, location);
-            } else if(ran ==1) {
-                enemies[enemySize++] = new RedEnemy(mContext, location);
-            } else {
-                enemies[enemySize++] = new GreenEnemy(mContext, location);
+                Point location;
+                try {
+                    if (((currentCol * enemy.getEnemyWidth()) + 20) > (mSurfaceWidth)) {
+                        currentCol = 0;
+                        currentRow++;
+                    }
+                    location = new Point((currentCol++ * enemy.getEnemyWidth()) + 20,
+                            currentRow * enemy.getEnemyHeight());
+                } catch (Exception e) {
+                    location = new Point(20, 100);
+                }
+                try {
+                    enemy = (Enemy) constructor.newInstance(mContext, location);
+                } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NullPointerException e) {
+                    e.printStackTrace();
+                }
+                enemies[enemySize++] = enemy;
             }
         }
     }
@@ -170,7 +180,9 @@ public class SanitizorGame {
 
     //Called from GameThread when a button is clicked
     public void buttonClicked() {
-        createProjectile(mPlayer);
+        if (mPlayer.getPlayerLives() > 0) {
+            createProjectile(mPlayer);
+        }
     }
 
     public void update(PointF velocity) {
@@ -180,15 +192,18 @@ public class SanitizorGame {
 //            updateLives();
             //level progression
             if (enemySize == 0) {
-                if (!levelEnding)
+                if (!levelEnding) {
                     endLevel();
+                }
             } else {
                 enemiesAttack();
                 checkForDeadEnemies();
             }
             //Move player
-            mPlayer.move(velocity);
-            mPlayer.checkInvincibility();
+            if (mPlayer.getPlayerLives() > 0) {
+                mPlayer.move(velocity);
+                mPlayer.checkInvincibility();
+            }
             moveProjectiles();
             movePowerUps();
 
@@ -208,8 +223,9 @@ public class SanitizorGame {
             if (enemy != null && enemy.shouldDestroy()) {
                 Random rand = new Random();
                 int spawn = rand.nextInt(10);
-                if(spawn < 7){
+                if (spawn < 7) {
                     //Log.d("PowerUp", "PowerUp should have spawned");
+
                     createPowerup(enemy);
                 }
                 enemies[currentEnemyIndex] = null;
@@ -236,14 +252,16 @@ public class SanitizorGame {
     private void movePowerUps() {
         //Move Projectiles
         int i = 0;
-        for (PowerUp powerUp: mPowerUps) {
+        for (PowerUp powerUp : mPowerUps) {
             if (powerUp != null && !powerUp.shouldDestroy()) {
                 powerUp.move();
                 movePowerUp(powerUp);
             } else {
+
 //                if(powerUp != null) {
 //                    Log.d("PowerUp", "Destroy");
 //                }
+
                 mPowerUps[i] = null;
             }
             i++;
@@ -340,6 +358,7 @@ public class SanitizorGame {
                     }
                 } else {
                     if (!enemy.getIsAttacking()) {
+
                         if(enemy.getClass().equals(GreenEnemy.class) && ((GreenEnemy) enemy).getGreenIsShooting()){
                             createProjectile(enemy);
                             Log.d("Projectile","Enemy Shot");
@@ -352,7 +371,7 @@ public class SanitizorGame {
             attack = ran.nextInt(500);
             if (attack <= 1 && enemy.getClass().equals(GreenEnemy.class)) {
                 ((GreenEnemy) enemy).setGreenIsShooting(true);
-            } else if(attack<=1){
+            } else if (attack <= 1) {
                 createProjectile(enemy);
             }
         }
@@ -379,7 +398,7 @@ public class SanitizorGame {
         } else {
             //Create a new projectile at enemy position
             projectile = new EnemyProjectile(mContext);
-            if(character.getClass().equals(GreenEnemy.class)){
+            if (character.getClass().equals(GreenEnemy.class)) {
                 ((GreenEnemy) character).shoot();
             }
         }
@@ -394,15 +413,16 @@ public class SanitizorGame {
         mProjPointer %= mProjectiles.length;
     }
 
-    private void createPowerup(Enemy enemy){
+    private void createPowerup(Enemy enemy) {
         PowerUp powerUp;
-        if (levelEnding){
+        if (levelEnding) {
             return;
         }
 //        Log.d("PowerUp", "create Powerup");
         Random ran = new Random();
         int r = ran.nextInt(2);
         if(r == 0) {
+
             powerUp = new rapidPowerup(mContext);
         } else {
             powerUp = new lifePowerup(mContext);
@@ -450,8 +470,8 @@ public class SanitizorGame {
         mJoystick.draw(canvas);
     }
 
-    private void updateGameOver(){
-        if(mPlayer.isGameOver() || level >= MAX_LEVEL){
+    private void updateGameOver() {
+        if (mPlayer.isGameOver() || level >= MAX_LEVEL) {
             mGameOver = true;
         }
     }

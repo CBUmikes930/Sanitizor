@@ -1,23 +1,22 @@
 package com.egr423.sanitizor;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.PointF;
 import android.view.SurfaceHolder;
 
 /**
  * Created by Micah Steinbock on 10/6/2020
- *
+ * <p>
  * A GameThread which is responsible for starting and stopping the game through the SanitizorGame
  */
 public class GameThread extends Thread {
 
-    private SurfaceHolder mSurfaceHolder;
-    private SanitizorGame mSanitizorGame;
+    private final SurfaceHolder mSurfaceHolder;
+    private final SanitizorGame mSanitizorGame;
     private boolean mThreadRunning;
     private boolean mIsPaused;
-    private PointF mVelocity;
+    private final PointF mVelocity;
 
     public GameThread(SurfaceHolder holder, Context context) {
         mSurfaceHolder = holder;
@@ -69,11 +68,11 @@ public class GameThread extends Thread {
         mThreadRunning = false;
     }
 
-    public int getPlayerScore(){
+    public int getPlayerScore() {
         return mSanitizorGame.getPlayerScore();
     }
 
-    public SanitizorGame getmSanitizorGame(){
+    public SanitizorGame getmSanitizorGame() {
         return mSanitizorGame;
     }
 

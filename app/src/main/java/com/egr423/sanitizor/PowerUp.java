@@ -14,6 +14,7 @@ import android.util.Log;
 public abstract class PowerUp extends Projectile {
     float SPEED = -1f;
     protected Bitmap[] mImage;
+    float SPEED = -1f;
     int mStatus;
     //Animation start time
     Rect bounds;
@@ -25,7 +26,8 @@ public abstract class PowerUp extends Projectile {
     private MediaPlayer collectSound;
 
 
-    public PowerUp(POWER_UPS type,Context context) {
+
+    public PowerUp(POWER_UPS type, Context context) {
         super(context);
         soundName = null;
         mImage = new Bitmap[17];
@@ -34,7 +36,7 @@ public abstract class PowerUp extends Projectile {
         //Load in all the sprites into an array
         for (int i = 0; i < mImage.length; i++) {
             //Get sprite name
-            String name = ("powerup_" + type+"_" + (i + 1)).toLowerCase();
+            String name = ("powerup_" + type + "_" + (i + 1)).toLowerCase();
             //Get sprite id
             int id = context.getResources().getIdentifier(name, "drawable", context.getPackageName());
             if (id == 0) {
@@ -62,28 +64,28 @@ public abstract class PowerUp extends Projectile {
     }
 
     @Override
-    public void move(){
-        Log.d("powerUp", "Current location:" + bounds.left +','+bounds.top);
+    public void move() {
+        Log.d("powerUp", "Current location:" + bounds.left + ',' + bounds.top);
         if (mLastMoved < SanitizorGame.pauseStart) {
             mLastMoved += SanitizorGame.elapsedPauseTime;
         }
         long elapsedTime = System.currentTimeMillis() - mLastMoved;
-        bounds.offset(0, (int)(-SPEED * elapsedTime));
+        bounds.offset(0, (int) (-SPEED * elapsedTime));
         mLastMoved = System.currentTimeMillis();
         mShouldDestroy = bounds.top >= SanitizorGame.mSurfaceHeight;
     }
 
     @Override
-    public void startAnimation(){
-        if(!mAnimationIsRunning){
+    public void startAnimation() {
+        if (!mAnimationIsRunning) {
             mStartTime = System.currentTimeMillis();
             mAnimationIsRunning = true;
         }
     }
 
     @Override
-    public boolean shouldDestroy(){
-        Log.d("PowerUp: shouldDestroy", ""+ (bounds.top > SanitizorGame.mSurfaceHeight));
+    public boolean shouldDestroy() {
+        Log.d("PowerUp: shouldDestroy", "" + (bounds.top > SanitizorGame.mSurfaceHeight));
         return (mShouldDestroy);
     }
 
@@ -114,9 +116,9 @@ public abstract class PowerUp extends Projectile {
             }
         }
         // Reset the animation if it has finished.
-        if(mStatus >= mImage.length){
-             mStatus = 0;
-             mStartTime = System.currentTimeMillis();
+        if (mStatus >= mImage.length) {
+            mStatus = 0;
+            mStartTime = System.currentTimeMillis();
         }
         //If the animation has not finished, then render the frame
         if (mStatus < mImage.length) {
@@ -129,11 +131,11 @@ public abstract class PowerUp extends Projectile {
         }
     }
 
-    public void destroyPowerUp(){
+    public void destroyPowerUp() {
         mShouldDestroy = true;
     }
 
-    public void upgradePlayer(Player player){
+    public void upgradePlayer(Player player) {
         player.activateRapidFire();
         SoundManager.getInstance().playSound("Powerup.ogg");
     }

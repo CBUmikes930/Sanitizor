@@ -1,18 +1,17 @@
 package com.egr423.sanitizor;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
-import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -22,12 +21,12 @@ public class GameOver extends AppCompatActivity implements AccountManager.signed
     //The score for the run
     private int mScore;
 
-    protected void onCreate (Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         //Initialize theme
         SettingsDialogue.initialize(this);
         //create
-        super .onCreate(savedInstanceState) ;
-        setContentView(R.layout.activity_game_over) ;
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_game_over);
 
         //Initialize the recycler view
         RecyclerView recyclerView = findViewById(R.id.gOrecycler_view);
@@ -51,9 +50,9 @@ public class GameOver extends AppCompatActivity implements AccountManager.signed
         leaderboardManager.populateLeaderboard(this, recyclerView, progressBar);
 
         //Load header info
-        TextView textView = findViewById(R.id.GameOverTitle) ;
-        SpannableString content = new SpannableString( "Game Over" ) ;
-        content.setSpan( new UnderlineSpan() , 0 , content.length() , 0 ) ;
+        TextView textView = findViewById(R.id.GameOverTitle);
+        SpannableString content = new SpannableString("Game Over");
+        content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
         textView.setText(content);
 
         //Update UI based on current user
@@ -75,6 +74,11 @@ public class GameOver extends AppCompatActivity implements AccountManager.signed
         AccountManager accountManager = AccountManager.getInstance(this);
         accountManager.setListener(this::updateUI);
         accountManager.signIn();
+    }
+
+    @Override
+    public void onBackPressed() {
+
     }
 
     @Override

@@ -1,30 +1,12 @@
 package com.egr423.sanitizor;
 
-import androidx.annotation.NonNull;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
-
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GoogleAuthProvider;
 
 public class MainActivity extends AppCompatActivity implements AccountManager.signedInListener {
 
@@ -78,9 +60,10 @@ public class MainActivity extends AppCompatActivity implements AccountManager.si
 
     /**
      * Added by Micah Steinbock on 10/6/2020
-     *
+     * <p>
      * A method that is triggered by the "Play" button
      * Starts the GameActivity
+     *
      * @param view
      */
     public void playButton(View view) {
@@ -90,9 +73,10 @@ public class MainActivity extends AppCompatActivity implements AccountManager.si
 
     /**
      * Added by Chase Crossley on 10/6/2020
-     *
+     * <p>
      * A method that is triggered by the "Settings" button
      * Opens the modal Settings page
+     *
      * @param view
      */
     public void settingsButtonListener(View view) {
@@ -103,9 +87,10 @@ public class MainActivity extends AppCompatActivity implements AccountManager.si
 
     /**
      * Added by Micah Steinbock on 10/20/2020
-     *
+     * <p>
      * A method that is triggered by the "Leaderboard" button
      * Starts and switches to the Leaderboard activity
+     *
      * @param view
      */
     public void viewLeaderboard(View view) {
@@ -115,10 +100,11 @@ public class MainActivity extends AppCompatActivity implements AccountManager.si
 
     /**
      * Added by Micah Steinbock on 11/4/2020
-     *
+     * <p>
      * A method that is triggered by the "Log in" button
      * Starts the google sign in intent
      * triggers onActivityReuslt when completed
+     *
      * @param view
      */
     public void signIn(View view) {
@@ -127,9 +113,10 @@ public class MainActivity extends AppCompatActivity implements AccountManager.si
 
     /**
      * Added by Micah Steinbock on 11/4/2020
-     *
+     * <p>
      * A method that is triggered by the "Log out" button
      * Signs out the currently logged in user and updates the UI
+     *
      * @param view
      */
     public void signOut(View view) {
