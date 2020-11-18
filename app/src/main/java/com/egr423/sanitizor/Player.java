@@ -13,27 +13,23 @@ import android.util.Log;
 
 /**
  * Created by Micah Steinbock on 10/6/2020
- *
+ * <p>
  * The player object which is the class controlled by the player.
  */
 public class Player extends Character {
 
     //Player position values
     private final int BOTTOM_PADDING = 50; //Padding to keep image off of bottom
-
-    //The image resource for the player
-    private int rotation;
-    private int cur_sprite;
-
     private final int INVICIBILITY_DURATION = 1000;
     private final long RAPID_FIRE_DURATION = 8000;
     private final int NORMAL_SHOT_COOLDOWN = 1000;
-
-
+    private final boolean isInvincible;
+    //The image resource for the player
+    private int rotation;
+    private int cur_sprite;
     private boolean isAlive;
     private boolean justTookDamage;
     private long lastDamaged;
-    private final boolean isInvincible;
     private int playerLives;
     private boolean mDeathAnimationIsRunning;
     private long mDeathStartTime;
@@ -85,11 +81,11 @@ public class Player extends Character {
     }
 
     public void damagePlayer() {
-        if(!justTookDamage){
+        if (!justTookDamage) {
             SoundManager.getInstance().playSound("Player_Damage.ogg");
             Log.d("Player", "Player took damage!");
             playerLives--;
-            Log.d("Player","Player has "+ playerLives +" lives left");
+            Log.d("Player", "Player has " + playerLives + " lives left");
             justTookDamage = true;
             lastDamaged = System.currentTimeMillis();
         }
@@ -140,7 +136,7 @@ public class Player extends Character {
                     mDeathStartTime += SanitizorGame.elapsedPauseTime;
                 }
                 long elapsedTime = System.currentTimeMillis() - mDeathStartTime;
-                cur_sprite = (int) Math.floor(elapsedTime/ANIMATION_SPEED);
+                cur_sprite = (int) Math.floor(elapsedTime / ANIMATION_SPEED);
                 rotation = (int) (elapsedTime * ROTATION_RATE);
                 if (rotation > 90) {
                     rotation = 90;
@@ -175,7 +171,7 @@ public class Player extends Character {
                 mRapidFireStart += SanitizorGame.elapsedPauseTime;
             }
             elapsedTime = System.currentTimeMillis() - mRapidFireStart;
-            if(!(elapsedTime < RAPID_FIRE_DURATION && mHasRapidFire)){
+            if (!(elapsedTime < RAPID_FIRE_DURATION && mHasRapidFire)) {
                 shotCoolDown = NORMAL_SHOT_COOLDOWN;
                 mHasRapidFire = false;
             }
@@ -188,11 +184,11 @@ public class Player extends Character {
                 SanitizorGame.mSurfaceHeight - (BOTTOM_PADDING + bounds.height()));
     }
 
-    public int getPlayerLives(){
+    public int getPlayerLives() {
         return playerLives;
     }
 
-    public void setPlayerLives(int lives){
+    public void setPlayerLives(int lives) {
         playerLives = lives;
         if (playerLives == 0) {
             startDeathAnimation();
@@ -217,7 +213,7 @@ public class Player extends Character {
         return mGameOverStatus;
     }
 
-    public void activateRapidFire(){
+    public void activateRapidFire() {
         mRapidFireStart = System.currentTimeMillis();
         mHasRapidFire = true;
         shotCoolDown = 0;

@@ -8,17 +8,14 @@ import android.graphics.PointF;
  * Joystick is a singleton class that creates a joystick that the user can use to move the player character
  */
 public class Joystick {
-    private static Joystick joystick = new Joystick();
-
-    private static PointF center;
-    private static PointF handleCenter;
-
     //The radius of the outer circle of the joystick
     private static final float OUT_RADIUS = 100;
     //The radius of the "Handle" of the circle of the joystick
     private static final float HANDLE_RADIUS = 50;
-
-    private static Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private static final Joystick joystick = new Joystick();
+    private static final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private static PointF center;
+    private static PointF handleCenter;
     //The color for the outer circle of the joystick
     private static int outColor;
     //The color for the inner circle of the joystick
@@ -35,6 +32,11 @@ public class Joystick {
         return joystick;
     }
 
+    public PointF getCenter() {
+        //Return a new object with the same values as center
+        return new PointF(center.x, center.y);
+    }
+
     public void setCenter(PointF center) {
         //If a center hasn't been declared, then make a new one, otherwise, set the coords
         if (Joystick.center == null) {
@@ -44,9 +46,8 @@ public class Joystick {
         }
     }
 
-    public PointF getCenter() {
-        //Return a new object with the same values as center
-        return new PointF(center.x, center.y);
+    public PointF getHandleCenter() {
+        return new PointF(handleCenter.x, handleCenter.y);
     }
 
     public void setHandleCenter(PointF center) {
@@ -73,10 +74,6 @@ public class Joystick {
             //Set the handle to the edge of the circle.
             handleCenter.set((float) (Joystick.center.x + dx), (float) (Joystick.center.y + dy));
         }
-    }
-
-    public PointF getHandleCenter() {
-        return new PointF(handleCenter.x, handleCenter.y);
     }
 
     public void resetHandlePos() {
@@ -107,7 +104,7 @@ public class Joystick {
 
     public void draw(Canvas canvas) {
         if ((drawGraphic && SettingsDialogue.controlScheme == R.id.swipe_controls) ||
-            SettingsDialogue.controlScheme == R.id.joystick_controls) {
+                SettingsDialogue.controlScheme == R.id.joystick_controls) {
             //Draw the outer circle
             paint.setColor(outColor);
 

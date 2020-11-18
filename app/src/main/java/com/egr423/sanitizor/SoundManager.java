@@ -8,11 +8,7 @@ import android.media.SoundPool;
 import android.util.ArrayMap;
 import android.util.Log;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 
 public class SoundManager {
 
@@ -22,11 +18,11 @@ public class SoundManager {
     private static SoundManager mManager;
 
     private AssetManager mAssets;
-    private SoundPool mSoundPool;
+    private final SoundPool mSoundPool;
 
     private Map<String, Integer> sounds;
     private Map<Integer, Boolean> soundIsReady;
-    private Map<Integer, String> runningSounds;
+    private final Map<Integer, String> runningSounds;
 
     // Variables for a readied song to play after loading is complete
     private int readiedId;
@@ -34,13 +30,6 @@ public class SoundManager {
     private int readiedLoop;
 
     private boolean playGameAudio;
-
-    public static SoundManager getInstance() {
-        if (mManager == null) {
-            mManager = new SoundManager();
-        }
-        return mManager;
-    }
 
     public SoundManager() {
         //Initialize the sound pool
@@ -54,6 +43,13 @@ public class SoundManager {
                 .build();
         runningSounds = new ArrayMap<>();
         playGameAudio = false;
+    }
+
+    public static SoundManager getInstance() {
+        if (mManager == null) {
+            mManager = new SoundManager();
+        }
+        return mManager;
     }
 
     public void loadSounds(Context context) {

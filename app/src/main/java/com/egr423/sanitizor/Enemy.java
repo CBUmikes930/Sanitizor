@@ -27,20 +27,21 @@ import androidx.annotation.NonNull;
 
 public abstract class Enemy extends Character {
 
+    public static final Class<?>[] SUB_CLASSES = {RedEnemy.class, BlueEnemy.class, GreenEnemy.class};
     private final float ROTATION_RATE = 0.5f;
+    private final int TIME_TO_ATTACK = 20;
     //VARIABLE Fields
     int ATTACK_PHASE = 4000;
     int hitPoints = 2;
     int ATTACK_COOL_DOWN = 5000;
+    int mPointValue;
     private float rotation = 0;
     private int mDeathStatus;
     private boolean mDeathAnimationIsRunning = false;
     private boolean wrappingx = false;
     private boolean wrappingy = false;
     private long mDeathStartTime;
-
     private long mLastMovedTime;
-    private final int TIME_TO_ATTACK = 20;
     private long lastAttacked;
     private long attackTime;
     private Rect gridPos;
@@ -51,10 +52,7 @@ public abstract class Enemy extends Character {
     private boolean wrappingGx = false;
     private boolean wrappingGy = false;
 
-    protected int mPointValue;
-
     public Enemy(ENEMY_COLORS color, @NonNull Context context, Point location, int numberOfSprites) {
-        mPointValue = 0;
         mImage = new Bitmap[numberOfSprites];
         for (int i = 0; i < numberOfSprites; i++) {
             //Get sprite name
@@ -323,6 +321,6 @@ public abstract class Enemy extends Character {
         return mPointValue;
     }
 
-    protected enum ENEMY_COLORS {RED, BLUE}
+    protected enum ENEMY_COLORS {RED, BLUE, GREEN}
 
 }

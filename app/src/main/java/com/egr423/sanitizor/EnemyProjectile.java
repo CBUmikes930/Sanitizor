@@ -4,15 +4,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.drawable.Drawable;
-
-import androidx.core.content.res.ResourcesCompat;
 
 /**
  * Created by Micah Steinbock on 10/13/2020
@@ -49,7 +43,7 @@ public class EnemyProjectile extends Projectile {
         }
     }
 
-    public void draw(Canvas canvas){
+    public void draw(Canvas canvas) {
         if (mStatus < mImage.length) {
             Matrix matrix = new Matrix();
             //Map to the bounds coordinates

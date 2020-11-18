@@ -1,7 +1,6 @@
 package com.egr423.sanitizor;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,12 +22,11 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
 
 /**
  * Created by Micah Steinbock on October 21, 2020
@@ -53,8 +51,9 @@ public class LeaderboardManager {
 
     /**
      * The overall method that gets the data from the firestore database and populates the RecyclerView
-     * @param context - The context of the app that is calling this method
-     * @param rView - The recyclerview to set the content to
+     *
+     * @param context     - The context of the app that is calling this method
+     * @param rView       - The recyclerview to set the content to
      * @param progressBar - The progress bar spinner to hide when the data is generated
      */
     public void populateLeaderboard(Context context, RecyclerView rView, ProgressBar progressBar) {
@@ -88,7 +87,8 @@ public class LeaderboardManager {
 
     /**
      * Method to get the current user's high score (displayed in the leaderboard activity
-     * @param context - The activity context that this is getting called from
+     *
+     * @param context  - The activity context that this is getting called from
      * @param textView - The textview to set to the high score
      */
     public void getUserHighScore(Context context, TextView textView) {
@@ -137,9 +137,10 @@ public class LeaderboardManager {
 
     /**
      * Method to add a new score into the database
+     *
      * @param context - the activity that this is getting called from
-     * @param  - the username to display with the score
-     * @param number - the score
+     * @param -       the username to display with the score
+     * @param number  - the score
      */
     public void addNewScore(Context context, Integer number) {
         //Create data record map
@@ -175,6 +176,7 @@ public class LeaderboardManager {
 
     /**
      * Helper method to convert the QuerySnapshot into a List of Key-Object maps
+     *
      * @param result - the result of the query
      * @return - A list of maps that have a string key and object value
      */
@@ -193,8 +195,8 @@ public class LeaderboardManager {
 
         private Map<String, Object> mScore;
 
-        private TextView mNameTextView;
-        private TextView mScoreTextView;
+        private final TextView mNameTextView;
+        private final TextView mScoreTextView;
 
         public ScoreHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.list_score, parent, false));
@@ -211,8 +213,8 @@ public class LeaderboardManager {
 
     private class ScoreAdapter extends RecyclerView.Adapter<ScoreHolder> {
 
-        private List<Map<String, Object>> mScores;
-        private Context mContext;
+        private final List<Map<String, Object>> mScores;
+        private final Context mContext;
 
         public ScoreAdapter(List<Map<String, Object>> scores, Context context) {
             mScores = scores;
