@@ -73,7 +73,7 @@ public class Player extends Character {
 
         SPEED = 0.1;
         justTookDamage = false;
-        isInvincible = false;
+        isInvincible = true;
         playerLives = 3;
         mGameOverStatus = false;
         shotCoolDown = NORMAL_SHOT_COOLDOWN;

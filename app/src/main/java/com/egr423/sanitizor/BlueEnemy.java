@@ -17,7 +17,6 @@ public class BlueEnemy extends Enemy {
     public void attack(@NonNull PointF velocity) {
         wrapGrid();
 //        checkAtOriginalPos();
-        bounds.offset(0, (int) (velocity.y * SPEED));
         wrapScreen();
 
         // NEW ATTACK
@@ -28,9 +27,9 @@ public class BlueEnemy extends Enemy {
         if (x < 0) {
             sign = -1;
         }
-        int speed = 40;
-        bounds.offset((int) ((speed * Math.cos(direction) * sign)),
-                (int) (velocity.y*SPEED));
+        bounds.offset((int) ((velocity.x * Math.cos(direction) * sign)*lastMoveTime(mLastMovedTime)),
+                (int) (velocity.y*SPEED *lastMoveTime(mLastMovedTime)));
+        mLastMovedTime = setLastMoveTime();
         wrapScreen();
     }
 }

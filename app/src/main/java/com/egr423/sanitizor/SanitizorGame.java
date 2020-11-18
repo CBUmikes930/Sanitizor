@@ -148,10 +148,13 @@ public class SanitizorGame {
                 location = new Point(20, 100);
             }
             Random rand = new Random();
-            if (rand.nextBoolean()) {
+            int ran = rand.nextInt(3);
+            if (ran ==0) {
                 enemies[enemySize++] = new BlueEnemy(mContext, location);
-            } else {
+            } else if(ran ==1) {
                 enemies[enemySize++] = new RedEnemy(mContext, location);
+            } else {
+                enemies[enemySize++] = new GreenEnemy(mContext, location);
             }
         }
     }
@@ -301,7 +304,6 @@ public class SanitizorGame {
 //                Log.d("Enemy", "Enemy collided with Player");
                 if (!mPlayerIsInvincible) {
                     mPlayer.damagePlayer();
-//                    updateLives();
                 }
             }
             int attack = ran.nextInt(1001);
@@ -322,14 +324,14 @@ public class SanitizorGame {
                     // Do nothing
                 }
             } else {
-                if (attack <= 1) {
+                if (attack <= 1 && !enemy.getClass().equals(GreenEnemy.class)) {
                     try {
                         if (enemy.checkAttackCooldown()) {
 //                            Log.d("Enemy update", "Enemy is attacking: " + enemy);
                             enemy.checkAttack();
                         } else {
                             if (!enemy.getIsAttacking()) {
-                                enemy.move(new PointF(30, 0));
+                                enemy.move(new PointF(1, 0));
                             }
 //                            Log.d("Enemy update", "Enemy couldn't attack");
                         }
@@ -338,13 +340,19 @@ public class SanitizorGame {
                     }
                 } else {
                     if (!enemy.getIsAttacking()) {
-                        enemy.move(new PointF(30, 0));
+                        if(enemy.getClass().equals(GreenEnemy.class) && ((GreenEnemy) enemy).getGreenIsShooting()){
+                            createProjectile(enemy);
+                            Log.d("Projectile","Enemy Shot");
+                        }
+                        enemy.move(new PointF(1, 0));
                     }
                 }
             }
             //Randomize whether to attack
             attack = ran.nextInt(500);
-            if (attack <= 1) {
+            if (attack <= 1 && enemy.getClass().equals(GreenEnemy.class)) {
+                ((GreenEnemy) enemy).setGreenIsShooting(true);
+            } else if(attack<=1){
                 createProjectile(enemy);
             }
         }
@@ -360,6 +368,7 @@ public class SanitizorGame {
         }
         long elapsedTime = System.currentTimeMillis() - character.lastFired;
         if (levelEnding || elapsedTime < character.shotCoolDown) {
+
             return;
         }
 
@@ -370,6 +379,9 @@ public class SanitizorGame {
         } else {
             //Create a new projectile at enemy position
             projectile = new EnemyProjectile(mContext);
+            if(character.getClass().equals(GreenEnemy.class)){
+                ((GreenEnemy) character).shoot();
+            }
         }
         //Record shot time
         character.lastFired = System.currentTimeMillis();
